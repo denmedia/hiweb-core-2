@@ -5,9 +5,9 @@
 	 * Date: 30.06.2016
 	 * Time: 15:34
 	 */
-	
+
 	if( !class_exists( 'hiweb' ) ){
-		
+
 		/**
 		 * Запрос к корневому классу hiweb
 		 * @return hiweb
@@ -17,25 +17,25 @@
 			if( !$class instanceof hiweb ) $class = new hiweb();
 			return $class;
 		}
-		
+
 		class hiweb{
-			
+
 			private $modules = array();
-			
+
 			/**
 			 * @return bool|hiweb_arrays
 			 */
 			public function arrays(){
 				return $this->module( 'arrays' );
 			}
-			
+
 			/**
 			 * @return bool|hiweb_backtrace
 			 */
 			public function backtrace(){
 				return $this->module( 'backtrace' );
 			}
-			
+
 			/**
 			 * @param null $data
 			 * @return bool|hiweb_console
@@ -44,21 +44,21 @@
 				if( !is_null( $data ) || trim( $data ) != '' ) return $this->module( 'console' )->info( $data );
 				else return $this->module( 'console', $data );
 			}
-			
+
 			/**
 			 * @return bool|hiweb_path
 			 */
 			public function path(){
 				return $this->module( 'path' );
 			}
-			
+
 			/**
 			 * @return bool|hiweb_string
 			 */
 			public function string(){
 				return $this->module( 'string' );
 			}
-			
+
 			/**
 			 * @param null $data
 			 * @return boo|hiweb_dump
@@ -66,8 +66,8 @@
 			public function dump( $data = null ){
 				return $this->module( 'dump', $data );
 			}
-			
-			
+
+
 			/**
 			 * @param $file
 			 * @return mixed
@@ -75,8 +75,8 @@
 			public function css( $file ){
 				return $this->module( 'css' )->enqueue( $file );
 			}
-			
-			
+
+
 			/**
 			 * @param       $file
 			 * @param array $afterJS   - список предварительных JS файлов от WP
@@ -86,14 +86,21 @@
 			public function js( $file, $afterJS = array(), $in_footer = false ){
 				return $this->module( 'js' )->enqueue( $file, $afterJS, $in_footer );
 			}
-			
+
 			/**
 			 * @return bool|hiweb_wp
 			 */
 			public function wp(){
 				return $this->module( 'wp' );
 			}
-			
+
+			/**
+			 * @return bool|hiweb_date
+			 */
+			public function date(){
+				return $this->module( 'date' );
+			}
+
 			/**
 			 * Подключение модуля
 			 * @param            $name
@@ -113,9 +120,9 @@
 				}
 				return end( $this->modules[ $name ] );
 			}
-			
-			
+
+
 		}
-		
-		
+
+
 	}
