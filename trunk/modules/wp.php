@@ -78,6 +78,17 @@
 
 			return $this->themes[ $theme ];
 		}
+
+
+        /**
+         * Возвращает TRUE, если текущий запрос происходит через AJAX
+         * @return bool
+         */
+        public function is_ajax(){
+            return (defined('DOING_AJAX') && DOING_AJAX) || (! empty( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ]) == 'xmlhttprequest');
+        }
+
+
 	}
 
 
