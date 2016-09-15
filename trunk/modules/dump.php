@@ -82,7 +82,7 @@
 		 * @param int $autoDeleteOldFile - указать время в секундах, в течении которого старые записи не будут удаляться из файла
 		 * @return int
 		 */
-		function file( $dataMix, $filePath = 'log.html', $append = true, $autoDeleteOldFile = 5 ){
+		function to_file( $dataMix, $filePath = 'log.html', $append = true, $autoDeleteOldFile = 5 ){
 			$filePath = realpath( $filePath );
 			if( ! file_exists( dirname( $filePath ) ) ){
 				file_put_contents( realpath( 'error.txt' ), dirname( $filePath ) . ' => not exists' );

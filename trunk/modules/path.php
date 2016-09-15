@@ -252,12 +252,51 @@
 
 
 		/**
+		 * Возвращает DIRECTORY SEPARATOR, отталкиваясь от данных
+		 */
+		public function separator(){
+			$left = substr_count( $_SERVER['DOCUMENT_ROOT'], '\\' );
+			$right = substr_count( $_SERVER['DOCUMENT_ROOT'], '//' );
+			return $left > $right ? '\\' : '/';
+		}
+
+
+		/**
+		 * Возвращает путь с правильными разделителями
+		 * @param $path - исходный путь
+		 * @param bool $removeLastSeparators - удалить самый хвостовой сепаратор
+		 * @return string | bool
+		 * @version 1.1
+		 */
+		public function prepare_separator( $path, $removeLastSeparators = false ){
+			if( ! is_string( $path ) ){
+				hiweb()->console()->warn( 'Путь должен быть строкой', 1 );
+				return false;
+			}
+			$r = strtr( $path, array( '\\' => $this->separator(), '/' => $this->separator() ) );
+			return $removeLastSeparators ? rtrim( $r, $this->separator() ) : $r;
+		}
+
+
+		/**
+		 * Конвертация относитльного пути к коневой папке в реальный
+		 * @version 1.0.0.0
+		 * @param $fileOrDirPath - путь до файла или папки
+		 * @return string
+		 */
+		public function realpath( $fileOrDirPath ){
+			$fileOrDirPath = $this->prepare_separator( $fileOrDirPath );
+			return ( strpos( $fileOrDirPath, $this->base_dir() ) !== 0 ) ? $this->base_dir() . $this->separator() . $fileOrDirPath : $fileOrDirPath;
+		}
+
+
+		/**
 		 * Функция атоматически создает папки
 		 * @param $dirPath - путь до папи, которую необходимо создать
 		 * @return string
 		 */
 		public function mkdir( $dirPath ){
-			$dirPath = realpath( $dirPath );
+			$dirPath = $this->realpath( $dirPath );
 			if( @file_exists( $dirPath ) ){
 				return is_dir( $dirPath ) ? $dirPath : false;
 			}
@@ -358,7 +397,7 @@
 		 * @return array
 		 */
 		public function scan_directory( $path, $returnDirs = true, $returnFiles = true, $getSubDirs = true ){
-			$path = realpath( $path );
+			$path = $this->realpath( $path );
 			if( ! file_exists( $path ) ){
 				return array();
 			}
@@ -395,11 +434,11 @@
 		 * @return bool|string
 		 */
 		public function archive( $pathInput, $pathOut = '', $arhiveName = 'arhive.zip', $baseDirInArhive = true, $appendToArchive = false ){
-			$pathInput = realpath( $pathInput );
+			$pathInput = $this->realpath( $pathInput );
 			if( ! is_file( $pathOut ) ){
 				$this->mkdir( $pathOut );
 			}
-			$pathOut = $pathOut == '' ? $pathInput : realpath( $pathOut );
+			$pathOut = $pathOut == '' ? $pathInput : $this->realpath( $pathOut );
 			if( ! file_exists( $pathInput ) ){
 				return false;
 			}
@@ -430,7 +469,7 @@
 		 * @return bool
 		 */
 		public function unpack( $archivePath, $destinationDir = '' ){
-			$archivePath = realpath( $archivePath );
+			$archivePath = $this->realpath( $archivePath );
 			if( ! file_exists( $archivePath ) ){
 				return false;
 			}
