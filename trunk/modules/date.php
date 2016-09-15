@@ -11,7 +11,7 @@
 		 *
 		 * @return bool|string
 		 */
-		public function getStr_dateTime( $time = null, $format = 'Y-m-d H:i:s' ) {
+		public function dateTime( $time = null, $format = 'Y-m-d H:i:s' ) {
 			if ( intval( $time ) < 100 ) {
 				$time = time();
 			}
@@ -27,7 +27,7 @@
 		 *
 		 * @return bool
 		 */
-		public function getStr_dateWeek( $weekNum = 0, $fullName = true ) {
+		public function dateWeek( $weekNum = 0, $fullName = true ) {
 			$weekNum = intval( $weekNum );
 			$a       = array(
 				array( 'вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб' ),
