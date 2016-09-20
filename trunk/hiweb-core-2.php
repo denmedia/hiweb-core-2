@@ -3,7 +3,7 @@
 	Plugin Name: hiWeb Core 2
 	Plugin URI: http://plugins.hiweb.moscow/core
 	Description: Special framework plugin
-	Version: 2.2.1.1
+	Version: 2.2.2.0
 	Author: Den Media
 	Author URI: http://hiweb.moscow
 	*/

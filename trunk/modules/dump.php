@@ -83,9 +83,9 @@
 		 * @return int
 		 */
 		function to_file( $dataMix, $filePath = 'log.html', $append = true, $autoDeleteOldFile = 5 ){
-			$filePath = realpath( $filePath );
+			$filePath = hiweb()->path()->realpath( $filePath );
 			if( ! file_exists( dirname( $filePath ) ) ){
-				file_put_contents( realpath( 'error.txt' ), dirname( $filePath ) . ' => not exists' );
+				file_put_contents( hiweb()->path()->realpath( 'error.txt' ), dirname( $filePath ) . ' => not exists' );
 				return false;
 			}
 			$returnStr = '<style type="text/css">.sep { border-bottom: 1px dotted #ccc; } .sepLast { margin-bottom: 35px; }</style>';
