@@ -15,8 +15,24 @@
 		 * @version 1.0.2
 		 */
 		public function url_full( $trimSlashes = true ){
-			$https = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
+			$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
 			return rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'], '/' ) . ( $trimSlashes ? rtrim( $_SERVER['REQUEST_URI'], '/\\' ) : $_SERVER['REQUEST_URI'] );
+		}
+
+
+		/**
+		 * Возвращает запрошенный GET или POST параметр
+		 * @param $key
+		 * @param mixed $default
+		 * @return mixed
+		 */
+		public function request( $key, $default = null ){
+			$R = $default;
+			if( array_key_exists( $key, $_GET ) )
+				$R = $_GET[ $key ];
+			if( array_key_exists( $key, $_POST ) )
+				$R = $_POST[ $key ];
+			return $R;
 		}
 
 
@@ -48,7 +64,7 @@
 					}
 				}
 			}
-			$https = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
+			$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
 			return rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . $r, '/' );
 		}
 
@@ -165,7 +181,7 @@
 			///
 			$baseUrl = $this->base_url();
 			$baseUrl = strpos( $url, $baseUrl ) === 0 ? $baseUrl : false;
-			$https = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
+			$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
 			$shema = $https ? 'https://' : 'http://';
 			$dirs = array();
 			$domain = '';
@@ -200,11 +216,11 @@
 		 * @return bool|array|string
 		 */
 		public function prepare_url( $url, $startUrl = null, $returnParseArray = false ){
-			if( ! is_string( $url ) ){
+			if( !is_string( $url ) ){
 				return false;
 			}
 			$urlParse = parse_url( trim( $url ) );
-			if( ! isset( $urlParse['scheme'] ) ){
+			if( !isset( $urlParse['scheme'] ) ){
 				if( is_string( $startUrl ) && trim( $startUrl ) != '' ){
 					$startUrlParse = parse_url( $startUrl );
 					$urlParse['scheme'] = $startUrlParse['scheme'];
@@ -217,10 +233,10 @@
 				}
 			}
 			//if(function_exists('idn_to_utf8')) { $urlParse['host'] = idn_to_utf8($urlParse['host']); }
-			if( ! isset( $urlParse['path'] ) ){
+			if( !isset( $urlParse['path'] ) ){
 				$urlParse['path'] = '';
 			}
-			if( ! isset( $urlParse['query'] ) ){
+			if( !isset( $urlParse['query'] ) ){
 				$urlParse['query'] = '';
 			}else{
 				$urlParse['query'] = '?' . $urlParse['query'];
@@ -269,7 +285,7 @@
 		 * @version 1.1
 		 */
 		public function prepare_separator( $path, $removeLastSeparators = false ){
-			if( ! is_string( $path ) ){
+			if( !is_string( $path ) ){
 				hiweb()->console()->warn( 'Путь должен быть строкой', 1 );
 				return false;
 			}
@@ -308,7 +324,7 @@
 				$newDirStr = implode( '/', $newDirArr );
 				@chmod( $newDirStr, 0755 );
 				$stat = @stat( $newDirStr );
-				if( ! @file_exists( $newDirStr ) || @is_file( $newDirStr ) ){
+				if( !@file_exists( $newDirStr ) || @is_file( $newDirStr ) ){
 					$newDirDoneArr[ $name ] = @mkdir( $newDirStr, 0755 );
 				}else{
 					$newDirDoneArr[ $newDirStr ] = 0;
@@ -324,7 +340,7 @@
 		 * @return bool
 		 */
 		public function rmdir( $dirPath ){
-			if( ! is_dir( $dirPath ) ){
+			if( !is_dir( $dirPath ) ){
 				return false;
 			}
 			if( substr( $dirPath, strlen( $dirPath ) - 1, 1 ) != '/' ){
@@ -398,14 +414,14 @@
 		 */
 		public function scan_directory( $path, $returnDirs = true, $returnFiles = true, $getSubDirs = true ){
 			$path = $this->realpath( $path );
-			if( ! file_exists( $path ) ){
+			if( !file_exists( $path ) ){
 				return array();
 			}
 			$R = array();
 			if( $handle = opendir( $path ) ){
 				while( false !== ( $file = readdir( $handle ) ) ){
 					$nextpath = $path . '/' . $file;
-					if( $file != '.' && $file != '..' && ! is_link( $nextpath ) ){
+					if( $file != '.' && $file != '..' && !is_link( $nextpath ) ){
 						///
 						if( is_dir( $nextpath ) && $returnDirs ){
 							$R[ $nextpath ] = pathinfo( $nextpath );
@@ -435,17 +451,17 @@
 		 */
 		public function archive( $pathInput, $pathOut = '', $arhiveName = 'arhive.zip', $baseDirInArhive = true, $appendToArchive = false ){
 			$pathInput = $this->realpath( $pathInput );
-			if( ! is_file( $pathOut ) ){
+			if( !is_file( $pathOut ) ){
 				$this->mkdir( $pathOut );
 			}
 			$pathOut = $pathOut == '' ? $pathInput : $this->realpath( $pathOut );
-			if( ! file_exists( $pathInput ) ){
+			if( !file_exists( $pathInput ) ){
 				return false;
 			}
 			if( $baseDirInArhive === true ){
 				$baseDirInArhive = basename( $pathInput ) . '/';
 			}
-			if( ! $appendToArchive && file_exists( $pathOut . '/' . $arhiveName ) ){
+			if( !$appendToArchive && file_exists( $pathOut . '/' . $arhiveName ) ){
 				@unlink( $pathOut . '/' . $arhiveName );
 			}
 			$zip = new ZipArchive; // класс для работы с архивами
@@ -470,7 +486,7 @@
 		 */
 		public function unpack( $archivePath, $destinationDir = '' ){
 			$archivePath = $this->realpath( $archivePath );
-			if( ! file_exists( $archivePath ) ){
+			if( !file_exists( $archivePath ) ){
 				return false;
 			}
 			if( $destinationDir == '' ){
@@ -478,7 +494,7 @@
 			}
 			$zip = new ZipArchive();
 			if( $zip->open( $archivePath ) === true ){
-				if( ! $zip->extractTo( $destinationDir ) ){
+				if( !$zip->extractTo( $destinationDir ) ){
 					return false;
 				}
 				$zip->close();
