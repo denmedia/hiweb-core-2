@@ -7,7 +7,7 @@
 	 * Date: 30.06.2016
 	 * Time: 17:26
 	 */
-	class hiweb_console{
+	class hw_console{
 
 		public $_infos = array();
 		public $_warns = array();

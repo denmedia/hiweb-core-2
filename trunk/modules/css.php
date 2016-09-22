@@ -6,7 +6,7 @@
 	 * Date: 30.06.2016
 	 * Time: 22:16
 	 */
-	class hiweb_css {
+	class hw_css {
 
 		private $files = array();
 

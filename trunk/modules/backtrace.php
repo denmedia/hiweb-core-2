@@ -6,7 +6,7 @@
 	 * Date: 30.06.2016
 	 * Time: 17:48
 	 */
-	class hiweb_backtrace {
+	class hw_backtrace {
 
 
 		/**

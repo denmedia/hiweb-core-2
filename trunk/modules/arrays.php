@@ -6,7 +6,7 @@
 	 * Date: 30.06.2016
 	 * Time: 16:57
 	 */
-	class hiweb_arrays {
+	class hw_arrays {
 
 
 		/**

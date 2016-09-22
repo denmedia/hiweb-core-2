@@ -23,14 +23,14 @@
 			private $modules = array();
 
 			/**
-			 * @return bool|hiweb_arrays
+			 * @return bool|hw_arrays
 			 */
 			public function arrays(){
 				return $this->module( 'arrays' );
 			}
 
 			/**
-			 * @return bool|hiweb_backtrace
+			 * @return bool|hw_backtrace
 			 */
 			public function backtrace(){
 				return $this->module( 'backtrace' );
@@ -38,7 +38,7 @@
 
 			/**
 			 * @param null $data
-			 * @return bool|hiweb_console
+			 * @return bool|hw_console
 			 */
 			public function console( $data = null ){
 				if( !is_null( $data ) || trim( $data ) != '' ) return $this->module( 'console' )->info( $data );
@@ -46,14 +46,14 @@
 			}
 
 			/**
-			 * @return bool|hiweb_path
+			 * @return bool|hw_path
 			 */
 			public function path(){
 				return $this->module( 'path' );
 			}
 
 			/**
-			 * @return bool|hiweb_string
+			 * @return bool|hw_string
 			 */
 			public function string(){
 				return $this->module( 'string' );
@@ -61,7 +61,7 @@
 
 			/**
 			 * @param null $data
-			 * @return boo|hiweb_dump
+			 * @return boo|hw_dump
 			 */
 			public function dump( $data = null ){
 				return $this->module( 'dump', $data );
@@ -88,17 +88,24 @@
 			}
 
 			/**
-			 * @return bool|hiweb_wp
+			 * @return bool|hw_wp
 			 */
 			public function wp(){
 				return $this->module( 'wp' );
 			}
 
 			/**
-			 * @return bool|hiweb_date
+			 * @return bool|hw_date
 			 */
 			public function date(){
 				return $this->module( 'date' );
+			}
+
+			/**
+			 * @return bool|hw_form
+			 */
+			public function form(){
+				return $this->module( 'form' );
 			}
 
 			/**
@@ -113,7 +120,7 @@
 				if( !array_key_exists( $name, $this->modules ) ) $this->modules[ $name ] = array();
 				$index = count( $this->modules[ $name ] );
 				if( $index == 0 || $newInstance ){
-					$className = 'hiweb_' . $name;
+					$className = 'hw_' . $name;
 					$this->modules[ $name ][ $index ] = null;
 					include_once HIWEB_DIR_MODULES . '/' . $name . '.php';
 					$this->modules[ $name ][ $index ] = new $className( $data );

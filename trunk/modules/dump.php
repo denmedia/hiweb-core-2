@@ -7,7 +7,7 @@
 	 * Date: 31.08.2016
 	 * Time: 23:03
 	 */
-	class hiweb_dump{
+	class hw_dump{
 		
 		
 		public function __construct( $data = null ){

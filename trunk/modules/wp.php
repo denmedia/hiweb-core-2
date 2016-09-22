@@ -11,25 +11,25 @@
 	 * Класс для работы с WordPress
 	 * Class hiweb_wp
 	 */
-	class hiweb_wp{
+	class hw_wp{
 
-		/** @var hiweb_wp_post[] */
+		/** @var hw_wp_post[] */
 		private $posts = array();
 
-		/** @var hiweb_wp_taxonomy[] */
+		/** @var hw_wp_taxonomy[] */
 		private $taxonomies = array();
 
-		/** @var hiweb_wp_theme[] */
+		/** @var hw_wp_theme[] */
 		private $themes = array();
 
-		/** @var hiweb_wp_cpt[] */
+		/** @var hw_wp_cpt[] */
 		private $cpts = array();
 
 
 		/**
 		 * Возвращает hiweb_wp_post
 		 * @param int|WP_post $postOrId
-		 * @return hiweb_wp_post
+		 * @return hw_wp_post
 		 */
 		public function post( $postOrId ){
 			if( $postOrId instanceof WP_Post ){
@@ -39,7 +39,7 @@
 			}
 			///
 			if( !isset( $this->posts[ $postId ] ) ){
-				$this->posts[ $postId ] = new hiweb_wp_post( $postOrId );
+				$this->posts[ $postId ] = new hw_wp_post( $postOrId );
 			}
 
 			return $this->posts[ $postId ];
@@ -50,7 +50,7 @@
 		 * @param int|WP_Post $postOrId
 		 * @param null $key
 		 * @param null $use_regex_index
-		 * @return hiweb_wp_meta|mixed|null
+		 * @return hw_wp_meta|mixed|null
 		 */
 		public function meta( $postOrId, $key = null, $use_regex_index = null ){
 			return $this->post( $postOrId )->meta( $key, $use_regex_index );
@@ -59,7 +59,7 @@
 
 		public function taxonomy( $taxonomy = null ){
 			if( !array_key_exists( $taxonomy, $this->taxonomies ) ){
-				$this->taxonomies[ $taxonomy ] = new hiweb_wp_taxonomy( $taxonomy );
+				$this->taxonomies[ $taxonomy ] = new hw_wp_taxonomy( $taxonomy );
 			}
 
 			return $this->taxonomies[ $taxonomy ];
@@ -68,14 +68,14 @@
 
 		/**
 		 * @param $theme - слуг темы
-		 * @return hiweb_wp_theme
+		 * @return hw_wp_theme
 		 */
 		public function theme( $theme = null ){
 			if( !is_string( $theme ) || trim( $theme ) == '' ){
 				$theme = get_option( 'template' );
 			}
 			if( !array_key_exists( $theme, $this->themes ) ){
-				$this->themes[ $theme ] = new hiweb_wp_theme( $theme );
+				$this->themes[ $theme ] = new hw_wp_theme( $theme );
 			}
 
 			return $this->themes[ $theme ];
@@ -85,11 +85,11 @@
 		/**
 		 * Возвращает корневой CPT класс для работы с кастомным типом поста
 		 * @param $post_type
-		 * @return hiweb_wp_cpt
+		 * @return hw_wp_cpt
 		 */
 		public function cpt( $post_type ){
 			if( !array_key_exists( $post_type, $this->cpts ) ){
-				$this->cpts[ $post_type ] = new hiweb_wp_cpt( $post_type );
+				$this->cpts[ $post_type ] = new hw_wp_cpt( $post_type );
 			}
 			return $this->cpts[ $post_type ];
 		}
@@ -111,7 +111,7 @@
 	 * Класс для работы с одной записью
 	 * Class hiweb_wp_post
 	 */
-	class hiweb_wp_post{
+	class hw_wp_post{
 
 		/**
 		 * @var array|null|WP_Post
@@ -119,12 +119,12 @@
 		private $object;
 
 		/**
-		 * @var hiweb_wp_meta
+		 * @var hw_wp_meta
 		 */
 		private $meta;
 
 		private $taxonomy_exist = array();
-		/** @var hiweb_wp_taxonomy[] */
+		/** @var hw_wp_taxonomy[] */
 		private $taxonomies = array();
 
 
@@ -164,11 +164,11 @@
 		 * Возвращает класс для работы с мета записи
 		 * @param null|string $key - вернуть значение ключа мета, либо regex-паттерн (обязатиельно указать INT $use_regex_index), либо объект класса для работы с мета даннойзаписи
 		 * @param null $use_regex_index - если $key является паттерном regex, то вернуть значение по индексу найденного ключа
-		 * @return hiweb_wp_meta|mixed|null
+		 * @return hw_wp_meta|mixed|null
 		 */
 		public function meta( $key = null, $use_regex_index = null ){
-			if( !$this->meta instanceof hiweb_wp_meta ){
-				$this->meta = new hiweb_wp_meta( $this->object );
+			if( !$this->meta instanceof hw_wp_meta ){
+				$this->meta = new hw_wp_meta( $this->object );
 			}
 			if( is_null( $key ) ){
 				return $this->meta;
@@ -196,7 +196,7 @@
 		/**
 		 * Возвращает класс таксономии hiweb_wp_taxonomy
 		 * @param $taxonomy
-		 * @return hiweb_wp_taxonomy|bool
+		 * @return hw_wp_taxonomy|bool
 		 */
 		public function taxonomy( $taxonomy ){
 			if( !isset( $this->taxonomies[ $taxonomy ] ) ){
@@ -211,7 +211,7 @@
 
 
 		/**
-		 * @return hiweb_wp_taxonomy[]
+		 * @return hw_wp_taxonomy[]
 		 */
 		public function taxonomies(){
 			$taxonomies = get_post_taxonomies( $this->object );
@@ -265,10 +265,10 @@
 	 * Класс для работы с мета-данными одной записи
 	 * Class hiweb_wp_meta
 	 */
-	class hiweb_wp_meta{
+	class hw_wp_meta{
 
 		/**
-		 * @return hiweb_wp_post
+		 * @return hw_wp_post
 		 */
 		private $post;
 
@@ -348,7 +348,7 @@
 	 * Класс для работы с таксономией и постами
 	 * Class hiweb_wp_taxonomy
 	 */
-	class hiweb_wp_taxonomy{
+	class hw_wp_taxonomy{
 
 		/** @var string */
 		private $name;
@@ -444,12 +444,12 @@
 	}
 
 
-	class hiweb_wp_theme{
+	class hw_wp_theme{
 
 		/** @var  string */
 		private $theme;
 
-		/** @var hiweb_wp_location[] */
+		/** @var hw_wp_location[] */
 		private $locations = array();
 
 
@@ -479,11 +479,11 @@
 
 		/**
 		 * @param $location
-		 * @return hiweb_wp_location
+		 * @return hw_wp_location
 		 */
 		public function location( $location = null ){
 			if( !array_key_exists( $location, $this->locations ) ){
-				$this->locations[ $location ] = new hiweb_wp_location( $location );
+				$this->locations[ $location ] = new hw_wp_location( $location );
 			}
 
 			return $this->locations[ $location ];
@@ -513,7 +513,7 @@
 	}
 
 
-	class hiweb_wp_location{
+	class hw_wp_location{
 
 		private $location;
 
@@ -525,7 +525,7 @@
 	}
 	
 	
-	class hiweb_wp_cpt{
+	class hw_wp_cpt{
 		
 		private $_type;
 		/** @var WP_Error|WP_Post_Type */
@@ -566,6 +566,8 @@
 		///////
 		/** @var  null|array */
 		private $_taxonomies;
+		/** @var hw_wp_meta_boxes[] */
+		private $_meta_boxes = array();
 
 
 		public function __construct( $post_type ){
@@ -614,6 +616,29 @@
 
 
 		/**
+		 * @param string|int $id
+		 * @param hw_wp_meta_boxes $hiweb_meta_boxes
+		 * @return hw_wp_meta_boxes
+		 */
+		public function add_meta_box( $id, $hiweb_meta_boxes = null ){
+			if( !isset( $this->_meta_boxes[ $id ] ) ){
+				if( $hiweb_meta_boxes instanceof hw_wp_meta_boxes )
+					$this->_meta_boxes[ $id ] = $hiweb_meta_boxes;else $this->_meta_boxes[ $id ] = new hw_wp_meta_boxes( $id );
+				$this->_meta_boxes[ $id ]->screen( $this->_type );
+			}
+			return $this->_meta_boxes[ $id ];
+		}
+
+
+		/**
+		 * @return hw_wp_meta_boxes[]
+		 */
+		public function meta_boxes(){
+			return $this->_meta_boxes;
+		}
+
+
+		/**
 		 * Возвращает все таксономии данного типа
 		 * @param string $output - [names|objects]
 		 * @return array
@@ -626,4 +651,184 @@
 		}
 
 		
+	}
+
+
+	class hw_wp_meta_boxes{
+
+		/** @var string */
+		private $_id;
+
+		private $title = '&nbsp;';
+		private $callback;
+		private $screen = array();
+		private $context = 'normal'; //normal, advanced или side
+		private $priority = 'default';
+		private $callback_args;
+		private $callback_save_post;
+
+		/** @var hw_form_input[] */
+		private $fields;
+		/** @var string */
+		private $fields_prefix = 'hw_wp_meta_boxes_';
+
+
+		public function __construct( $id ){
+			$this->_id = $id;
+			add_action( 'add_meta_boxes', array( $this, 'add_action_add_meta_box' ), 10, 2 );
+			add_action( 'save_post', array( $this, 'add_action_save_post' ), 10, 2 );
+		}
+
+
+		/**
+		 * Возвращает ID текущего мета-бокса
+		 * @return string
+		 */
+		public function id(){
+			return $this->_id;
+		}
+
+
+		/**
+		 * @param $title
+		 * @return $this
+		 */
+		public function title( $title = null ){
+			if( is_null( $title ) )
+				return $this->title;else $this->title = $title;
+			return $this;
+		}
+
+
+		/**
+		 * @param $callback
+		 * @return $this
+		 */
+		public function callback( $callback = null ){
+			if( is_null( $callback ) )
+				return $this->callback;else $this->callback = $callback;
+			return $this;
+		}
+
+
+		/**
+		 * @param null $screen
+		 * @param bool $append
+		 * @return $this
+		 */
+		public function screen( $screen = null, $append = true ){
+			$this->screen = is_array( $this->screen ) ? $this->screen : array( $this->screen );
+			if( is_null( $screen ) ){
+				return $this->screen;
+			}else{
+				if( !is_array( $screen ) )
+					$screen = array( $screen );
+				$this->screen = $append ? $this->screen + $screen : $screen;
+			}
+			return $this;
+		}
+
+
+		/**
+		 * @param null $context
+		 * @return $this
+		 */
+		public function context( $context = null ){
+			if( is_null( $context ) )
+				return $this->context;else $this->context = $context;
+			return $this;
+		}
+
+
+		/**
+		 * @param null $priority
+		 * @return $this
+		 */
+		public function priority( $priority = null ){
+			if( is_null( $priority ) )
+				return $this->priority;else $this->priority = $priority;
+			return $this;
+		}
+
+
+		/**
+		 * @param null $callback_args
+		 * @return $this
+		 */
+		public function callback_args( $callback_args = null ){
+			if( is_null( $callback_args ) )
+				return $this->callback_args;else $this->callback_args = $callback_args;
+			return $this;
+		}
+
+
+		/**
+		 * @param null $callback
+		 * @return $this
+		 */
+		public function callback_save_post( $callback = null ){
+			if( is_null( $callback ) )
+				return $this->callback_save_post;else $this->callback_save_post = $callback;
+			return $this;
+		}
+
+
+		public function __call( $name, $arguments ){
+			switch( $name ){
+				case 'add_action_add_meta_box':
+					$this->add_action_add_meta_box( $arguments[0], isset( $arguments[1] ) ? $arguments[1] : null );
+					break;
+				case 'add_action_save_post':
+					$this->add_action_save_post( $arguments[0] );
+					break;
+				case 'generate_meta_box':
+					$this->generate_meta_box( $arguments[0], $arguments[1] );
+					break;
+			}
+		}
+		
+
+		public function add_field( $id ){
+			$this->fields[ $id ] = hiweb()->form()->input( $id );
+			return $this->fields[ $id ];
+		}
+
+
+		/**
+		 * @return hw_form_input[]
+		 */
+		public function fields(){
+			return $this->fields;
+		}
+
+
+		private function add_action_add_meta_box( $post_type, $post = null ){
+			add_meta_box( $this->_id, $this->title, is_null( $this->callback ) ? array( $this, 'generate_meta_box' ) : $this->callback, $this->screen, $this->context, $this->priority, $this->callback_args );
+		}
+
+
+		private function add_action_save_post( $post_id = null ){
+			if( !is_null( $this->callback_save_post ) )
+				return call_user_func( $this->callback_save_post, $post_id );else{
+				if( is_array( $this->fields ) )
+					foreach( $this->fields as $id => $field ){
+						update_post_meta( $post_id, $field->name(), $_POST[ $field->name() ] );
+					}
+			}
+		}
+
+
+		private function generate_meta_box( $post, $meta_box ){
+			foreach( $this->fields as $id => $field ){
+				if($post instanceof WP_Post) $field->value(get_post_meta($post->ID, $field->name(), true));
+				?>
+				<p>
+					<strong><?php echo $field->label(); ?></strong>
+					<label class="screen-reader-text" for="<?php echo $id ?>"><?php echo $field->label() ?></label>
+				</p>
+				<?php $field->get_echo();
+			}
+		}
+
+
 	}

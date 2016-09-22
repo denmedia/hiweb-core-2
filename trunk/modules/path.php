@@ -7,7 +7,7 @@
 	 * Date: 30.06.2016
 	 * Time: 15:38
 	 */
-	class hiweb_path{
+	class hw_path{
 
 
 		/**

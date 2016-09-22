@@ -1,7 +1,7 @@
 <?php
 
 
-	class hiweb_date {
+	class hw_date {
 
 		/**
 		 * Возвращает форматированное дату и время

@@ -6,7 +6,7 @@
 	 * Date: 30.06.2016
 	 * Time: 16:23
 	 */
-	class hiweb_string {
+	class hw_string {
 
 
 		/**
