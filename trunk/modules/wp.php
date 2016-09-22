@@ -25,6 +25,9 @@
 		/** @var hw_wp_cpt[] */
 		private $cpts = array();
 
+		/** @var hw_wp_add_taxonomy[] */
+		private $add_taxonomies = array();
+
 
 		/**
 		 * Возвращает hiweb_wp_post
@@ -63,6 +66,19 @@
 			}
 
 			return $this->taxonomies[ $taxonomy ];
+		}
+
+
+		/**
+		 * Возвращает класс создания таксономии
+		 * @param $name
+		 * @return hw_wp_add_taxonomy
+		 */
+		public function add_taxonomy( $name ){
+			if( !array_key_exists( $name, $this->add_taxonomies ) ){
+				$this->add_taxonomies[ $name ] = new hw_wp_add_taxonomy( $name );
+			}
+			return $this->add_taxonomies[ $name ];
 		}
 
 
@@ -531,9 +547,9 @@
 		/** @var WP_Error|WP_Post_Type */
 		private $_object;
 		private $_defaults = array(
-			'label' => null, 'labels' => array(), 'description' => '', 'public' => false, 'hierarchical' => false, 'exclude_from_search' => null, 'publicly_queryable' => null, 'show_ui' => null, 'show_in_menu' => null, 'show_in_nav_menus' => null,
-			'show_in_admin_bar' => null, 'menu_position' => null, 'menu_icon' => null, 'capability_type' => 'post', 'capabilities' => array(), 'map_meta_cap' => null, 'supports' => array(), 'register_meta_box_cb' => null, 'taxonomies' => array(),
-			'has_archive' => false, 'rewrite' => true, 'query_var' => true, 'can_export' => true, 'delete_with_user' => null, '_builtin' => false, '_edit_link' => 'post.php?post=%d',
+			'label' => null, 'labels' => array(), 'description' => '', 'public' => false, 'hierarchical' => false, 'exclude_from_search' => null, 'publicly_queryable' => null, 'show_ui' => true, 'show_in_menu' => null, 'show_in_nav_menus' => null,
+			'show_in_admin_bar' => null, 'menu_position' => null, 'menu_icon' => 'dashicons-sticky', 'capability_type' => 'post', 'capabilities' => array(), 'map_meta_cap' => null, 'supports' => array(), 'register_meta_box_cb' => null,
+			'taxonomies' => array(), 'has_archive' => false, 'rewrite' => true, 'query_var' => true, 'can_export' => true, 'delete_with_user' => null, '_builtin' => false, '_edit_link' => 'post.php?post=%d',
 		);
 		///////PROPS
 		public $label;
@@ -564,8 +580,8 @@
 		public $_edit_link;
 
 		///////
-		/** @var  null|array */
-		private $_taxonomies;
+		/** @var  hw_wp_add_taxonomy[] */
+		private $_taxonomies = array();
 		/** @var hw_wp_cpt_meta_boxes[] */
 		private $_meta_boxes = array();
 
@@ -630,9 +646,14 @@
 		}
 
 
-		public function add_taxonomy( $name, $hiweb_taxonomy = null ){
+		/**
+		 * @param $name
+		 * @return hw_wp_add_taxonomy
+		 */
+		public function add_taxonomy( $name ){
 			if( !isset( $this->_taxonomies[ $name ] ) ){
-				$this->_taxonomies[ $name ] = new hw_wp_cpt_taxonomy( $name );
+				$this->_taxonomies[ $name ] = hiweb()->wp()->add_taxonomy( $name );
+				$this->_taxonomies[ $name ]->object_type( $this->_type );
 			}
 			return $this->_taxonomies[ $name ];
 		}
@@ -662,7 +683,7 @@
 	}
 
 
-	class hw_wp_cpt_taxonomy{
+	class hw_wp_add_taxonomy{
 
 		private $name;
 		private $labels;
@@ -675,10 +696,12 @@
 		private $defaults = array(
 			'labels' => array(), 'hierarchical' => false, 'public' => true, 'show_ui' => true, 'show_admin_column' => true, 'show_in_nav_menus' => true, 'show_tagcloud' => true
 		);
+		private $object_type = array();
 
 
 		public function __construct( $name ){
 			$this->name = $name;
+			$this->labels = $name;
 			add_action( 'init', array( $this, 'register_taxonomy' ), 0 );
 		}
 
@@ -693,8 +716,26 @@
 		}
 
 
-		private function register_taxonomy(){//todo
-			//register_taxonomy( $this->name, $this->props() );
+		private function register_taxonomy(){
+			register_taxonomy( $this->name, $this->object_type(), $this->props() );
+		}
+
+
+		/**
+		 * Получить/Утсановить POST TYPE
+		 * @param null|array|string $object_type - post type
+		 * @param bool $append - добавлять к текущему значению
+		 * @return hw_wp_add_taxonomy|string
+		 */
+		public function object_type( $object_type = null, $append = false ){
+			if( !is_null( $object_type ) ){
+				if( !is_array( $this->object_type ) )
+					$this->object_type = array( $this->object_type );
+				if( !is_array( $object_type ) )
+					$object_type = array( $object_type );
+				$this->object_type = $append ? $this->object_type + $object_type : $object_type;
+				return $this;
+			}else return $this->object_type;
 		}
 
 
@@ -722,10 +763,11 @@
 
 		/**
 		 * @param null $labels
-		 * @return hw_wp_cpt_taxonomy|string
+		 * @return hw_wp_add_taxonomy|string
 		 */
 		public function labels( $labels = null ){
 			if( !is_null( $labels ) ){
+				if(!is_array($labels)) $labels = array('name' => $labels);
 				$this->labels = $labels;
 				return $this;
 			}
@@ -735,7 +777,7 @@
 
 		/**
 		 * @param null $hierarchical
-		 * @return hw_wp_cpt_taxonomy|string
+		 * @return hw_wp_add_taxonomy|string
 		 */
 		public function hierarchical( $hierarchical = null ){
 			if( !is_null( $hierarchical ) ){
@@ -748,7 +790,7 @@
 
 		/**
 		 * @param null $public
-		 * @return hw_wp_cpt_taxonomy|string
+		 * @return hw_wp_add_taxonomy|string
 		 */
 		public function publicly( $public = null ){
 			if( !is_null( $public ) ){
@@ -761,7 +803,7 @@
 
 		/**
 		 * @param null $show_ui
-		 * @return hw_wp_cpt_taxonomy|string
+		 * @return hw_wp_add_taxonomy|string
 		 */
 		public function show_ui( $show_ui = null ){
 			if( !is_null( $show_ui ) ){
@@ -774,7 +816,7 @@
 
 		/**
 		 * @param null $show_admin_column
-		 * @return hw_wp_cpt_taxonomy|string
+		 * @return hw_wp_add_taxonomy|string
 		 */
 		public function show_admin_column( $show_admin_column = null ){
 			if( !is_null( $show_admin_column ) ){
@@ -787,7 +829,7 @@
 
 		/**
 		 * @param null $show_in_nav_menus
-		 * @return hw_wp_cpt_taxonomy|string
+		 * @return hw_wp_add_taxonomy|string
 		 */
 		public function show_in_nav_menus( $show_in_nav_menus = null ){
 			if( !is_null( $show_in_nav_menus ) ){
@@ -800,7 +842,7 @@
 
 		/**
 		 * @param null $show_tagcloud
-		 * @return hw_wp_cpt_taxonomy|string
+		 * @return hw_wp_add_taxonomy|string
 		 */
 		public function show_tagcloud( $show_tagcloud = null ){
 			if( !is_null( $show_tagcloud ) ){
