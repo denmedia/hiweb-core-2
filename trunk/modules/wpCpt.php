@@ -566,7 +566,7 @@
 		///////
 		/** @var  null|array */
 		private $_taxonomies;
-		/** @var hw_wp_meta_boxes[] */
+		/** @var hw_wp_cpt_meta_boxes[] */
 		private $_meta_boxes = array();
 
 
@@ -617,21 +617,29 @@
 
 		/**
 		 * @param string|int $id
-		 * @param hw_wp_meta_boxes $hiweb_meta_boxes
-		 * @return hw_wp_meta_boxes
+		 * @param hw_wp_cpt_meta_boxes $hiweb_meta_boxes
+		 * @return hw_wp_cpt_meta_boxes
 		 */
 		public function add_meta_box( $id, $hiweb_meta_boxes = null ){
 			if( !isset( $this->_meta_boxes[ $id ] ) ){
-				if( $hiweb_meta_boxes instanceof hw_wp_meta_boxes )
-					$this->_meta_boxes[ $id ] = $hiweb_meta_boxes;else $this->_meta_boxes[ $id ] = new hw_wp_meta_boxes( $id );
+				if( $hiweb_meta_boxes instanceof hw_wp_cpt_meta_boxes )
+					$this->_meta_boxes[ $id ] = $hiweb_meta_boxes;else $this->_meta_boxes[ $id ] = new hw_wp_cpt_meta_boxes( $id );
 				$this->_meta_boxes[ $id ]->screen( $this->_type );
 			}
 			return $this->_meta_boxes[ $id ];
 		}
 
 
+		public function add_taxonomy( $name, $hiweb_taxonomy = null ){
+			if( !isset( $this->_taxonomies[ $name ] ) ){
+				$this->_taxonomies[ $name ] = new hw_wp_cpt_taxonomy( $name );
+			}
+			return $this->_taxonomies[ $name ];
+		}
+
+
 		/**
-		 * @return hw_wp_meta_boxes[]
+		 * @return hw_wp_cpt_meta_boxes[]
 		 */
 		public function meta_boxes(){
 			return $this->_meta_boxes;
@@ -654,7 +662,159 @@
 	}
 
 
-	class hw_wp_meta_boxes{
+	class hw_wp_cpt_taxonomy{
+
+		private $name;
+		private $labels;
+		private $hierarchical;
+		private $public;
+		private $show_ui;
+		private $show_admin_column;
+		private $show_in_nav_menus;
+		private $show_tagcloud;
+		private $defaults = array(
+			'labels' => array(), 'hierarchical' => false, 'public' => true, 'show_ui' => true, 'show_admin_column' => true, 'show_in_nav_menus' => true, 'show_tagcloud' => true
+		);
+
+
+		public function __construct( $name ){
+			$this->name = $name;
+			add_action( 'init', array( $this, 'register_taxonomy' ), 0 );
+		}
+
+
+		public function __call( $name, $arguments ){
+			// TODO: Implement __call() method.
+			switch( $name ){
+				case 'register_taxonomy':
+					$this->register_taxonomy();
+					break;
+			}
+		}
+
+
+		private function register_taxonomy(){//todo
+			//register_taxonomy( $this->name, $this->props() );
+		}
+
+
+		/**
+		 * @return array
+		 */
+		public function props(){
+			$R = array();
+			if( is_array( $this->defaults ) )
+				foreach( $this->defaults as $key => $def_value ){
+					if( property_exists( $this, $key ) && !is_null( $this->{$key} ) )
+						$R[ $key ] = $this->{$key};else $R[ $key ] = $def_value;
+				}
+			return $R;
+		}
+
+
+		/**
+		 * @return string
+		 */
+		public function name(){
+			return $this->name;
+		}
+
+
+		/**
+		 * @param null $labels
+		 * @return hw_wp_cpt_taxonomy|string
+		 */
+		public function labels( $labels = null ){
+			if( !is_null( $labels ) ){
+				$this->labels = $labels;
+				return $this;
+			}
+			return $this->labels;
+		}
+
+
+		/**
+		 * @param null $hierarchical
+		 * @return hw_wp_cpt_taxonomy|string
+		 */
+		public function hierarchical( $hierarchical = null ){
+			if( !is_null( $hierarchical ) ){
+				$this->hierarchical = $hierarchical;
+				return $this;
+			}
+			return $this->hierarchical;
+		}
+
+
+		/**
+		 * @param null $public
+		 * @return hw_wp_cpt_taxonomy|string
+		 */
+		public function publicly( $public = null ){
+			if( !is_null( $public ) ){
+				$this->public = $public;
+				return $this;
+			}
+			return $this->public;
+		}
+
+
+		/**
+		 * @param null $show_ui
+		 * @return hw_wp_cpt_taxonomy|string
+		 */
+		public function show_ui( $show_ui = null ){
+			if( !is_null( $show_ui ) ){
+				$this->show_ui = $show_ui;
+				return $this;
+			}
+			return $this->show_ui;
+		}
+
+
+		/**
+		 * @param null $show_admin_column
+		 * @return hw_wp_cpt_taxonomy|string
+		 */
+		public function show_admin_column( $show_admin_column = null ){
+			if( !is_null( $show_admin_column ) ){
+				$this->show_admin_column = $show_admin_column;
+				return $this;
+			}
+			return $this->show_admin_column;
+		}
+
+
+		/**
+		 * @param null $show_in_nav_menus
+		 * @return hw_wp_cpt_taxonomy|string
+		 */
+		public function show_in_nav_menus( $show_in_nav_menus = null ){
+			if( !is_null( $show_in_nav_menus ) ){
+				$this->show_in_nav_menus = $show_in_nav_menus;
+				return $this;
+			}
+			return $this->show_in_nav_menus;
+		}
+
+
+		/**
+		 * @param null $show_tagcloud
+		 * @return hw_wp_cpt_taxonomy|string
+		 */
+		public function show_tagcloud( $show_tagcloud = null ){
+			if( !is_null( $show_tagcloud ) ){
+				$this->show_tagcloud = $show_tagcloud;
+				return $this;
+			}
+			return $this->show_tagcloud;
+		}
+
+
+	}
+
+
+	class hw_wp_cpt_meta_boxes{
 
 		/** @var string */
 		private $_id;
@@ -820,7 +980,8 @@
 
 		private function generate_meta_box( $post, $meta_box ){
 			foreach( $this->fields as $id => $field ){
-				if($post instanceof WP_Post) $field->value(get_post_meta($post->ID, $field->name(), true));
+				if( $post instanceof WP_Post )
+					$field->value( get_post_meta( $post->ID, $field->name(), true ) );
 				?>
 				<p>
 					<strong><?php echo $field->label(); ?></strong>
