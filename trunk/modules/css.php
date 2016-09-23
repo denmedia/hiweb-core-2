@@ -35,7 +35,7 @@
 					$file      = $sourceDir . $file;
 				}
 			}
-			$url = hiweb()->path()->url_to_path( $file );
+			$url = hiweb()->path()->path_to_url( $file );
 			if ( $url != '' ) {
 				$this->files[ md5( $url ) ] = $url;
 
