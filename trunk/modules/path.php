@@ -148,13 +148,24 @@
 
 
 		/**
-		 * Конвертирует путь до файла в URL до файла
+		 * Конвертирует путь в URL до файла
 		 * @param $path
 		 * @return mixed
 		 */
-		public function url_to_path( $path ){
-			$path = str_replace( '\\', '/', realpath( $path ) );
+		public function path_to_url( $path ){
+			$path = str_replace( '\\', '/', $this->realpath( $path ) );
 			return str_replace( $this->base_dir(), $this->base_url(), $path );
+		}
+
+
+		/**
+		 * Конвертирует URL в путь
+		 * @param $url
+		 * @return mixed
+		 */
+		public function url_to_path( $url ){
+			$url = str_replace( '\\', '/', $url );
+			return str_replace( $this->base_url(), $this->base_dir(), $url );
 		}
 
 
