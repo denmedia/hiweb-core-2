@@ -56,7 +56,7 @@
 		 * @param int|WP_Post $postOrId
 		 * @param null $key
 		 * @param null $use_regex_index
-		 * @return hw_wp_meta|mixed|null
+		 * @return hw_wp_post_meta|mixed|null
 		 */
 		public function meta( $postOrId, $key = null, $use_regex_index = null ){
 			return $this->post( $postOrId )->meta( $key, $use_regex_index );
@@ -163,7 +163,7 @@
 		private $object;
 
 		/**
-		 * @var hw_wp_meta
+		 * @var hw_wp_post_meta
 		 */
 		private $meta;
 
@@ -208,11 +208,11 @@
 		 * Возвращает класс для работы с мета записи
 		 * @param null|string $key - вернуть значение ключа мета, либо regex-паттерн (обязатиельно указать INT $use_regex_index), либо объект класса для работы с мета даннойзаписи
 		 * @param null $use_regex_index - если $key является паттерном regex, то вернуть значение по индексу найденного ключа
-		 * @return hw_wp_meta|mixed|null
+		 * @return hw_wp_post_meta|mixed|null
 		 */
 		public function meta( $key = null, $use_regex_index = null ){
-			if( !$this->meta instanceof hw_wp_meta ){
-				$this->meta = new hw_wp_meta( $this->object );
+			if( !$this->meta instanceof hw_wp_post_meta ){
+				$this->meta = new hw_wp_post_meta( $this->object );
 			}
 			if( is_null( $key ) ){
 				return $this->meta;
@@ -307,9 +307,9 @@
 
 	/**
 	 * Класс для работы с мета-данными одной записи
-	 * Class hiweb_wp_meta
+	 * Class hw_wp_post_meta
 	 */
-	class hw_wp_meta{
+	class hw_wp_post_meta{
 
 		/**
 		 * @return hw_wp_post
@@ -328,7 +328,7 @@
 				$meta = get_post_meta( $this->post->ID );
 				if( is_array( $meta ) ){
 					foreach( $meta as $key => $val ){
-						$this->meta[ $key ] = is_array( $val ) ? reset( $val ) : $val;
+						$this->meta[ $key ] = get_post_meta( $this->post->ID, $key, true );
 					}
 				}
 			}
@@ -1335,12 +1335,12 @@
 				$R = array();
 				if( is_array( $meta ) )
 					foreach( $meta as $key => $cval ){
-						$R[ $key ] = reset( $cval );
+						$R[ $key ] = update_user_meta( $this->id, $key, true );
 					}
 				return $R;
 			}else{
 				if( array_key_exists( $metaKey, $meta ) )
-					return reset( $meta[ $metaKey ] );
+					return update_user_meta( $this->id, $metaKey, true );
 			}
 			return null;
 		}
