@@ -1323,7 +1323,7 @@
 
 
 		/**
-		 * Возвращает мета данные
+		 * Возвращает мета данные в массиве, либо значение указанного ключа
 		 * @param null $metaKey
 		 * @return array|mixed|null
 		 */
@@ -1343,6 +1343,21 @@
 					return reset( $meta[ $metaKey ] );
 			}
 			return null;
+		}
+
+
+		/**
+		 * Обновит/удалить мета
+		 * @param $metaKey
+		 * @param null $metaValue
+		 * @return bool|int
+		 */
+		public function meta_update( $metaKey, $metaValue = null ){
+			if( !$this->is_exist() )
+				return false;
+			if( is_null( $metaValue ) )
+				return delete_user_meta( $this->id, $metaKey );
+			return update_user_meta( $this->id, $metaKey, $metaValue );
 		}
 
 	}
