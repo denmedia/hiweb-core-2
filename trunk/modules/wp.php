@@ -116,10 +116,16 @@
 
 		/**
 		 * Возвращает корневой класс для работы с данными пользователя
-		 * @param $idOrLoginOrEmail
+		 * @param $idOrLoginOrEmail - если не указывать, то будет взят текущий авторизированный пользователь
 		 * @return hw_wp_user
 		 */
-		public function user( $idOrLoginOrEmail ){
+		public function user( $idOrLoginOrEmail = null ){
+			if( is_null( $idOrLoginOrEmail ) ){
+				require_once 'wp-includes/pluggable.php';
+				$current_user = wp_get_current_user();
+				if( $current_user instanceof WP_User )
+					$idOrLoginOrEmail = $current_user->ID;
+			}
 			if( !isset( $this->users[ $idOrLoginOrEmail ] ) ){
 				$user = new hw_wp_user( $idOrLoginOrEmail );
 				$this->users[ $idOrLoginOrEmail ] = $user;
@@ -739,7 +745,6 @@
 
 
 		public function __call( $name, $arguments ){
-			// TODO: Implement __call() method.
 			switch( $name ){
 				case 'register_taxonomy':
 					$this->register_taxonomy();

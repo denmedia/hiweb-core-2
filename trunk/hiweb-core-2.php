@@ -10,3 +10,6 @@
 	
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
+
+	//todo
+	hiweb()->console( hiweb()->wp()->user()->id() );
