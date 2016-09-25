@@ -28,6 +28,9 @@
 		/** @var hw_wp_add_taxonomy[] */
 		private $add_taxonomies = array();
 
+		/** @var hw_wp_user[] */
+		private $users = array();
+
 
 		/**
 		 * Возвращает hiweb_wp_post
@@ -108,6 +111,25 @@
 				$this->cpts[ $post_type ] = new hw_wp_cpt( $post_type );
 			}
 			return $this->cpts[ $post_type ];
+		}
+
+
+		/**
+		 * Возвращает корневой класс для работы с данными пользователя
+		 * @param $idOrLoginOrEmail
+		 * @return hw_wp_user
+		 */
+		public function user( $idOrLoginOrEmail ){
+			if( !isset( $this->users[ $idOrLoginOrEmail ] ) ){
+				$user = new hw_wp_user( $idOrLoginOrEmail );
+				$this->users[ $idOrLoginOrEmail ] = $user;
+				if( $user->is_exist() ){
+					$this->users[ $user->id() ] = $user;
+					$this->users[ $user->login() ] = $user;
+					$this->users[ $user->email() ] = $user;
+				}
+			}
+			return $this->users[ $idOrLoginOrEmail ];
 		}
 
 
@@ -1179,5 +1201,143 @@
 			}
 		}
 
+
+	}
+
+
+	class hw_wp_user{
+
+		/** @var int */
+		private $id;
+		/** @var string */
+		private $login;
+		/** @var string */
+		private $email;
+		/** @var  WP_User */
+		private $wp_user;
+
+
+		public function __construct( $idOrLoginOrMail ){
+			$fields = array( 'id', 'login', 'email' );
+			require_once 'wp-includes/pluggable.php';
+			foreach( $fields as $field ){
+				$user = get_user_by( $field, $idOrLoginOrMail );
+				if( !$user instanceof WP_User )
+					continue;
+				$this->{$field} = $idOrLoginOrMail;
+				$this->wp_user = $user;
+				break;
+			}
+			///
+			if( $this->is_exist() ){
+				$this->id = $this->wp_user->ID;
+				$this->login = $this->wp_user->user_login;
+				$this->email = $this->wp_user->user_email;
+			}
+		}
+
+
+		/**
+		 * @return false|WP_User
+		 */
+		public function wp_user(){
+			return $this->wp_user;
+		}
+
+
+		/**
+		 * @return array
+		 */
+		public function data(){
+			return $this->is_exist() ? (array)$this->wp_user->data : array();
+		}
+
+
+		/**
+		 * @return array
+		 */
+		public function allcaps(){
+			return $this->is_exist() ? (array)$this->wp_user->allcaps : array();
+		}
+
+
+		/**
+		 * @return array
+		 */
+		public function caps(){
+			return $this->is_exist() ? (array)$this->wp_user->caps : array();
+		}
+
+
+		/**
+		 * Возвращает TRUE, если для данного пользователя заданная роль актуальна
+		 * @param string $role
+		 * @return bool
+		 */
+		public function is_role( $role = 'administrator' ){
+			if( $this->is_exist() ){
+				foreach( $this->caps() as $cap => $bool ){
+					if( strtolower( $role ) == $cap )
+						return true;
+				}
+			}
+			return false;
+		}
+
+
+		/**
+		 * @return int
+		 */
+		public function id(){
+			return $this->id;
+		}
+
+
+		/**
+		 * @return int
+		 */
+		public function login(){
+			return $this->login;
+		}
+
+
+		/**
+		 * @return int
+		 */
+		public function email(){
+			return $this->email;
+		}
+
+
+		/**
+		 * @return bool
+		 */
+		public function is_exist(){
+			return ( $this->wp_user instanceof WP_User );
+		}
+
+
+		/**
+		 * Возвращает мета данные
+		 * @param null $metaKey
+		 * @return array|mixed|null
+		 */
+		public function meta( $metaKey = null ){
+			if( !$this->is_exist() )
+				return null;
+			$meta = get_user_meta( $this->id() );
+			if( !is_string( $metaKey ) ){
+				$R = array();
+				if( is_array( $meta ) )
+					foreach( $meta as $key => $cval ){
+						$R[ $key ] = reset( $cval );
+					}
+				return $R;
+			}else{
+				if( array_key_exists( $metaKey, $meta ) )
+					return reset( $meta[ $metaKey ] );
+			}
+			return null;
+		}
 
 	}
