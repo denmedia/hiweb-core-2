@@ -31,6 +31,9 @@
 		/** @var hw_wp_user[] */
 		private $users = array();
 
+		/** @var hw_wp_user_meta_boxes[] */
+		private $_user_meta_boxes = array();
+
 
 		/**
 		 * Возвращает hiweb_wp_post
@@ -136,6 +139,15 @@
 				}
 			}
 			return $this->users[ $idOrLoginOrEmail ];
+		}
+
+
+		public function add_user_meta_box( $id, $hiweb_user_meta_boxes = null ){
+			if( !isset( $this->_user_meta_boxes[ $id ] ) ){
+				if( $hiweb_user_meta_boxes instanceof hw_wp_user_meta_boxes )
+					$this->_user_meta_boxes[ $id ] = $hiweb_user_meta_boxes;else $this->_user_meta_boxes[ $id ] = new hw_wp_user_meta_boxes( $id );
+			}
+			return $this->_user_meta_boxes[ $id ];
 		}
 
 
@@ -666,8 +678,8 @@
 		 */
 		public function add_meta_box( $id, $hiweb_meta_boxes = null ){
 			if( !isset( $this->_meta_boxes[ $id ] ) ){
-				if( $hiweb_meta_boxes instanceof hw_wp_cpt_meta_boxes )
-					$this->_meta_boxes[ $id ] = $hiweb_meta_boxes;else $this->_meta_boxes[ $id ] = new hw_wp_cpt_meta_boxes( $id );
+				if( $hiweb_meta_boxes[ $id ] instanceof hw_wp_cpt_meta_boxes )
+					$this->_meta_boxes = $hiweb_meta_boxes;else $this->_meta_boxes[ $id ] = new hw_wp_cpt_meta_boxes( $id );
 				$this->_meta_boxes[ $id ]->screen( $this->_type );
 			}
 			return $this->_meta_boxes[ $id ];
@@ -1032,24 +1044,27 @@
 	class hw_wp_cpt_meta_boxes{
 
 		/** @var string */
-		private $_id;
-
-		private $title = '&nbsp;';
-		private $callback;
-		private $screen = array();
-		private $context = 'normal'; //normal, advanced или side
-		private $priority = 'default';
-		private $callback_args;
-		private $callback_save_post;
-
+		protected $_id;
+		protected $title = '&nbsp;';
+		protected $callback;
+		protected $screen = array();
+		protected $context = 'normal'; //normal, advanced или side
+		protected $priority = 'default';
+		protected $callback_args;
+		protected $callback_save_post;
 		/** @var hw_form_input[] */
-		private $fields;
+		protected $fields;
 		/** @var string */
-		private $fields_prefix = 'hw_wp_meta_boxes_';
+		protected $fields_prefix = 'hw_wp_meta_boxes_';
 
 
 		public function __construct( $id ){
 			$this->_id = $id;
+			$this->_hooks();
+		}
+
+
+		protected function _hooks(){
 			add_action( 'add_meta_boxes', array( $this, 'add_action_add_meta_box' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'add_action_save_post' ), 10, 2 );
 		}
@@ -1161,7 +1176,7 @@
 					break;
 			}
 		}
-		
+
 
 		public function add_field( $id ){
 			$this->fields[ $id ] = hiweb()->form()->input( $id );
@@ -1177,12 +1192,12 @@
 		}
 
 
-		private function add_action_add_meta_box( $post_type, $post = null ){
+		protected function add_action_add_meta_box( $post_type, $post = null ){
 			add_meta_box( $this->_id, $this->title, is_null( $this->callback ) ? array( $this, 'generate_meta_box' ) : $this->callback, $this->screen, $this->context, $this->priority, $this->callback_args );
 		}
 
 
-		private function add_action_save_post( $post_id = null ){
+		protected function add_action_save_post( $post_id = null ){
 			if( !is_null( $this->callback_save_post ) )
 				return call_user_func( $this->callback_save_post, $post_id );else{
 				if( is_array( $this->fields ) )
@@ -1193,7 +1208,7 @@
 		}
 
 
-		private function generate_meta_box( $post, $meta_box ){
+		protected function generate_meta_box( $post, $meta_box ){
 			foreach( $this->fields as $id => $field ){
 				if( $post instanceof WP_Post )
 					$field->value( get_post_meta( $post->ID, $field->name(), true ) );
@@ -1205,8 +1220,6 @@
 				<?php $field->get_echo();
 			}
 		}
-
-
 	}
 
 
@@ -1224,9 +1237,10 @@
 
 		public function __construct( $idOrLoginOrMail ){
 			$fields = array( 'id', 'login', 'email' );
-			require_once 'wp-includes/pluggable.php';
+			require_once ABSPATH.'/wp-includes/pluggable.php';
 			foreach( $fields as $field ){
-				$user = get_user_by( $field, $idOrLoginOrMail );
+				if( $idOrLoginOrMail instanceof WP_User )
+					$user = $idOrLoginOrMail;else $user = get_user_by( $field, $idOrLoginOrMail );
 				if( !$user instanceof WP_User )
 					continue;
 				$this->{$field} = $idOrLoginOrMail;
@@ -1358,6 +1372,66 @@
 			if( is_null( $metaValue ) )
 				return delete_user_meta( $this->id, $metaKey );
 			return update_user_meta( $this->id, $metaKey, $metaValue );
+		}
+
+	}
+
+
+	class hw_wp_user_meta_boxes extends hw_wp_cpt_meta_boxes{
+
+
+		protected function _hooks(){
+			add_action( 'show_user_profile', array( $this, 'add_action_user_profile' ) );
+			add_action( 'edit_user_profile', array( $this, 'add_action_user_profile' ) );
+			add_action( 'personal_options_update', array( $this, 'add_action_options_update' ) );
+			add_action( 'edit_user_profile_update', array( $this, 'add_action_options_update' ) );
+		}
+
+
+		public function __call( $name, $arguments ){
+			switch( $name ){
+				case 'add_action_user_profile':
+					$this->add_action_user_profile( $arguments[0], isset( $arguments[1] ) ? $arguments[1] : null );
+					break;
+				case 'add_action_options_update':
+					$this->add_action_options_update( $arguments[0] );
+					break;
+			}
+		}
+
+
+		protected function add_action_user_profile( $user, $b = null ){
+			?>
+			<table class="form-table" id="<?php echo $this->_id; ?>">
+				<tbody>
+				<?php
+					foreach( $this->fields as $id => $field ){
+						if( $user instanceof WP_User )
+							$field->value( get_user_meta( $user->ID, $field->name(), true ) );//todo
+						?>
+						<tr id="<?php echo $field->id() ?>" class="user-<?php echo $field->id() ?>-wrap">
+							<th><label for="<?php echo $field->id() ?>"><?php echo $field->label() ?></label></th>
+							<td>
+								<?php $field->get_echo() ?>
+							</td>
+						</tr>
+						<?php
+					}
+				?>
+				</tbody>
+			</table>
+			<?php
+		}
+
+
+		protected function add_action_options_update( $user_id ){
+			if( !is_null( $this->callback_save_post ) )
+				return call_user_func( $this->callback_save_post, $user_id );else{
+				if( is_array( $this->fields ) )
+					foreach( $this->fields as $id => $field ){
+						hiweb()->wp()->user( $user_id )->meta_update( $field->name(), $_POST[ $field->name() ] );
+					}
+			}
 		}
 
 	}
