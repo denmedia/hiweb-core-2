@@ -124,7 +124,7 @@
 		 */
 		public function user( $idOrLoginOrEmail = null ){
 			if( is_null( $idOrLoginOrEmail ) ){
-				require_once 'wp-includes/pluggable.php';
+				require_once ABSPATH . '/wp-includes/pluggable.php';
 				$current_user = wp_get_current_user();
 				if( $current_user instanceof WP_User )
 					$idOrLoginOrEmail = $current_user->ID;
@@ -1237,7 +1237,7 @@
 
 		public function __construct( $idOrLoginOrMail ){
 			$fields = array( 'id', 'login', 'email' );
-			require_once ABSPATH.'/wp-includes/pluggable.php';
+			require_once ABSPATH . '/wp-includes/pluggable.php';
 			foreach( $fields as $field ){
 				if( $idOrLoginOrMail instanceof WP_User )
 					$user = $idOrLoginOrMail;else $user = get_user_by( $field, $idOrLoginOrMail );
