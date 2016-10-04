@@ -1349,12 +1349,12 @@
 				$R = array();
 				if( is_array( $meta ) )
 					foreach( $meta as $key => $cval ){
-						$R[ $key ] = update_user_meta( $this->id, $key, true );
+						$R[ $key ] = get_user_meta( $this->id, $key, true );
 					}
 				return $R;
 			}else{
 				if( array_key_exists( $metaKey, $meta ) )
-					return update_user_meta( $this->id, $metaKey, true );
+					return get_user_meta( $this->id, $metaKey, true );
 			}
 			return null;
 		}
