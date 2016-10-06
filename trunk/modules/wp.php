@@ -124,7 +124,7 @@
 		 */
 		public function user( $idOrLoginOrEmail = null ){
 			if( is_null( $idOrLoginOrEmail ) ){
-				require_once 'wp-includes/pluggable.php';
+				require_once ABSPATH.'/wp-includes/pluggable.php';
 				$current_user = wp_get_current_user();
 				if( $current_user instanceof WP_User )
 					$idOrLoginOrEmail = $current_user->ID;
@@ -1349,12 +1349,12 @@
 				$R = array();
 				if( is_array( $meta ) )
 					foreach( $meta as $key => $cval ){
-						$R[ $key ] = update_user_meta( $this->id, $key, true );
+						$R[ $key ] = get_user_meta( $this->id, $key, true );
 					}
 				return $R;
 			}else{
 				if( array_key_exists( $metaKey, $meta ) )
-					return update_user_meta( $this->id, $metaKey, true );
+					return get_user_meta( $this->id, $metaKey, true );
 			}
 			return null;
 		}
