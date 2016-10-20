@@ -1,19 +1,13 @@
 <?php
 
 
-	/**
-	 * Created by PhpStorm.
-	 * User: hiweb
-	 * Date: 30.06.2016
-	 * Time: 17:26
-	 */
 	class hw_console{
 
-		public $_infos = array();
-		public $_warns = array();
-		public $_errors = array();
+		private $_infos = array();
+		private $_warns = array();
+		private $_errors = array();
 		public $mess = array();
-		public $_mess = array();
+		private $_mess = array();
 
 
 		public function __construct( $info = null ){
@@ -22,6 +16,15 @@
 			}
 			if( !hiweb()->wp()->is_ajax() )
 				add_action( 'shutdown', array( $this, 'echo_footer' ), 10 );
+		}
+
+
+		public function __call( $name, $arguments ){
+			switch( $name ){
+				case 'echo_footer':
+					$this->echo_footer();
+					break;
+			}
 		}
 
 
@@ -79,7 +82,7 @@
 		 * Форс вывод console.info($info)
 		 * @param $info
 		 */
-		public function echo_info( $info ){
+		protected function echo_info( $info ){
 			echo 'console.info(' . json_encode( $info ) . ');';
 		}
 
@@ -88,7 +91,7 @@
 		 * Форс вывод console.warn($info)
 		 * @param $info
 		 */
-		public function echo_warn( $info ){
+		protected function echo_warn( $info ){
 			echo 'console.warn(' . json_encode( $info ) . ');';
 		}
 
@@ -97,12 +100,12 @@
 		 * Форс вывод console.error($info)
 		 * @param $info
 		 */
-		public function echo_error( $info ){
+		protected function echo_error( $info ){
 			echo 'console.error(' . json_encode( $info ) . ');';
 		}
 
 
-		public function echo_footer(){
+		private function echo_footer(){
 			echo '<script>';
 			foreach( $this->_mess as $info ){
 				$this->{'echo_' . $info['type']}( $info['debug'] ? ( is_array( $info['data'] ) ? array_merge( array(

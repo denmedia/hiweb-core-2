@@ -527,4 +527,25 @@
 		}
 
 
+		/**
+		 * Возвращает содержимое файла PHP, подключая его через INCLUDE
+		 * @param $path
+		 * @return bool|string
+		 */
+		public function get_content( $path ){
+			$path = $this->realpath( $path );
+			if( file_exists( $path ) && is_readable( $path ) ){
+				if( function_exists( 'ob_start' ) ){
+					ob_start();
+					include $path;
+					return ob_get_clean();
+				}else{
+					return false;
+				}
+			}else{
+				return false;
+			}
+		}
+
+
 	}

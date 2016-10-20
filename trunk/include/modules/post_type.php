@@ -1,7 +1,27 @@
 <?php
 
 
-	class hw_wp_cpt{
+	class hw_post_type{
+		
+		/** @var hw_post_type[] */
+		private $post_types = array();
+
+
+		/**
+		 * Возвращает корневой CPT класс для работы с кастомным типом поста
+		 * @param $post_type
+		 * @return hw_post_type
+		 */
+		public function object( $post_type ){
+			if( !array_key_exists( $post_type, $this->post_types ) ){
+				$this->post_types[ $post_type ] = new hw_post_type_object( $post_type );
+			}
+			return $this->post_types[ $post_type ];
+		}
+	}
+
+
+	class hw_post_type_object{
 
 		private $_type;
 		/** @var WP_Error|WP_Post_Type */
@@ -42,13 +62,22 @@
 		///////
 		/** @var  hw_wp_add_taxonomy[] */
 		private $_taxonomies = array();
-		/** @var hw_wp_cpt_meta_boxes[] */
+		/** @var hw_post_type_meta_boxes[] */
 		private $_meta_boxes = array();
 
 
 		public function __construct( $post_type ){
 			$this->_type = $post_type;
-			add_action( 'init', array( $this, '_create' ) );
+			add_action( 'init', array( $this, 'add_action_init_create' ), 99999 );
+		}
+
+
+		public function __call( $name, $arguments ){
+			switch( $name ){
+				case 'add_action_init_create':
+					$this->_create();
+					break;
+			}
 		}
 
 
@@ -85,21 +114,31 @@
 		 * Процедура регистрации типа поста
 		 * @return WP_Error|WP_Post_Type
 		 */
-		public function _create(){
-			$this->_object = register_post_type( $this->_type, $this->props() );
+		private function _create(){
+			if( post_type_exists( $this->_type ) ){
+				//If PT exist
+				$this->_object = get_post_type_object( $this->_type );
+				foreach( get_object_vars( $this->_object ) as $key => $value ){
+					if( property_exists( $this, $key ) )
+						$this->{$key} = $value;
+				}
+			}else{
+				//Register PT
+				$this->_object = register_post_type( $this->_type, $this->props() );
+			}
 			return $this->get();
 		}
 
 
 		/**
 		 * @param string|int $id
-		 * @param hw_wp_cpt_meta_boxes $hiweb_meta_boxes
-		 * @return hw_wp_cpt_meta_boxes
+		 * @param hw_post_type_meta_boxes $hiweb_meta_boxes
+		 * @return hw_post_type_meta_boxes
 		 */
 		public function add_meta_box( $id, $hiweb_meta_boxes = null ){
 			if( !isset( $this->_meta_boxes[ $id ] ) ){
-				if( $hiweb_meta_boxes[ $id ] instanceof hw_wp_cpt_meta_boxes )
-					$this->_meta_boxes = $hiweb_meta_boxes;else $this->_meta_boxes[ $id ] = new hw_wp_cpt_meta_boxes( $id );
+				if( $hiweb_meta_boxes[ $id ] instanceof hw_post_type_meta_boxes )
+					$this->_meta_boxes = $hiweb_meta_boxes;else $this->_meta_boxes[ $id ] = new hw_post_type_meta_boxes( $id );
 				$this->_meta_boxes[ $id ]->screen( $this->_type );
 			}
 			return $this->_meta_boxes[ $id ];
@@ -120,7 +159,7 @@
 
 
 		/**
-		 * @return hw_wp_cpt_meta_boxes[]
+		 * @return hw_post_type_meta_boxes[]
 		 */
 		public function meta_boxes(){
 			return $this->_meta_boxes;
@@ -143,7 +182,7 @@
 	}
 
 
-	class hw_wp_cpt_meta_boxes{
+	class hw_post_type_meta_boxes{
 
 		/** @var string */
 		protected $_id;
@@ -311,15 +350,17 @@
 
 
 		protected function generate_meta_box( $post, $meta_box ){
-			foreach( $this->fields as $id => $field ){
-				if( $post instanceof WP_Post )
-					$field->value( get_post_meta( $post->ID, $field->name(), true ) );
-				?>
-				<p>
-					<strong><?php echo $field->label(); ?></strong>
-					<label class="screen-reader-text" for="<?php echo $id ?>"><?php echo $field->label() ?></label>
-				</p>
-				<?php $field->get_echo();
-			}
+			if( is_array( $this->fields ) )
+				foreach( $this->fields as $id => $field ){
+					if( $post instanceof WP_Post )
+						$field->value( get_post_meta( $post->ID, $field->name(), true ) );
+					?>
+					<p>
+						<strong><?php echo $field->label(); ?></strong>
+						<label class="screen-reader-text" for="<?php echo $id ?>"><?php echo $field->label() ?></label>
+					</p>
+					<?php $field->get_echo();
+				}
+			else ?><span>no fields</span><?php
 		}
 	}

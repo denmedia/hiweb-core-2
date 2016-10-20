@@ -7,10 +7,18 @@
 	Author: Den Media
 	Author URI: http://hiweb.moscow
 	*/
-	
+
+	//todo!!!
+	error_reporting(E_ALL);
+	ini_set('display_errors', 1);
+
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
 	
-	
-	
-	$page = hiweb()->wp()->admin_menu()->add_page('test_page')->function_echo('<div class="wrap"><h1>Test WORK!!!!</h1></div>');
+	//todo!!!
+	$cpt = hiweb()->post_type('post');
+	$metaBox = $cpt->add_meta_box('test');
+	$metaBox->add_field('test_field')->label('Test Filed')->value('My value');
+	//
+	$pageContent = hiweb()->path()->get_content(HIWEB_DIR_BASE.'/test.php');
+	$page = hiweb()->admin()->menu()->add_page('test_page')->menu_title('Test Page')->function_echo($pageContent);

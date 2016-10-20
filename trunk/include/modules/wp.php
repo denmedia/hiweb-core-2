@@ -6,9 +6,7 @@
 	 * Time: 17:36
 	 */
 
-	include_once 'wp/admin_bar.php';
-	include_once 'wp/admin_menu.php';
-	include_once 'wp/cpt.php';
+
 	include_once 'wp/post.php';
 	include_once 'wp/taxonomy.php';
 	include_once 'wp/theme.php';
@@ -30,9 +28,6 @@
 		/** @var hw_wp_theme[] */
 		private $themes = array();
 
-		/** @var hw_wp_cpt[] */
-		private $cpts = array();
-
 		/** @var hw_wp_add_taxonomy[] */
 		private $add_taxonomies = array();
 
@@ -41,8 +36,6 @@
 
 		/** @var hw_wp_user_meta_boxes[] */
 		private $_user_meta_boxes = array();
-		/** @var hw_wp_admin_bar[] */
-		private $_add_link_to_admin_bar = array();
 
 
 		/**
@@ -115,19 +108,6 @@
 
 
 		/**
-		 * Возвращает корневой CPT класс для работы с кастомным типом поста
-		 * @param $post_type
-		 * @return hw_wp_cpt
-		 */
-		public function cpt( $post_type ){
-			if( !array_key_exists( $post_type, $this->cpts ) ){
-				$this->cpts[ $post_type ] = new hw_wp_cpt( $post_type );
-			}
-			return $this->cpts[ $post_type ];
-		}
-
-
-		/**
 		 * Возвращает корневой класс для работы с данными пользователя
 		 * @param $idOrLoginOrEmail - если не указывать, то будет взят текущий авторизированный пользователь
 		 * @return hw_wp_user
@@ -159,29 +139,6 @@
 					$this->_user_meta_boxes[ $id ] = $hiweb_user_meta_boxes;else $this->_user_meta_boxes[ $id ] = new hw_wp_user_meta_boxes( $id );
 			}
 			return $this->_user_meta_boxes[ $id ];
-		}
-
-
-		/**
-		 * @return hw_wp_admin_menu
-		 */
-		public function admin_menu(){
-			static $class;
-			if(!$class instanceof hw_wp_admin_menu) $class = new hw_wp_admin_menu();
-			return $class;
-		}
-
-
-		/**
-		 * Добавить линки в админ-бар
-		 * @param $id
-		 * @return hw_wp_admin_bar
-		 */
-		public function admin_bar( $id ){
-			if( !array_key_exists( $id, $this->_add_link_to_admin_bar ) ){
-				$this->_add_link_to_admin_bar[ $id ] = new hw_wp_admin_bar( $id );
-			}
-			return $this->_add_link_to_admin_bar[ $id ];
 		}
 
 

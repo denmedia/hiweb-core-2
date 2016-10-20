@@ -14,13 +14,16 @@
 		 */
 		function hiweb(){
 			static $class;
-			if( !$class instanceof hiweb ) $class = new hiweb();
+			if( !$class instanceof hiweb )
+				$class = new hiweb();
 			return $class;
 		}
+
 
 		class hiweb{
 
 			private $modules = array();
+
 
 			/**
 			 * @return bool|hw_arrays
@@ -29,6 +32,7 @@
 				return $this->module( 'arrays' );
 			}
 
+
 			/**
 			 * @return bool|hw_backtrace
 			 */
@@ -36,14 +40,16 @@
 				return $this->module( 'backtrace' );
 			}
 
+
 			/**
 			 * @param null $data
 			 * @return bool|hw_console
 			 */
 			public function console( $data = null ){
-				if( !is_null( $data ) || trim( $data ) != '' ) return $this->module( 'console' )->info( $data );
-				else return $this->module( 'console', $data );
+				if( !is_null( $data ) || trim( $data ) != '' )
+					return $this->module( 'console' )->info( $data );else return $this->module( 'console', $data );
 			}
+
 
 			/**
 			 * @return bool|hw_path
@@ -52,6 +58,7 @@
 				return $this->module( 'path' );
 			}
 
+
 			/**
 			 * @return bool|hw_string
 			 */
@@ -59,9 +66,10 @@
 				return $this->module( 'string' );
 			}
 
+
 			/**
 			 * @param null $data
-			 * @return boo|hw_dump
+			 * @return mixed|hw_dump
 			 */
 			public function dump( $data = null ){
 				return $this->module( 'dump', $data );
@@ -79,13 +87,24 @@
 
 			/**
 			 * @param       $file
-			 * @param array $afterJS   - список предварительных JS файлов от WP
-			 * @param bool  $in_footer - показывать в фтуре
+			 * @param array $afterJS - список предварительных JS файлов от WP
+			 * @param bool $in_footer - показывать в фтуре
 			 * @return mixed
 			 */
 			public function js( $file, $afterJS = array(), $in_footer = false ){
 				return $this->module( 'js' )->enqueue( $file, $afterJS, $in_footer );
 			}
+
+
+			/**
+			 * Получить / созлать новый тип записей.
+			 * @param string $type - необходимый тип
+			 * @return bool|hw_post_type_object
+			 */
+			public function post_type( $type = 'post' ){
+				return $this->module( 'post_type' )->object( $type );
+			}
+
 
 			/**
 			 * @return bool|hw_wp
@@ -94,6 +113,15 @@
 				return $this->module( 'wp' );
 			}
 
+
+			/**
+			 * @return bool|hw_admin
+			 */
+			public function admin(){
+				return $this->module( 'admin' );
+			}
+
+
 			/**
 			 * @return bool|hw_date
 			 */
@@ -101,23 +129,27 @@
 				return $this->module( 'date' );
 			}
 
+
 			/**
-			 * @return bool|hw_form
+			 * @param null $id - необязательный параметр
+			 * @return bool|hw_form_object
 			 */
-			public function form(){
-				return $this->module( 'form' );
+			public function form( $id = null ){
+				return $this->module( 'form' )->get( $id );
 			}
+
 
 			/**
 			 * Подключение модуля
 			 * @param            $name
 			 * @param null|mixed $data
-			 * @param bool       $newInstance
+			 * @param bool $newInstance
 			 * @return mixed
 			 * @version 1.0
 			 */
-			public function module( $name, $data = null, $newInstance = false ){
-				if( !array_key_exists( $name, $this->modules ) ) $this->modules[ $name ] = array();
+			protected function module( $name, $data = null, $newInstance = false ){
+				if( !array_key_exists( $name, $this->modules ) )
+					$this->modules[ $name ] = array();
 				$index = count( $this->modules[ $name ] );
 				if( $index == 0 || $newInstance ){
 					$className = 'hw_' . $name;
@@ -130,6 +162,4 @@
 
 
 		}
-
-
 	}
