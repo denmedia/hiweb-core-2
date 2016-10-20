@@ -1,16 +1,81 @@
 <?php
 
 
+	class hw_wp_admin_menu{
+
+		/** @var hw_wp_add_admin_menu_page[] */
+		private $_admin_menu_pages = array();
+		/** @var hw_wp_add_admin_submenu_page[] */
+		private $_admin_submenu_pages = array();
+		/** @var hw_wp_add_admin_options_page[] */
+		private $_admin_option_pages = array();
+		/** @var hw_wp_add_admin_theme_page[] */
+		private $_admin_theme_pages = array();
+
+
+		/**
+		 * Возвращает объект для работы со страницей опций
+		 * @param $slug
+		 * @return hw_wp_add_admin_menu_page
+		 */
+		public function add_page( $slug ){
+			if( !array_key_exists( $slug, $this->_admin_menu_pages ) ){
+				$this->_admin_menu_pages[ $slug ] = new hw_wp_add_admin_menu_page( $slug );
+			}
+			return $this->_admin_menu_pages[ $slug ];
+		}
+
+
+		/**
+		 * Возвращает объект для работы со страницей опций
+		 * @param $slug
+		 * @return hw_wp_add_admin_menu_page
+		 */
+		public function add_sub_page( $slug, $parentSlug = null ){
+			if( !array_key_exists( $slug, $this->_admin_submenu_pages ) ){
+				$this->_admin_submenu_pages[ $slug ] = new hw_wp_add_admin_submenu_page( $slug, $parentSlug );
+			}
+			return $this->_admin_submenu_pages[ $slug ];
+		}
+
+
+		/**
+		 * Возвращает объект для работы со страницей опций
+		 * @param $slug
+		 * @return hw_wp_add_admin_menu_page
+		 */
+		public function add_options_page( $slug ){
+			if( !array_key_exists( $slug, $this->_admin_option_pages ) ){
+				$this->_admin_option_pages[ $slug ] = new hw_wp_add_admin_options_page( $slug );
+			}
+			return $this->_admin_option_pages[ $slug ];
+		}
+
+
+		/**
+		 * Возвращает объект для работы со страницей опций
+		 * @param $slug
+		 * @return hw_wp_add_admin_menu_page
+		 */
+		public function add_theme_page( $slug ){
+			if( !array_key_exists( $slug, $this->_admin_theme_pages ) ){
+				$this->_admin_theme_pages[ $slug ] = new hw_wp_add_admin_theme_page( $slug );
+			}
+			return $this->_admin_theme_pages[ $slug ];
+		}
+
+	}
+
+
 	/**
 	 * Class hw_wp_admin_page
 	 */
-	abstract class hw_wp_admin_menu{
+	abstract class hw_wp_add_admin_menu{
 
 		protected $page_title;
 		protected $menu_title;
 		protected $capability = 'administrator';
 		protected $menu_slug;
-		protected $function;
 		protected $function_echo;
 
 
@@ -48,6 +113,8 @@
 		protected function echo_page(){
 			if( is_callable( $this->function_echo ) ){
 				call_user_func( $this->function_echo );
+			}elseif( is_string( $this->function_echo ) ){
+				echo $this->function_echo;
 			}else{
 				echo 'No function ECHO exists...';
 			}
@@ -115,20 +182,6 @@
 		 * @param callable $set
 		 * @return callable|$this|null
 		 */
-		public function function_call( $set = null ){
-			if( !is_null( $set ) ){
-				$this->function = $set;
-				return $this;
-			}
-			return $this->function;
-		}
-
-
-		/**
-		 * Возвращает / устанавливает функцию
-		 * @param callable $set
-		 * @return callable|$this|null
-		 */
 		public function function_echo( $set = null ){
 			if( !is_null( $set ) ){
 				$this->function_echo = $set;
@@ -144,7 +197,7 @@
 	/**
 	 * Class hw_wp_admin_menu_page
 	 */
-	class hw_wp_admin_menu_page extends hw_wp_admin_menu{
+	class hw_wp_add_admin_menu_page extends hw_wp_add_admin_menu{
 
 		private $icon_url;
 		private $position;
@@ -189,13 +242,13 @@
 	/**
 	 * Class hw_wp_submenu_page
 	 */
-	class hw_wp_admin_submenu_page extends hw_wp_admin_menu{
+	class hw_wp_add_admin_submenu_page extends hw_wp_add_admin_menu{
 
 		private $parent_slug;
 
 
 		protected function __construct2( $additionData ){
-			if( $additionData instanceof hw_wp_admin_menu ){
+			if( $additionData instanceof hw_wp_add_admin_menu ){
 				$this->parent_slug = $additionData->menu_slug();
 			}else
 				$this->parent_slug = $additionData;
@@ -227,7 +280,7 @@
 	/**
 	 * Class hw_wp_admin_page_options
 	 */
-	class hw_wp_admin_options_page extends hw_wp_admin_menu{
+	class hw_wp_add_admin_options_page extends hw_wp_add_admin_menu{
 
 		protected function add_action_admin_menu(){
 			add_options_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
@@ -241,7 +294,7 @@
 	/**
 	 * Class hw_wp_admin_page_theme
 	 */
-	class hw_wp_admin_theme_page extends hw_wp_admin_menu{
+	class hw_wp_add_admin_theme_page extends hw_wp_add_admin_menu{
 
 		protected function add_action_admin_menu(){
 			add_theme_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(

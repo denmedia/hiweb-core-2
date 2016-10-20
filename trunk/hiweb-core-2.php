@@ -10,3 +10,7 @@
 	
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
+	
+	
+	
+	$page = hiweb()->wp()->admin_menu()->add_page('test_page')->function_echo('<div class="wrap"><h1>Test WORK!!!!</h1></div>');

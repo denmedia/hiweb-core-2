@@ -41,15 +41,6 @@
 
 		/** @var hw_wp_user_meta_boxes[] */
 		private $_user_meta_boxes = array();
-
-		/** @var hw_wp_admin_menu_page[] */
-		private $_admin_menu_pages = array();
-		/** @var hw_wp_admin_submenu_page[] */
-		private $_admin_submenu_pages = array();
-		/** @var hw_wp_admin_options_page[] */
-		private $_admin_option_pages = array();
-		/** @var hw_wp_admin_theme_page[] */
-		private $_admin_theme_pages = array();
 		/** @var hw_wp_admin_bar[] */
 		private $_add_link_to_admin_bar = array();
 
@@ -172,54 +163,12 @@
 
 
 		/**
-		 * Возвращает объект для работы со страницей опций
-		 * @param $slug
-		 * @return hw_wp_admin_menu_page
+		 * @return hw_wp_admin_menu
 		 */
-		public function add_admin_menu_page( $slug ){
-			if( !array_key_exists( $slug, $this->_admin_menu_pages ) ){
-				$this->_admin_menu_pages[ $slug ] = new hw_wp_admin_menu_page( $slug );
-			}
-			return $this->_admin_menu_pages[ $slug ];
-		}
-
-
-		/**
-		 * Возвращает объект для работы со страницей опций
-		 * @param $slug
-		 * @return hw_wp_admin_menu_page
-		 */
-		public function add_admin_submenu_page( $slug, $parentSlug = null ){
-			if( !array_key_exists( $slug, $this->_admin_submenu_pages ) ){
-				$this->_admin_submenu_pages[ $slug ] = new hw_wp_admin_submenu_page( $slug, $parentSlug );
-			}
-			return $this->_admin_submenu_pages[ $slug ];
-		}
-
-
-		/**
-		 * Возвращает объект для работы со страницей опций
-		 * @param $slug
-		 * @return hw_wp_admin_menu_page
-		 */
-		public function add_admin_options_page( $slug ){
-			if( !array_key_exists( $slug, $this->_admin_option_pages ) ){
-				$this->_admin_option_pages[ $slug ] = new hw_wp_admin_options_page( $slug );
-			}
-			return $this->_admin_option_pages[ $slug ];
-		}
-
-
-		/**
-		 * Возвращает объект для работы со страницей опций
-		 * @param $slug
-		 * @return hw_wp_admin_menu_page
-		 */
-		public function add_admin_theme_page( $slug ){
-			if( !array_key_exists( $slug, $this->_admin_theme_pages ) ){
-				$this->_admin_theme_pages[ $slug ] = new hw_wp_admin_theme_page( $slug );
-			}
-			return $this->_admin_theme_pages[ $slug ];
+		public function admin_menu(){
+			static $class;
+			if(!$class instanceof hw_wp_admin_menu) $class = new hw_wp_admin_menu();
+			return $class;
 		}
 
 
