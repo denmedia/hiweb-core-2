@@ -377,7 +377,13 @@
 
 		/**
 		 * Возвращает все термины таксономии
-		 * @return WP_Term[]|int|WP_Error
+		 * @param string $returnKeyGoup
+		 * @param string $orderby
+		 * @param bool $hide_empty
+		 * @param int $number
+		 * @param int $offset
+		 * @param string $field
+		 * @return int|WP_Error|WP_Term[]
 		 */
 		public function terms( $returnKeyGoup = '', $orderby = 'name', $hide_empty = false, $number = 0, $offset = 0, $field = 'all' ){
 			$taxonomy = $this->name;

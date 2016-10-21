@@ -27,7 +27,6 @@
 		 * @return bool
 		 */
 		public function enqueue( $file ) {
-			$url = '';
 			if ( strpos( $file, '/' ) === 0 ) {
 				$backtrace = debug_backtrace();
 				if ( strpos( $file, hiweb()->path()->base_dir() ) !== 0 ) {

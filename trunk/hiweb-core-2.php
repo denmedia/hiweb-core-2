@@ -16,9 +16,5 @@
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
 	
 	//todo!!!
-	$cpt = hiweb()->post_type('post');
-	$metaBox = $cpt->add_meta_box('test');
-	$metaBox->add_field('test_field')->label('Test Filed')->value('My value');
-	//
 	$pageContent = hiweb()->path()->get_content(HIWEB_DIR_BASE.'/test.php');
 	$page = hiweb()->admin()->menu()->add_page('test_page')->menu_title('Test Page')->function_echo($pageContent);

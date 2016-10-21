@@ -334,7 +334,7 @@
 				$newDirArr[] = $name;
 				$newDirStr = implode( '/', $newDirArr );
 				@chmod( $newDirStr, 0755 );
-				$stat = @stat( $newDirStr );
+				//$stat = @stat( $newDirStr );
 				if( !@file_exists( $newDirStr ) || @is_file( $newDirStr ) ){
 					$newDirDoneArr[ $name ] = @mkdir( $newDirStr, 0755 );
 				}else{
@@ -540,9 +540,11 @@
 					include $path;
 					return ob_get_clean();
 				}else{
+					hiweb()->console()->error('Функции [ob_start] не установлено на сервере', true);
 					return false;
 				}
 			}else{
+				hiweb()->console()->error('Файла ['.$path.'] нет', true);
 				return false;
 			}
 		}

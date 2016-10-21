@@ -1,6 +1,9 @@
 <?php
 
 
+	include_once HIWEB_DIR_MODULES.'/post_type.php';
+
+
 	class hw_wp_user{
 
 		/** @var int */
@@ -210,6 +213,7 @@
 						hiweb()->wp()->user( $user_id )->meta_update( $field->name(), $_POST[ $field->name() ] );
 					}
 			}
+			return $user_id;
 		}
 
 	}

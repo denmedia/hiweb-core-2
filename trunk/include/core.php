@@ -97,6 +97,15 @@
 
 
 			/**
+			 * Корневой класс для работы с полями ввода
+			 * @return hw_input
+			 */
+			public function input(  ){
+				return $this->module( 'input' );
+			}
+
+
+			/**
 			 * Получить / созлать новый тип записей.
 			 * @param string $type - необходимый тип
 			 * @return bool|hw_post_type_object
@@ -131,7 +140,7 @@
 
 
 			/**
-			 * @param null $id - необязательный параметр
+			 * @param null $id - необязательный параметр, задать ID формы
 			 * @return bool|hw_form_object
 			 */
 			public function form( $id = null ){

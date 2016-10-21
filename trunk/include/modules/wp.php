@@ -134,6 +134,7 @@
 
 
 		public function add_user_meta_box( $id, $hiweb_user_meta_boxes = null ){
+			hiweb()->post_type();
 			if( !isset( $this->_user_meta_boxes[ $id ] ) ){
 				if( $hiweb_user_meta_boxes instanceof hw_wp_user_meta_boxes )
 					$this->_user_meta_boxes[ $id ] = $hiweb_user_meta_boxes;else $this->_user_meta_boxes[ $id ] = new hw_wp_user_meta_boxes( $id );

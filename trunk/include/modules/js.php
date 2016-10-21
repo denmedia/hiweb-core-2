@@ -17,17 +17,17 @@
 			add_action( 'wp_footer', array( $this, '_my_wp_enqueue_scripts' ) );
 			add_action( 'admin_footer', array( $this, '_my_wp_enqueue_scripts' ) );
 		}
-
+		
+		
 		/**
 		 * Поставить в очередь файл JS
 		 * @version 1.2
-		 *
 		 * @param $file
-		 *
+		 * @param array $afterJS
+		 * @param bool $in_footer
 		 * @return bool
 		 */
 		public function enqueue( $file, $afterJS = array(), $in_footer = false ) {
-			$url = '';
 			if ( strpos( $file, '/' ) === 0 ) {
 				$backtrace = debug_backtrace();
 				if ( strpos( $file, hiweb()->path()->base_dir() ) !== 0 ) {

@@ -181,7 +181,6 @@
 
 	}
 
-
 	class hw_post_type_meta_boxes{
 
 		/** @var string */
@@ -193,7 +192,7 @@
 		protected $priority = 'default';
 		protected $callback_args;
 		protected $callback_save_post;
-		/** @var hw_form_input[] */
+		/** @var hw_input_object[] */
 		protected $fields;
 		/** @var string */
 		protected $fields_prefix = 'hw_wp_meta_boxes_';
@@ -320,13 +319,13 @@
 
 
 		public function add_field( $id ){
-			$this->fields[ $id ] = hiweb()->form()->input( $id );
+			$this->fields[ $id ] = hiweb()->input()->make( $id );
 			return $this->fields[ $id ];
 		}
 
 
 		/**
-		 * @return hw_form_input[]
+		 * @return hw_input[]
 		 */
 		public function fields(){
 			return $this->fields;
@@ -346,6 +345,7 @@
 						update_post_meta( $post_id, $field->name(), $_POST[ $field->name() ] );
 					}
 			}
+			return $post_id;
 		}
 
 
@@ -360,7 +360,6 @@
 						<label class="screen-reader-text" for="<?php echo $id ?>"><?php echo $field->label() ?></label>
 					</p>
 					<?php $field->get_echo();
-				}
-			else ?><span>no fields</span><?php
+				}else ?><span>no fields</span><?php
 		}
 	}
