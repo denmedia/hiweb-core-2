@@ -1,7 +1,7 @@
 <?php
 
 
-	class hw_post_type{
+	class hw_post_types{
 		
 		/** @var hw_post_type[] */
 		private $post_types = array();
@@ -12,16 +12,16 @@
 		 * @param $post_type
 		 * @return hw_post_type
 		 */
-		public function object( $post_type ){
+		public function post_type( $post_type ){
 			if( !array_key_exists( $post_type, $this->post_types ) ){
-				$this->post_types[ $post_type ] = new hw_post_type_object( $post_type );
+				$this->post_types[ $post_type ] = new hw_post_type( $post_type );
 			}
 			return $this->post_types[ $post_type ];
 		}
 	}
 
 
-	class hw_post_type_object{
+	class hw_post_type{
 
 		private $_type;
 		/** @var WP_Error|WP_Post_Type */
@@ -32,50 +32,100 @@
 			'taxonomies' => array(), 'has_archive' => false, 'rewrite' => true, 'query_var' => true, 'can_export' => true, 'delete_with_user' => null, '_builtin' => false, '_edit_link' => 'post.php?post=%d',
 		);
 		///////PROPS
-		public $label;
-		public $labels;
-		public $description;
-		public $public;
-		public $hierarchical;
-		public $exclude_from_search;
-		public $publicly_queryable;
-		public $show_ui;
-		public $show_in_menu;
-		public $show_in_nav_menus;
-		public $show_in_admin_bar;
-		public $menu_position;
-		public $menu_icon;
-		public $capability_type;
-		public $capabilities;
-		public $map_meta_cap;
-		public $supports;
-		public $register_meta_box_cb;
-		public $taxonomies;
-		public $has_archive;
-		public $rewrite;
-		public $query_var;
-		public $can_export;
-		public $delete_with_user;
-		public $_builtin;
-		public $_edit_link;
+		private $label;
+		private $labels;
+		private $description;
+		private $public;
+		private $hierarchical;
+		private $exclude_from_search;
+		private $publicly_queryable;
+		private $show_ui;
+		private $show_in_menu;
+		private $show_in_nav_menus;
+		private $show_in_admin_bar;
+		private $menu_position;
+		private $menu_icon;
+		private $capability_type;
+		private $capabilities;
+		private $map_meta_cap;
+		private $supports;
+		private $register_meta_box_cb;
+		private $taxonomies;
+		private $has_archive;
+		private $rewrite;
+		private $query_var;
+		private $can_export;
+		private $delete_with_user;
+		private $_builtin;
+		private $_edit_link;
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function label( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function labels( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param string $key
+		 * @param string $value
+		 * @return $this
+		 */
+		public function labels_set( $key = 'name', $value = '' ){
+			$this->labels->{$key} = $value;
+			return $this;
+		}
 
 		///////
-		/** @var  hw_wp_add_taxonomy[] */
+		/** @var  hw_taxonomy[] */
 		private $_taxonomies = array();
-		/** @var hw_post_type_meta_boxes[] */
+		/** @var hw_meta_boxes[] */
 		private $_meta_boxes = array();
 
 
 		public function __construct( $post_type ){
 			$this->_type = $post_type;
+			$this->set_props();
 			add_action( 'init', array( $this, 'add_action_init_create' ), 99999 );
+		}
+
+
+		private function set_props(){
+			if( post_type_exists( $this->_type ) ){
+				$props = (array)get_post_type_object( $this->_type );
+				foreach( $props as $key => $val ){
+					if( property_exists( $this, $key ) ){
+						$this->{$key} = $val;
+					}
+				}
+			}
 		}
 
 
 		public function __call( $name, $arguments ){
 			switch( $name ){
 				case 'add_action_init_create':
-					$this->_create();
+					$this->add_action_init_create();
 					break;
 			}
 		}
@@ -114,14 +164,29 @@
 		 * Процедура регистрации типа поста
 		 * @return WP_Error|WP_Post_Type
 		 */
-		private function _create(){
+		private function add_action_init_create(){
 			if( post_type_exists( $this->_type ) ){
+				global $wp_post_types;
+				foreach( $wp_post_types[ $this->_type ] as $key => $val ){
+					if( property_exists( $this, $key ) ){
+						if( $key == 'label' ){
+							$wp_post_types[ $this->_type ]->{$key} = __($this->{$key});
+						}elseif( $key == 'labels' ){
+							if( is_object( $val ) )
+								foreach( $val as $label => $name ){
+									$wp_post_types[ $this->_type ]->{$key}->{$label} = __( $this->labels->{$label});
+								}
+						}else{
+							$wp_post_types[ $this->_type ]->{$key} = $this->{$key};
+						}
+					}
+				}
+				hiweb()->console( $wp_post_types[$this->_type] );
 				//If PT exist
-				$this->_object = get_post_type_object( $this->_type );
-				foreach( get_object_vars( $this->_object ) as $key => $value ){
+				/*foreach( (array)get_post_type_object( $this->_type ) as $key => $value ){
 					if( property_exists( $this, $key ) )
 						$this->{$key} = $value;
-				}
+				}*/
 			}else{
 				//Register PT
 				$this->_object = register_post_type( $this->_type, $this->props() );
@@ -181,6 +246,7 @@
 
 	}
 
+
 	class hw_post_type_meta_boxes{
 
 		/** @var string */
@@ -192,7 +258,7 @@
 		protected $priority = 'default';
 		protected $callback_args;
 		protected $callback_save_post;
-		/** @var hw_input_object[] */
+		/** @var hw_input[] */
 		protected $fields;
 		/** @var string */
 		protected $fields_prefix = 'hw_wp_meta_boxes_';
@@ -319,7 +385,7 @@
 
 
 		public function add_field( $id ){
-			$this->fields[ $id ] = hiweb()->input()->make( $id );
+			$this->fields[ $id ] = hiweb()->inputs()->make( $id );
 			return $this->fields[ $id ];
 		}
 
@@ -359,7 +425,7 @@
 						<strong><?php echo $field->label(); ?></strong>
 						<label class="screen-reader-text" for="<?php echo $id ?>"><?php echo $field->label() ?></label>
 					</p>
-					<?php $field->get_echo();
+					<?php $field->the();
 				}else ?><span>no fields</span><?php
 		}
 	}

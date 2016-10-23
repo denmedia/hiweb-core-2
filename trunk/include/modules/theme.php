@@ -1,7 +1,7 @@
 <?php
 
 
-	class hw_wp_theme{
+	class hw_theme{
 
 		/** @var  string */
 		private $theme;
@@ -16,6 +16,7 @@
 
 
 		public function exist(){
+			//todo
 		}
 
 

@@ -1,7 +1,7 @@
 <?php
 
 
-	class hw_input{
+	class hw_inputs{
 
 		/**
 		 * @var array
@@ -16,8 +16,7 @@
 		private function inc( $type ){
 			$path = HIWEB_DIR_MODULES . '/input/' . $type . '.php';
 			if( file_exists( $path ) && is_file( $path ) && is_readable( $path ) )
-				include_once $path;
-			else {
+				include_once $path;else{
 				hiweb()->console()->warn( 'Файла [' . $path . '] нет', true );
 			}
 		}
@@ -26,16 +25,16 @@
 		/**
 		 * @param null $id
 		 * @param string $type
-		 * @return hw_input_object
+		 * @return hw_input
 		 */
-		public function make( $id = null, $type = 'text' ){
+		private function make( $id = null, $type = 'text' ){
 			$this->inc( $type );
-			$className = 'hw_input_object_' . $type;
+			$className = 'hw_input_' . $type;
 			if( !class_exists( $className ) ){
 				hiweb()->console()->warn( 'Класса [' . $className . '] нет', true );
-				$className = 'hw_input_object';
+				$className = 'hw_input';
 			}
-			/** @var hw_input_object $newInput */
+			/** @var hw_input $newInput */
 			$newInput = new $className( $id, $type );
 			///
 			$this->inputs[ $newInput->global_id() ] = $newInput;
@@ -44,9 +43,9 @@
 		}
 
 
-		public function get( $id ){
+		public function get( $id, $type = 'text' ){
 			if( !array_key_exists( $id, $this->inputs ) ){
-				$this->inputs[ $id ] = $this->make( $id );
+				$this->inputs[ $id ] = $this->make( $id, $type );
 			}
 			return $this->inputs[ $id ];
 		}
@@ -55,33 +54,39 @@
 	}
 
 
-	class hw_input_object{
+	class hw_input{
 
 		/** @var null|integer Глобалвьный ID */
 		protected $global_id = null;
-		/** @var  string */
+		/** @var string */
 		protected $id;
-		/** @var  string */
+		/** @var string */
 		protected $name;
-		/** @var  string */
+		/** @var string */
 		protected $value;
-		/** @var  string */
+		/** @var string */
 		protected $label;
+		/** @var string */
+		protected $description;
+		/** @var string */
+		protected $title;
 		/** @var string */
 		protected $placeholder;
 		/** @var string */
 		protected $type;
+		/** @var array */
+		protected $tags = array();
 
 
 		public function __construct( $id = null, $type = 'text' ){
 			$this->set_id( $id );
-			$this->type = $type;
+			$this->type = trim($type) == '' ? 'text' : $type;
 			$this->global_id = md5( implode( '+', array( $this->id, $this->type, microtime() ) ) );
 		}
 
 
 		public function __call( $name, $arguments ){
-			hiweb()->console()->warn('Попытка образения к несуществующему методу ['.$name.']', true);
+			hiweb()->console()->warn( 'Попытка образения к несуществующему методу [' . $name . ']', true );
 		}
 
 
@@ -102,17 +107,6 @@
 		}
 
 
-		protected function prepare_tags( $props = array( 'id', 'name', 'value', 'placeholder' ) ){
-			$R = array();
-			foreach( $props as $key ){
-				if( property_exists( $this, $key ) ){
-					$R[ $key ] = htmlentities( $this->{$key}, ENT_QUOTES, 'utf-8', false );
-				}
-			}
-			return $R;
-		}
-
-
 		/**
 		 * Возвращает ID
 		 * @return string
@@ -122,9 +116,41 @@
 		}
 
 
+		/**
+		 * @param null $set
+		 * @return string|$this
+		 */
+		public function description( $set = null ){
+			if( !is_null( $set ) ){
+				$this->description = $set;
+				return $this;
+			}
+			return $this->description;
+		}
+
+
+		/**
+		 * Усттановить дополнительные тэги HTML, например array('class' => 'class_name')
+		 * @param null $set
+		 * @return array|$this
+		 */
+		public function tags( $set = null ){
+			if( is_string( $set ) ){
+				$this->tags = $set;
+				return $this;
+			}
+			return $this->tags;
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this|string
+		 */
 		public function type( $set = null ){
 			if( is_string( $set ) ){
 				$this->type = $set;
+				return $this;
 			}
 			return $this->type;
 		}
@@ -133,13 +159,26 @@
 		/**
 		 * Установить тэг NAME, либо
 		 * @param null $name - установить имя поля
-		 * @return string|hw_input
+		 * @return string|$this
 		 */
 		public function name( $name = null ){
 			if( !is_null( $name ) ){
 				$this->name = $name;
 				return $this;
 			}else return $this->name;
+		}
+
+
+		/**
+		 * Установить TITLE
+		 * @param null $title - установить название поля
+		 * @return string|hw_input
+		 */
+		public function title( $title = null ){
+			if( !is_null( $title ) ){
+				$this->title = $title;
+				return $this;
+			}else return $this->title;
 		}
 
 
@@ -187,7 +226,7 @@
 		 * @return string
 		 */
 		public function get(){
-			return vsprintf( "<label><input type='$this->type' id='%s' name='%s' value='%s' placeholder='%s' /> $this->label</label>", $this->prepare_tags() );
+			return '<input type="'.$this->type.'" id="' . $this->id . '" name="' . $this->name . '" title="' . $this->label . '" value="' . htmlentities( $this->value, ENT_QUOTES, 'utf-8' ) . '"/>';
 		}
 
 
@@ -195,7 +234,7 @@
 		 * Выводит HTML
 		 * @return string
 		 */
-		public function get_echo(){
+		public function the(){
 			$html = $this->get();
 			echo $html;
 			return $html;

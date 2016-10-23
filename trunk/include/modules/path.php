@@ -149,10 +149,12 @@
 
 		/**
 		 * Конвертирует путь в URL до файла
+		 * @version 2.1
 		 * @param $path
 		 * @return mixed
 		 */
 		public function path_to_url( $path ){
+			if(strpos($path,'http') === 0) return $path;
 			$path = str_replace( '\\', '/', $this->realpath( $path ) );
 			return str_replace( $this->base_dir(), $this->base_url(), $path );
 		}

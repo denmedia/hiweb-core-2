@@ -9,12 +9,17 @@
 	*/
 
 	//todo!!!
-	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
+	error_reporting( E_ALL );
+	ini_set( 'display_errors', 1 );
 
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
-	
-	//todo!!!
-	$pageContent = hiweb()->path()->get_content(HIWEB_DIR_BASE.'/test.php');
-	$page = hiweb()->admin()->menu()->add_page('test_page')->menu_title('Test Page')->function_echo($pageContent);
+
+
+
+	$meta = hiweb()->meta_boxes()->get('test')->title('Тестовый мета-бокс')->context('side');
+	$meta->add_field( 'test' )->description('Отметьте этот пункт, чтобы проверить его')->title('Тестовое поле');
+	$meta->screen()->post_type('')->or_in()->taxonomies();
+	//$pt = hiweb()->post_types( 'post' );
+
+	//hiweb()->console( $pt->labels() );

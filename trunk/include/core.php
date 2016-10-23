@@ -100,18 +100,62 @@
 			 * Корневой класс для работы с полями ввода
 			 * @return hw_input
 			 */
-			public function input(  ){
-				return $this->module( 'input' );
+			public function inputs(){
+				return $this->module( 'inputs' );
 			}
 
 
 			/**
 			 * Получить / созлать новый тип записей.
-			 * @param string $type - необходимый тип
-			 * @return bool|hw_post_type_object
+			 * @param string $post_type - вернуть указанный тип
+			 * @return bool|hw_post_type
 			 */
-			public function post_type( $type = 'post' ){
-				return $this->module( 'post_type' )->object( $type );
+			public function post_types( $post_type = 'post' ){
+				return $this->module( 'post_types' )->post_type( $post_type );
+			}
+
+
+			/**
+			 * @param null $postOrId
+			 * @return bool|hw_post
+			 */
+			public function post( $postOrId = null ){
+				return $this->module( 'posts' )->get( $postOrId );
+			}
+
+
+			/**
+			 * Получить класс мета боксов
+			 * @return bool|hw_meta_boxes
+			 */
+			public function meta_boxes(){
+				return $this->module( 'meta_boxes' );
+			}
+
+
+			/**
+			 * Получить класс мета боксов
+			 * @return bool|hw_screen_logic
+			 */
+			public function screen_logic(){
+				return $this->module( 'screen_logic', null, true );
+			}
+
+
+			/**
+			 * @return hw_taxonomies
+			 */
+			public function taxonomies(){
+				return $this->module( 'taxonomies' );
+			}
+
+
+			/**
+			 * @param $theme_name
+			 * @return mixed
+			 */
+			public function theme( $theme_name ){
+				return $this->module( 'theme' );
 			}
 
 
@@ -120,6 +164,15 @@
 			 */
 			public function wp(){
 				return $this->module( 'wp' );
+			}
+
+
+			/**
+			 * @param $loginOrId - логин, мэил или ID пользователя
+			 * @return bool|hw_user
+			 */
+			public function user( $loginOrId = null ){
+				return $this->module( 'users' )->get( $loginOrId );
 			}
 
 

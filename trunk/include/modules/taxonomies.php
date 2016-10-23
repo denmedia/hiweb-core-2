@@ -1,7 +1,48 @@
 <?php
 
 
-	class hw_wp_add_taxonomy{
+	class hw_taxonomies{
+
+		/** @var hw_taxonomy[] */
+		private $taxonomies = array();
+
+
+		public function is_exist( $taxonomy_name ){
+			return taxonomy_exists( $taxonomy_name );
+		}
+
+
+		/**
+		 * @param null $taxonomy_name
+		 * @return hw_taxonomy
+		 */
+		public function taxonomy( $taxonomy_name = null ){
+			if( !array_key_exists( $taxonomy_name, $this->taxonomies ) ){
+				$this->taxonomies[ $taxonomy_name ] = new hw_taxonomy( $taxonomy_name );
+			}
+
+			return $this->taxonomies[ $taxonomy_name ];
+		}
+
+
+		/**
+		 * @param $taxonomy_name_source
+		 * @param $taxonomy_name_dest
+		 * @return bool|hw_taxonomy
+		 */
+		public function copy( $taxonomy_name_source, $taxonomy_name_dest ){
+			if( !$this->is_exist( $taxonomy_name_source ) ){
+				return false;
+			}
+			$this->taxonomies[ $taxonomy_name_dest ] = clone $this->taxonomy( $taxonomy_name_source );
+			$this->taxonomies[ $taxonomy_name_dest ]->name( $taxonomy_name_dest );
+			return $this->taxonomies[ $taxonomy_name_dest ];
+		}
+
+	}
+
+
+	class hw_taxonomy{
 
 		private $name;
 		private $labels;
@@ -22,15 +63,30 @@
 		private $_builtin;
 		private $defaults = array(
 			'labels' => array(), 'description' => '', 'public' => true, 'publicly_queryable' => null, 'hierarchical' => false, 'show_ui' => null, 'show_in_menu' => null, 'show_in_nav_menus' => null, 'show_tagcloud' => null, 'show_in_quick_edit' => null,
-			'show_admin_column' => false, 'meta_box_cb' => null, 'capabilities' => array(), 'rewrite' => true, 'update_count_callback' => '', '_builtin' => false,
+			'show_admin_column' => false, 'meta_box_cb' => null, 'capabilities' => array(), 'rewrite' => true, 'update_count_callback' => '', '_builtin' => false, 'object_type' => array()
 		);
 		private $object_type = array();
+		/** @var array */
+		private $terms = array();
 
 
 		public function __construct( $name ){
 			$this->name = $name;
 			$this->labels = $name;
-			add_action( 'init', array( $this, 'register_taxonomy' ), 0 );
+			$this->set_properties();
+			add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
+		}
+
+
+		private function set_properties(){
+			if( taxonomy_exists( $this->name ) ){
+				$properties = (array)get_taxonomy( $this->name );
+				foreach( $properties as $key => $val ){
+					if( property_exists( $this, $key ) ){
+						$this->{$key} = $val;
+					}
+				}
+			}
 		}
 
 
@@ -43,8 +99,22 @@
 		}
 
 
+		public function __clone(){
+			add_action( 'init', array( $this, 'register_taxonomy' ), 99 );
+		}
+
+
 		private function register_taxonomy(){
-			register_taxonomy( $this->name, $this->object_type(), $this->props() );
+			if( !taxonomy_exists( $this->name ) ){
+				register_taxonomy( $this->name, $this->object_type(), $this->props() );
+			}else{
+				global $wp_taxonomies;
+				foreach( $this->props() as $key => $val ){
+					if( property_exists( $wp_taxonomies[ $this->name ], $key ) ){
+						$wp_taxonomies[ $this->name ]->{$key} = $val;
+					}
+				}
+			}
 		}
 
 
@@ -52,7 +122,7 @@
 		 * Получить/Утсановить POST TYPE
 		 * @param null|array|string $object_type - post type
 		 * @param bool $append - добавлять к текущему значению
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|array
 		 */
 		public function object_type( $object_type = null, $append = false ){
 			if( !is_null( $object_type ) ){
@@ -60,7 +130,7 @@
 					$this->object_type = array( $this->object_type );
 				if( !is_array( $object_type ) )
 					$object_type = array( $object_type );
-				$this->object_type = $append ? $this->object_type + $object_type : $object_type;
+				$this->object_type = $append ? array_merge( $this->object_type, $object_type ) : $object_type;
 				return $this;
 			}else return $this->object_type;
 		}
@@ -81,16 +151,22 @@
 
 
 		/**
+		 * @param null $name
 		 * @return string
 		 */
-		public function name(){
+		public function name( $name = null ){
+			if( is_string( $name ) ){
+				$this->name = $name;
+				$this->set_properties();
+				return $this;
+			}
 			return $this->name;
 		}
 
 
 		/**
 		 * @param null $labels
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function labels( $labels = null ){
 			if( !is_null( $labels ) ){
@@ -105,7 +181,7 @@
 
 		/**
 		 * @param null $description
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function description( $description = null ){
 			if( !is_null( $description ) ){
@@ -120,7 +196,7 @@
 
 		/**
 		 * @param null $publicly_queryable
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function publicly_queryable( $publicly_queryable = null ){
 			if( !is_null( $publicly_queryable ) ){
@@ -135,7 +211,7 @@
 
 		/**
 		 * @param null $show_in_menu
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function show_in_menu( $show_in_menu = null ){
 			if( !is_null( $show_in_menu ) ){
@@ -150,7 +226,7 @@
 
 		/**
 		 * @param null $show_in_quick_edit
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function show_in_quick_edit( $show_in_quick_edit = null ){
 			if( !is_null( $show_in_quick_edit ) ){
@@ -165,7 +241,7 @@
 
 		/**
 		 * @param null $meta_box_cb
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function meta_box_cb( $meta_box_cb = null ){
 			if( !is_null( $meta_box_cb ) ){
@@ -180,7 +256,7 @@
 
 		/**
 		 * @param null $capabilities
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function capabilities( $capabilities = null ){
 			if( !is_null( $capabilities ) ){
@@ -195,7 +271,7 @@
 
 		/**
 		 * @param null $rewrite
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function rewrite( $rewrite = null ){
 			if( !is_null( $rewrite ) ){
@@ -210,7 +286,7 @@
 
 		/**
 		 * @param null $update_count_callback
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function update_count_callback( $update_count_callback = null ){
 			if( !is_null( $update_count_callback ) ){
@@ -225,7 +301,7 @@
 
 		/**
 		 * @param null $_builtin
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function _builtin( $_builtin = null ){
 			if( !is_null( $_builtin ) ){
@@ -240,7 +316,7 @@
 
 		/**
 		 * @param null $hierarchical
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function hierarchical( $hierarchical = null ){
 			if( !is_null( $hierarchical ) ){
@@ -253,7 +329,7 @@
 
 		/**
 		 * @param null $public
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function publicly( $public = null ){
 			if( !is_null( $public ) ){
@@ -266,7 +342,7 @@
 
 		/**
 		 * @param null $show_ui
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function show_ui( $show_ui = null ){
 			if( !is_null( $show_ui ) ){
@@ -279,7 +355,7 @@
 
 		/**
 		 * @param null $show_admin_column
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function show_admin_column( $show_admin_column = null ){
 			if( !is_null( $show_admin_column ) ){
@@ -292,7 +368,7 @@
 
 		/**
 		 * @param null $show_in_nav_menus
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function show_in_nav_menus( $show_in_nav_menus = null ){
 			if( !is_null( $show_in_nav_menus ) ){
@@ -305,7 +381,7 @@
 
 		/**
 		 * @param null $show_tagcloud
-		 * @return hw_wp_add_taxonomy|string
+		 * @return $this|string
 		 */
 		public function show_tagcloud( $show_tagcloud = null ){
 			if( !is_null( $show_tagcloud ) ){
@@ -313,65 +389,6 @@
 				return $this;
 			}
 			return $this->show_tagcloud;
-		}
-
-
-	}
-
-
-	/**
-	 * Класс для работы с таксономией и постами
-	 * Class hiweb_wp_taxonomy
-	 */
-	class hw_wp_taxonomy{
-
-		/** @var string */
-		private $name;
-
-		/** @var array */
-		private $terms = array();
-
-		private $object;
-
-
-		public function __construct( $taxonomy ){
-			$this->name = $taxonomy;
-			$this->object = get_taxonomy( $taxonomy );
-		}
-
-
-		public function object(){
-			return $this->object;
-		}
-
-
-		/**
-		 * Возвращает значение ключа таксономии, либо NULL, если ключа нет
-		 * @param null $key - название ключа
-		 * @param null $secondKey - поиск значения ключа во вложенном массиве
-		 * @return null
-		 */
-		public function get( $key, $secondKey = null ){
-			if( array_key_exists( $key, (array)$this->object ) ){
-				if( is_null( $secondKey ) ){
-					return $this->object->{$key};
-				}else{
-					$val = (array)$this->object->{$key};
-
-					return $val[ $secondKey ];
-				}
-			}else{
-				return null;
-			}
-		}
-
-
-		/**
-		 * Возвращает TRUE, если таксономия существует
-		 * @return bool
-		 */
-		public function exist(){
-			return taxonomy_exists( $this->name );
 		}
 
 
@@ -412,14 +429,16 @@
 
 			return $this->terms[ $argsString ];
 		}
-
-
+		
+		
 		/**
-		 * Возвращает SLUG таксономии
-		 * @return string
+		 * Копирование объекта
+		 * @param $new_name
+		 * @return bool|hw_taxonomy
 		 */
-		public function name(){
-			return $this->name;
+		public function copy( $new_name ){
+			return hiweb()->taxonomies()->copy( $this->name, $new_name );
 		}
+
 
 	}

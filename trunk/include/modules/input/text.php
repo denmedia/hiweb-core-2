@@ -2,7 +2,7 @@
 
 
 
-	class hw_input_object_text extends hw_input_object{
+	class hw_input_text extends hw_input{
 
 		
 

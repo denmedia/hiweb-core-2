@@ -39,11 +39,11 @@
 		/**
 		 * @param $id
 		 * @param string $type
-		 * @return hw_input_object|hw_input_object_repeat
+		 * @return hw_input|hw_input__repeat
 		 */
 		public function field( $id, $type = 'text' ){
 			if( !array_key_exists( $id, $this->fields ) ){
-				$this->fields[ $id ] = hiweb()->input()->make( $id, $type );
+				$this->fields[ $id ] = hiweb()->inputs()->make( $id, $type );
 			}
 			return $this->fields[ $id ];
 		}

@@ -2,11 +2,10 @@
 <?php
 
 	$form = hiweb()->form( 'form1' );
-	$form->field('test')->placholder('Check is...')->label('Test LABEL');
-	$form->field('test2','checkbox')->label('Test LABEL 2');
 
-	$input[] = hiweb()->input()->make( 'test' )->placholder( 'Check is...' )->label( 'Test LABEL' );
-	$input[] = hiweb()->input()->make( 'test2', 'checkbox' )->label( 'Test LABEL 2' );
+	$input[] = hiweb()->inputs()->make( 'test3' )->label( 'Название пункта' );
+	$input[] = hiweb()->inputs()->make( 'test' )->placholder( 'Check is...' )->label( 'Test LABEL' );
+	$input[] = hiweb()->inputs()->make( 'test2', 'checkbox' )->label( 'Test LABEL 2' );
 
 	$form->field( 'test3', 'repeat' )->fields($input);
 	echo $form->get();

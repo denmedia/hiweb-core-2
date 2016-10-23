@@ -1,11 +1,38 @@
 <?php
 
 
+	class hw_posts{
+
+		/** @var hw_post[] */
+		private $posts = array();
+
+
+		/**
+		 * Возвращает пост
+		 * @param $postOrId
+		 * @return hw_post
+		 */
+		public function get( $postOrId ){
+			if( $postOrId instanceof WP_Post ){
+				$id = $postOrId->ID;
+			}else{
+				$id = $postOrId;
+			}
+			///
+			if( !array_key_exists( $id, $this->posts ) ){
+				$this->posts[ $id ] = new hw_post( $postOrId );
+			}
+			return $this->posts[ $id ];
+		}
+
+	}
+
+
 	/**
 	 * Класс для работы с одной записью
 	 * Class hiweb_wp_post
 	 */
-	class hw_wp_post{
+	class hw_post{
 
 		/**
 		 * @var array|null|WP_Post
@@ -51,6 +78,19 @@
 		 */
 		public function id(){
 			return ( $this->object instanceof WP_Post ) ? $this->object->ID : null;
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function name( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
 		}
 
 

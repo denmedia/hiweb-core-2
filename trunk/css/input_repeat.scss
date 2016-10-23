@@ -1,0 +1,35 @@
+.hw-input-repeat {
+
+  padding: 5px; background: #eee; border: 1px dotted grey;
+
+  table {
+    width: 100%; border: transparent 1px solid;
+    tr[data-source] {
+      display: none;
+    }
+    .col, .col-control {
+      width: 20px;
+    }
+    th { background: #777; color: #fff; font-weight: 500; padding: 4px 8px; }
+    td { text-align: center; border-bottom: 1px dotted grey; border-right: 1px dotted grey; }
+
+    span[data-click] { cursor: pointer;
+      &:hover { opacity: 0.7; -moz-opacity: 0.7; }
+    }
+
+    [data-help="first"] td {
+      font-size: 140%; height: 100px;
+    }
+
+    [data-drag] {
+      cursor: n-resize;
+    }
+
+  }
+
+
+  .bottom-control {
+    text-align: right;
+  }
+
+}
