@@ -13,7 +13,7 @@
 
 
 		public function get(){
-			return '<input type="checkbox" id="' . $this->id . '" name="' . $this->name . '" title="' . $this->label . '" '.( $this->value() ? 'checked' : '' ).'/>';
+			return '<input '.$this->get_tags().' '.( $this->value() ? 'checked' : '' ).'/>';
 		}
 
 	}

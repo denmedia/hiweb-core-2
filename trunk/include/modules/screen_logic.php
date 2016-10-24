@@ -274,7 +274,7 @@
 								$math = $math && ( $current->base == 'profile' );
 								break;
 							case 'user_edit':
-								$math = $math && ( $current->base == 'profile' || $current->base == 'user-edit' || ( $current->base == 'base' && $current->action == 'add' ) );
+								$math = $math && ( $current->base == 'profile' || $current->base == 'user-edit' || $current->base == 'user' || ( $current->base == 'base' && $current->action == 'add' ) );
 								break;
 							case 'user_login':
 								$math = $math && ( ( $current->base == 'user-edit' && hiweb()->user( isset( $_GET['user_id'] ) ? $_GET['user_id'] : '' )->login() == $value ) || ( $current->base == 'profile' && hiweb()->user()->login() == $value ) );

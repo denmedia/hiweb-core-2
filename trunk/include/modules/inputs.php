@@ -43,6 +43,11 @@
 		}
 
 
+		/**
+		 * @param $id
+		 * @param string $type
+		 * @return hw_input
+		 */
 		public function get( $id, $type = 'text' ){
 			if( !array_key_exists( $id, $this->inputs ) ){
 				$this->inputs[ $id ] = $this->make( $id, $type );
@@ -80,7 +85,7 @@
 
 		public function __construct( $id = null, $type = 'text' ){
 			$this->set_id( $id );
-			$this->type = trim($type) == '' ? 'text' : $type;
+			$this->type = trim( $type ) == '' ? 'text' : $type;
 			$this->global_id = md5( implode( '+', array( $this->id, $this->type, microtime() ) ) );
 		}
 
@@ -131,12 +136,13 @@
 
 		/**
 		 * Усттановить дополнительные тэги HTML, например array('class' => 'class_name')
-		 * @param null $set
-		 * @return array|$this
+		 * @param null $key
+		 * @param null $value
+		 * @return $this|array
 		 */
-		public function tags( $set = null ){
-			if( is_string( $set ) ){
-				$this->tags = $set;
+		public function tags( $key = null, $value = null ){
+			if( is_string( $key ) ){
+				$this->tags[ $key ] = $value;
 				return $this;
 			}
 			return $this->tags;
@@ -208,6 +214,11 @@
 		}
 
 
+		public function the_value(){
+			echo $this->value();
+		}
+
+
 		/**
 		 * Установить PLACEHOLDER, либо
 		 * @param null $placeholder - установить имя поля
@@ -221,12 +232,37 @@
 		}
 
 
+		public function get_tags( array $tags = array( 'type', 'id', 'name', 'title', 'value' ), $use_additionTags = true, $returnStr = true ){
+			$R = array();
+			if( $use_additionTags && is_array( $tags ) && is_array( $this->tags ) ){
+				$tags = array_merge( $tags, array_keys($this->tags) );
+			}
+			foreach( $tags as $tag ){
+				if( array_key_exists( $tag, $this->tags ) ){
+					$R[ $tag ] = $this->tags[ $tag ];
+				}else if( property_exists( $this, $tag ) ){
+					$R[ $tag ] = $this->{$tag};
+				}
+			}
+			if( !$returnStr )
+				return $R;
+			///
+			$R2 = array();
+			foreach( $R as $key => $val ){
+				if( is_null( $val ) )
+					continue;
+				$R2[] = $key . '="' . htmlentities( $val, ENT_QUOTES, 'utf-8' ) . '"';
+			}
+			return implode( ' ', $R2 );
+		}
+
+
 		/**
 		 * Возвращает HTML
 		 * @return string
 		 */
 		public function get(){
-			return '<input type="'.$this->type.'" id="' . $this->id . '" name="' . $this->name . '" title="' . $this->label . '" value="' . htmlentities( $this->value, ENT_QUOTES, 'utf-8' ) . '"/>';
+			return '<input ' . $this->get_tags() . '/>';
 		}
 
 

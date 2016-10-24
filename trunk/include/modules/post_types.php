@@ -385,7 +385,7 @@
 
 
 		public function add_field( $id ){
-			$this->fields[ $id ] = hiweb()->inputs()->make( $id );
+			$this->fields[ $id ] = hiweb()->input()->make( $id );
 			return $this->fields[ $id ];
 		}
 

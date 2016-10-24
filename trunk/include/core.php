@@ -52,10 +52,11 @@
 
 
 			/**
-			 * @return bool|hw_path
+			 * @param null $id - необязательный параметр, задать ID формы
+			 * @return bool|hw_form_object
 			 */
-			public function path(){
-				return $this->module( 'path' );
+			public function form( $id = null ){
+				return $this->module( 'form' )->get( $id );
 			}
 
 
@@ -98,10 +99,34 @@
 
 			/**
 			 * Корневой класс для работы с полями ввода
+			 * @param null $id
+			 * @param string $type
 			 * @return hw_input
 			 */
-			public function inputs(){
-				return $this->module( 'inputs' );
+			public function input( $id = null, $type = 'text' ){
+				return $this->module( 'inputs' )->get( $id, $type );
+			}
+
+
+			/**
+			 * Получить класс мета данных
+			 * @param null $field_id
+			 * @param null $screen_id
+			 * @return bool|hw_meta
+			 */
+			public function meta( $field_id = null, $screen_id = null ){
+				return $this->module( 'meta', $field_id, true )->get( $screen_id );
+			}
+
+
+			/**
+			 * Получить класс мета боксов
+			 * @param null $id
+			 * @param null $title
+			 * @return bool|hw_meta_box
+			 */
+			public function meta_box( $id = null, $title = null ){
+				return $this->module( 'meta_boxes' )->get( $id, $title );
 			}
 
 
@@ -110,8 +135,16 @@
 			 * @param string $post_type - вернуть указанный тип
 			 * @return bool|hw_post_type
 			 */
-			public function post_types( $post_type = 'post' ){
+			public function post_type( $post_type = 'post' ){
 				return $this->module( 'post_types' )->post_type( $post_type );
+			}
+
+
+			/**
+			 * @return bool|hw_path
+			 */
+			public function path(){
+				return $this->module( 'path' );
 			}
 
 
@@ -121,15 +154,6 @@
 			 */
 			public function post( $postOrId = null ){
 				return $this->module( 'posts' )->get( $postOrId );
-			}
-
-
-			/**
-			 * Получить класс мета боксов
-			 * @return bool|hw_meta_boxes
-			 */
-			public function meta_boxes(){
-				return $this->module( 'meta_boxes' );
 			}
 
 
@@ -189,15 +213,6 @@
 			 */
 			public function date(){
 				return $this->module( 'date' );
-			}
-
-
-			/**
-			 * @param null $id - необязательный параметр, задать ID формы
-			 * @return bool|hw_form_object
-			 */
-			public function form( $id = null ){
-				return $this->module( 'form' )->get( $id );
 			}
 
 

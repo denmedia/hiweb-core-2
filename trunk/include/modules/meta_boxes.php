@@ -11,13 +11,18 @@
 		 * @param $id
 		 * @return hw_meta_box|mixed
 		 */
-		public function get( $id ){
+		public function get( $id = null, $title = null ){
 			if( array_key_exists( $id, $this->meta_boxes ) ){
+				if( !is_null( $title ) )
+					$this->meta_boxes[ $id ]->title( $title );
 				return $this->meta_boxes[ $id ];
 			}else{
 				if( hiweb()->string()->is_empty( $id ) )
 					$id = hiweb()->string()->rand();
-				return new hw_meta_box( $id );
+				$this->meta_boxes[ $id ] = new hw_meta_box( $id );
+				if( !is_null( $title ) )
+					$this->meta_boxes[ $id ]->title( $title );
+				return $this->meta_boxes[ $id ];
 			}
 		}
 
@@ -48,7 +53,7 @@
 			$this->screen_logic = hiweb()->screen_logic();
 			///Show META
 			add_action( 'add_meta_boxes', array( $this, 'add_action_add_meta_box' ), 10, 2 );
-			$taxonomies = array_keys(get_taxonomies());
+			$taxonomies = array_keys( get_taxonomies() );
 			if( is_array( $taxonomies ) )
 				foreach( $taxonomies as $tax ){
 					add_action( $tax . '_add_form_fields', array( $this, 'the_taxonomy_add' ), 10, 2 );
@@ -56,10 +61,14 @@
 				}
 			add_action( 'show_user_profile', array( $this, 'the_user_edit' ) );
 			add_action( 'edit_user_profile', array( $this, 'the_user_edit' ) );
+			add_action( 'user_new_form', array( $this, 'the_user_edit' ) );
 			///Update Meta
-			/*add_action( 'created_term', array( $this, 'the_taxonomy_update' ), 10, 2 );
-			add_action( 'personal_options_update', array( $this, 'add_action_personal_options_update' ) );
-			add_action( 'edit_user_profile_update', array( $this, 'add_action_personal_options_update' ) );*/
+			add_action( 'save_post', array( $this, 'the_post_update' ), 10, 2 );
+			add_action( 'create_term', array( $this, 'the_taxonomy_update' ), 10, 2 );
+			add_action( 'edited_term_taxonomy', array( $this, 'the_taxonomy_update' ), 10, 2 );
+			add_action( 'personal_options_update', array( $this, 'the_user_update' ) );
+			add_action( 'edit_user_profile_update', array( $this, 'the_user_update' ) );
+			add_action( 'user_register', array( $this, 'the_user_update' ) );
 		}
 
 
@@ -72,14 +81,23 @@
 				case 'the_post_edit':
 					$this->the_post_edit( $arguments[0], $arguments[1] );
 					break;
+				case 'the_post_update':
+					$this->the_post_update( $arguments[0] );
+					break;
 				case 'the_taxonomy_add':
-					$this->the_taxonomy_add($arguments[0]);
+					$this->the_taxonomy_add( $arguments[0] );
 					break;
 				case 'the_taxonomy_edit':
-					$this->the_taxonomy_edit($arguments[0]);
+					$this->the_taxonomy_edit( $arguments[0] );
 					break;
 				case 'the_user_edit':
 					$this->the_user_edit();
+					break;
+				case 'the_taxonomy_update':
+					$this->the_taxonomy_update( $arguments[0] );
+					break;
+				case 'the_user_update':
+					$this->the_user_update( $arguments[0] );
 					break;
 			}
 		}
@@ -173,9 +191,24 @@
 		}
 
 
-		public function add_field( $id, $type = 'text' ){
-			$this->fields[ $id ] = hiweb()->inputs()->get( $id, $type );
-			return $this->fields[ $id ];
+		/**
+		 * @param $idOrInput - ID нового поля, либо hw_input, либо hw_input[] (массив полей)
+		 * @param string $type
+		 * @return hw_input
+		 */
+		public function add_field( $idOrInput, $type = 'text' ){
+			if( $idOrInput instanceof hw_input ){
+				$this->fields[ $idOrInput->id() ] = $idOrInput;
+				return $idOrInput;
+			}elseif( is_array( $idOrInput ) ){
+				foreach( $idOrInput as $field ){
+					$this->fields[ $field->id() ] = $field;
+				}
+				return reset( $idOrInput );
+			}else{
+				$this->fields[ $idOrInput ] = hiweb()->input()->get( $idOrInput, $type );
+				return $this->fields[ $idOrInput ];
+			}
 		}
 
 
@@ -190,6 +223,8 @@
 		protected function the_post_edit( $post, $meta_box ){
 			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
+				$value = hiweb()->post( $post )->meta( $field->name() );
+				$field->value( $value );
 				?><p><strong><?php echo $field->title() ?></strong></p><p>
 					<?php $field->the();
 						echo ' ' . $field->label(); ?>
@@ -199,7 +234,7 @@
 
 
 		protected function the_post_update( $post_id = null ){
-			if( !$this->screen()->detect()->detect() || !is_null( $this->callback_save_post ) )
+			if( !is_null( $this->callback_save_post ) )
 				return call_user_func( $this->callback_save_post, $post_id );else{
 				if( is_array( $this->fields ) )
 					foreach( $this->fields as $id => $field ){
@@ -248,7 +283,7 @@
 
 
 		protected function the_taxonomy_update( $term_id ){
-			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
 				if( isset( $_POST[ $field->name() ] ) ){
 					update_term_meta( $term_id, $field->name(), $_POST[ $field->name() ] );
@@ -264,7 +299,9 @@
 				<table class="form-table">
 				<tbody><?php
 					foreach( $this->fields as $id => $field ){
-						$field->value( hiweb()->user( isset( $_GET['user_id'] ) ? $_GET['user_id'] : null )->meta( $field->name() ) );
+						if( get_current_screen()->action != 'add' ){
+							$field->value( hiweb()->user( isset( $_GET['user_id'] ) ? $_GET['user_id'] : null )->meta( $field->name() ) );
+						}
 						?>
 						<tr>
 							<th><label for="<?php echo $field->name() ?>"><?php echo $field->title() ?></label></th>
@@ -278,11 +315,11 @@
 		}
 
 
-		protected function the_user_update(){
-			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+		protected function the_user_update( $new_user_id = null ){
+			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
 				if( isset( $_POST[ $field->name() ] ) ){
-					$B = hiweb()->user( $_POST['user_id'] )->meta_update( $field->name(), $_POST[ $field->name() ] );
+					$B = hiweb()->user( isset( $_POST['user_id'] ) ? $_POST['user_id'] : $new_user_id )->meta_update( $field->name(), $_POST[ $field->name() ] );
 				}
 			}
 		}

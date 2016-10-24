@@ -7,19 +7,24 @@
 	Author: Den Media
 	Author URI: http://hiweb.moscow
 	*/
-
+	
 	//todo!!!
 	error_reporting( E_ALL );
 	ini_set( 'display_errors', 1 );
-
+	
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
-
-
-
-	$meta = hiweb()->meta_boxes()->get('test')->title('Тестовый мета-бокс');
-	$meta->add_field( 'test' )->description('Отметьте этот пункт, чтобы проверить его')->title('Тестовое поле');
-	$meta->screen()->post_type()->or_in()->taxonomy('category');
-	//$pt = hiweb()->post_types( 'post' );
-
-	//hiweb()->console( $pt->labels() );
+	
+	///
+	
+	///
+	$field1 = hiweb()->input( 'test1' )->label( 'Тест-поле 1' );
+	$field2 = hiweb()->input( 'test2', 'checkbox' )->label( 'Тест-поле 2' );
+	$meta_box = hiweb()->meta_box()->get( 'test' )->title( 'Пробное репит-поле' );
+	$field = $meta_box->add_field( 'test', 'repeat' );
+	$field->cols( array( $field1, $field2 ) );
+	$field = $meta_box->add_field( 'test3', 'repeat' );
+	$field->cols( array( $field2, $field1 ) );
+	$meta_box->screen()->post_type()->or_in()->taxonomies()->or_in()->user_edit();
+	
+	hiweb()->console( hiweb()->meta()-> );
