@@ -53,10 +53,10 @@
 
 
 		/**
-		 * @param $post_type
+		 * @param $post_type - укажите тип поста, в котором показывать метабокс. Если не указывать, то мета бокс будет доступен во всех типах.
 		 * @return hw_screen_logic_operators
 		 */
-		public function post_type( $post_type ){
+		public function post_type( $post_type = null ){
 			$this->chain[ $this->or_block_index ][] = array( 'post_type' => $post_type );
 			return $this->operator();
 		}

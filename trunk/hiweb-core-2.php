@@ -17,9 +17,9 @@
 
 
 
-	$meta = hiweb()->meta_boxes()->get('test')->title('Тестовый мета-бокс')->context('side');
+	$meta = hiweb()->meta_boxes()->get('test')->title('Тестовый мета-бокс');
 	$meta->add_field( 'test' )->description('Отметьте этот пункт, чтобы проверить его')->title('Тестовое поле');
-	$meta->screen()->post_type('')->or_in()->taxonomies();
+	$meta->screen()->post_type()->or_in()->taxonomy('category');
 	//$pt = hiweb()->post_types( 'post' );
 
 	//hiweb()->console( $pt->labels() );

@@ -45,45 +45,43 @@
 
 		public function __construct( $id ){
 			$this->_id = $id;
-			add_action( 'current_screen', array( $this, 'init_screen' ), 9999999 );
-			add_action( 'created_term', array( $this, 'save_taxonomy_custom_meta' ), 10, 2 ); //todo!!!
+			$this->screen_logic = hiweb()->screen_logic();
+			///Show META
+			add_action( 'add_meta_boxes', array( $this, 'add_action_add_meta_box' ), 10, 2 );
+			$taxonomies = array_keys(get_taxonomies());
+			if( is_array( $taxonomies ) )
+				foreach( $taxonomies as $tax ){
+					add_action( $tax . '_add_form_fields', array( $this, 'the_taxonomy_add' ), 10, 2 );
+					add_action( $tax . '_edit_form', array( $this, 'the_taxonomy_edit' ), 10, 2 );
+				}
+			add_action( 'show_user_profile', array( $this, 'the_user_edit' ) );
+			add_action( 'edit_user_profile', array( $this, 'the_user_edit' ) );
+			///Update Meta
+			/*add_action( 'created_term', array( $this, 'the_taxonomy_update' ), 10, 2 );
+			add_action( 'personal_options_update', array( $this, 'add_action_personal_options_update' ) );
+			add_action( 'edit_user_profile_update', array( $this, 'add_action_personal_options_update' ) );*/
 		}
 
 
 		public function __call( $name, $arguments ){
 			switch( $name ){
-				case 'init_screen':
-					$this->init_screen();
-					break;
 				case 'add_action_add_meta_box':
 					if( $this->screen_logic->detect()->detect() )
-						add_meta_box( $this->_id, $this->title, is_null( $this->callback ) ? array( $this, 'generate_post' ) : $this->callback, $this->screen, $this->context, $this->priority, $this->callback_args );
+						add_meta_box( $this->_id, $this->title, is_null( $this->callback ) ? array( $this, 'the_post_edit' ) : $this->callback, $this->screen, $this->context, $this->priority, $this->callback_args );
 					break;
-				case 'generate_post' :
-					$this->generate_post( $arguments[0], $arguments[1] );
+				case 'the_post_edit':
+					$this->the_post_edit( $arguments[0], $arguments[1] );
 					break;
-				case 'add_action_add_form_fields':
-					$this->generate_taxonomy_add( $arguments[0] );
+				case 'the_taxonomy_add':
+					$this->the_taxonomy_add($arguments[0]);
 					break;
-				case 'add_action_edit_form':
-					$this->generate_taxonomy_edit( $arguments[0] );
+				case 'the_taxonomy_edit':
+					$this->the_taxonomy_edit($arguments[0]);
 					break;
-				case 'save_taxonomy_custom_meta':
-					$this->save_taxonomy_custom_meta( $arguments[0] );
+				case 'the_user_edit':
+					$this->the_user_edit();
 					break;
 			}
-		}
-
-
-		private function init_screen(){
-			add_action( 'add_meta_boxes', array( $this, 'add_action_add_meta_box' ), 10, 2 );
-			$taxonomies = $this->screen_logic->detect()->get_taxonomies_from_chain();
-			if( is_array( $taxonomies ) )
-				foreach( $taxonomies as $tax ){
-					add_action( $tax . '_add_form_fields', array( $this, 'add_action_add_form_fields' ), 10, 2 );
-					add_action( $tax . '_edit_form', array( $this, 'add_action_edit_form' ), 10, 2 );
-					add_action( 'edited_term_taxonomy', array( $this, 'save_taxonomy_custom_meta' ), 10, 2 );
-				}
 		}
 		
 
@@ -92,9 +90,6 @@
 		 * @return hw_screen_logic
 		 */
 		public function screen(){
-			if( !$this->screen_logic instanceof hw_screen_logic ){
-				$this->screen_logic = hiweb()->screen_logic();
-			}
 			return $this->screen_logic;
 		}
 
@@ -192,8 +187,19 @@
 		}
 
 
-		protected function add_action_save_post( $post_id = null ){
-			if( !is_null( $this->callback_save_post ) )
+		protected function the_post_edit( $post, $meta_box ){
+			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+			}else foreach( $this->fields as $id => $field ){
+				?><p><strong><?php echo $field->title() ?></strong></p><p>
+					<?php $field->the();
+						echo ' ' . $field->label(); ?>
+				</p><p><?php echo $field->description() ?></p><?php
+			}
+		}
+
+
+		protected function the_post_update( $post_id = null ){
+			if( !$this->screen()->detect()->detect() || !is_null( $this->callback_save_post ) )
 				return call_user_func( $this->callback_save_post, $post_id );else{
 				if( is_array( $this->fields ) )
 					foreach( $this->fields as $id => $field ){
@@ -204,18 +210,8 @@
 		}
 
 
-		protected function generate_post( $post, $meta_box ){
-			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
-			}else foreach( $this->fields as $id => $field ){
-				?><p><strong><?php echo $field->title() ?></strong></p><p>
-					<?php $field->the(); echo ' '.$field->label(); ?>
-				</p><p><?php echo $field->description() ?></p><?php
-			}
-		}
-
-
-		protected function generate_taxonomy_add( $taxonomy ){
-			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+		protected function the_taxonomy_add( $taxonomy ){
+			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
 				?>
 				<div class="form-field term-slug-wrap">
@@ -229,10 +225,9 @@
 		}
 
 
-		protected function generate_taxonomy_edit( $taxonomy ){
-			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+		protected function the_taxonomy_edit( $taxonomy ){
+			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
-				hiweb()->console( get_term_meta( $_GET['tag_ID'] ) ); //todo
 				$field->value( get_term_meta( $_GET['tag_ID'], $field->name(), true ) );
 				?>
 				<table class="form-table">
@@ -252,11 +247,42 @@
 		}
 
 
-		protected function save_taxonomy_custom_meta( $term_id ){
-			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+		protected function the_taxonomy_update( $term_id ){
+			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
 				if( isset( $_POST[ $field->name() ] ) ){
 					update_term_meta( $term_id, $field->name(), $_POST[ $field->name() ] );
+				}
+			}
+		}
+
+
+		protected function the_user_edit(){
+			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+			}else{
+				?>
+				<table class="form-table">
+				<tbody><?php
+					foreach( $this->fields as $id => $field ){
+						$field->value( hiweb()->user( isset( $_GET['user_id'] ) ? $_GET['user_id'] : null )->meta( $field->name() ) );
+						?>
+						<tr>
+							<th><label for="<?php echo $field->name() ?>"><?php echo $field->title() ?></label></th>
+							<td><?php $field->the(); ?><p class="description"><?php echo $field->description() ?></p></td>
+						</tr>
+						<?php
+					}
+				?></tbody>
+				</table><?php
+			}
+		}
+
+
+		protected function the_user_update(){
+			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+			}else foreach( $this->fields as $id => $field ){
+				if( isset( $_POST[ $field->name() ] ) ){
+					$B = hiweb()->user( $_POST['user_id'] )->meta_update( $field->name(), $_POST[ $field->name() ] );
 				}
 			}
 		}
