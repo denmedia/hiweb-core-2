@@ -196,7 +196,7 @@
 		/**
 		 * @param $idOrInput - ID нового поля, либо hw_input, либо hw_input[] (массив полей)
 		 * @param string $type
-		 * @return hw_input
+		 * @return hw_input|hw_input_text|hw_input_checkbox|hw_input_repeat
 		 */
 		public function add_field( $idOrInput, $type = 'text' ){
 			if( $idOrInput instanceof hw_input ){

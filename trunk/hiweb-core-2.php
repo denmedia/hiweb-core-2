@@ -17,7 +17,7 @@
 
 	///
 	$field1 = hiweb()->input( 'test1' )->label( 'Тест-поле 1' );
-	$field2 = hiweb()->input( 'test2', 'checkbox' )->label( 'Тест-поле 2' );
+	$field2 = hiweb()->input( 'test2', 'image' );
 	$meta_box = hiweb()->meta_box( 'test' )->title( 'Пробное репит-поле' );
 	$field = $meta_box->add_field( 'test', 'repeat' );
 	$field->cols( array( $field1, $field2 ) );

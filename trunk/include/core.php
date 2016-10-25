@@ -101,7 +101,7 @@
 			 * Корневой класс для работы с полями ввода
 			 * @param null $id
 			 * @param string $type
-			 * @return hw_input
+			 * @return hw_input|hw_input_text|hw_input_checkbox|hw_input_repeat
 			 */
 			public function input( $id = null, $type = 'text' ){
 				return $this->module( 'inputs' )->get( $id, $type );
