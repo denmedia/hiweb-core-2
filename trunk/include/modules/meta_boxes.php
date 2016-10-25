@@ -206,7 +206,7 @@
 				}
 				return reset( $idOrInput );
 			}else{
-				$this->fields[ $idOrInput ] = hiweb()->input()->get( $idOrInput, $type );
+				$this->fields[ $idOrInput ] = hiweb()->input( $idOrInput, $type );
 				return $this->fields[ $idOrInput ];
 			}
 		}

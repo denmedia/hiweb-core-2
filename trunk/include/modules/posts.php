@@ -40,7 +40,7 @@
 		private $object;
 
 		/**
-		 * @var hw_wp_post_meta
+		 * @var hw_post_meta
 		 */
 		private $meta;
 
@@ -98,11 +98,11 @@
 		 * Возвращает класс для работы с мета записи
 		 * @param null|string $key - вернуть значение ключа мета, либо regex-паттерн (обязатиельно указать INT $use_regex_index), либо объект класса для работы с мета даннойзаписи
 		 * @param null $use_regex_index - если $key является паттерном regex, то вернуть значение по индексу найденного ключа
-		 * @return hw_wp_post_meta|mixed|null
+		 * @return hw_post_meta|mixed|null
 		 */
 		public function meta( $key = null, $use_regex_index = null ){
-			if( !$this->meta instanceof hw_wp_post_meta ){
-				$this->meta = new hw_wp_post_meta( $this->object );
+			if( !$this->meta instanceof hw_post_meta ){
+				$this->meta = new hw_post_meta( $this->object );
 			}
 			if( is_null( $key ) ){
 				return $this->meta;
@@ -130,14 +130,14 @@
 		/**
 		 * Возвращает класс таксономии hiweb_wp_taxonomy
 		 * @param $taxonomy
-		 * @return hw_wp_taxonomy|bool
+		 * @return hw_taxonomy|bool
 		 */
 		public function taxonomy( $taxonomy ){
 			if( !isset( $this->taxonomies[ $taxonomy ] ) ){
 				if( $this->taxonomy_exist( $taxonomy ) ){
 					$this->taxonomies[ $taxonomy ] = false;
 				}
-				$this->taxonomies[ $taxonomy ] = hiweb()->wp()->taxonomy( $taxonomy );
+				$this->taxonomies[ $taxonomy ] = hiweb()->taxonomies()->taxonomy( $taxonomy );
 			}
 
 			return $this->taxonomies[ $taxonomy ];
@@ -145,7 +145,7 @@
 
 
 		/**
-		 * @return hw_wp_taxonomy[]
+		 * @return hw_taxonomy[]
 		 */
 		public function taxonomies(){
 			$taxonomies = get_post_taxonomies( $this->object );
@@ -199,7 +199,7 @@
 	 * Класс для работы с мета-данными одной записи
 	 * Class hw_wp_post_meta
 	 */
-	class hw_wp_post_meta{
+	class hw_post_meta{
 
 		/**
 		 * @return hw_wp_post

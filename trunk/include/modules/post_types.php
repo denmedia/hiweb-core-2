@@ -64,6 +64,305 @@
 		 * @param null $set
 		 * @return $this
 		 */
+		public function description( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function public_( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function hierarchical( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function exclude_from_search( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function publicly_queryable( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function show_ui( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function show_in_menu( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function show_in_nav_menus( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function show_in_admin_bar( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function menu_position( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function menu_icon( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function capability_type( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function map_meta_cap( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function supports( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function register_meta_box_cb( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function taxonomies( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function has_archive( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function rewrite( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function query_var( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function can_export( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function _edit_link( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function _builtin( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function delete_with_user( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
 		public function label( $set = null ){
 			if( !is_null( $set ) ){
 				$this->{__FUNCTION__} = $set;
@@ -170,18 +469,17 @@
 				foreach( $wp_post_types[ $this->_type ] as $key => $val ){
 					if( property_exists( $this, $key ) ){
 						if( $key == 'label' ){
-							$wp_post_types[ $this->_type ]->{$key} = __($this->{$key});
+							$wp_post_types[ $this->_type ]->{$key} = __( $this->{$key} );
 						}elseif( $key == 'labels' ){
 							if( is_object( $val ) )
 								foreach( $val as $label => $name ){
-									$wp_post_types[ $this->_type ]->{$key}->{$label} = __( $this->labels->{$label});
+									$wp_post_types[ $this->_type ]->{$key}->{$label} = __( $this->labels->{$label} );
 								}
 						}else{
 							$wp_post_types[ $this->_type ]->{$key} = $this->{$key};
 						}
 					}
 				}
-				hiweb()->console( $wp_post_types[$this->_type] );
 				//If PT exist
 				/*foreach( (array)get_post_type_object( $this->_type ) as $key => $value ){
 					if( property_exists( $this, $key ) )
@@ -228,19 +526,6 @@
 		 */
 		public function meta_boxes(){
 			return $this->_meta_boxes;
-		}
-
-
-		/**
-		 * Возвращает все таксономии данного типа
-		 * @param string $output - [names|objects]
-		 * @return array
-		 */
-		public function taxonomies( $output = 'names' ){
-			if( is_null( $this->_taxonomies[ $output ] ) ){
-				$this->_taxonomies[ $output ] = get_object_taxonomies( $this->_type, $output );
-			}
-			return $this->_taxonomies[ $output ];
 		}
 
 

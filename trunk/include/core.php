@@ -112,10 +112,10 @@
 			 * Получить класс мета данных
 			 * @param null $field_id
 			 * @param null $screen_id
-			 * @return bool|hw_meta
+			 * @return bool|hw_meta_field
 			 */
 			public function meta( $field_id = null, $screen_id = null ){
-				return $this->module( 'meta', $field_id, true )->get( $screen_id );
+				return $this->module( 'meta' )->get( $field_id );
 			}
 
 
