@@ -24,21 +24,34 @@
 
 		private $id;
 		public $object_type;
-		public $object_id;
+		public $object_id = 0;
+		private $value;
+		private $rows;
+		private $row;
 
 
 		public function __construct( $id ){
 			$this->id = $id;
-			switch( get_class( get_queried_object() ) ){
-				case 'WP_Post':
-					$this->set_post( get_queried_object_id() );
-					break;
-				case 'WP_Term':
-					$this->set_term( get_queried_object_id() );
-					break;
-				case 'WP_User':
-					$this->set_user( get_queried_object_id() );
-					break;
+			if( !function_exists( 'get_queried_object' ) ){
+				hiweb()->console()->warn( 'hiweb()→meta() warn: function[get_queried_object] not exists!' );
+			}else{
+				switch( get_class( get_queried_object() ) ){
+					case 'WP_Post':
+						$this->set_post( get_queried_object_id() );
+						break;
+					case 'WP_Term':
+						$this->set_term( get_queried_object_id() );
+						break;
+					case 'WP_User':
+						$this->set_user( get_queried_object_id() );
+						break;
+					default:
+						$this->object_id = get_option( 'page_on_front' );
+						if( intval( $this->object_id ) < 1 )
+							$this->object_id = get_option( 'page_for_posts' );
+						$this->object_type = 'post';
+						break;
+				}
 			}
 		}
 
@@ -48,16 +61,16 @@
 		 * @return array|hw_post_meta|mixed|null
 		 */
 		public function get(){
-			if( $this->object_type == 'post' ){
-				return get_post_meta( $this->object_id, $this->id, true );
+			if( is_null( $this->value ) ){
+				if( $this->object_type == 'post' ){
+					$this->value = get_post_meta( $this->object_id, $this->id, true );
+				}elseif( $this->object_type == 'term' ){
+					$this->value = get_term_meta( $this->object_id, $this->id, true );
+				}elseif( $this->object_type == 'user' ){
+					$this->value = hiweb()->user( $this->object_id )->meta( $this->id );
+				}
 			}
-			if( $this->object_type == 'term' ){
-				return get_term_meta( $this->object_id, $this->id, true );
-			}
-			if( $this->object_type == 'user' ){
-				return hiweb()->user( $this->object_id )->meta( $this->id );
-			}
-			return null;
+			return $this->value;
 		}
 		
 		
@@ -114,7 +127,60 @@
 		}
 
 
+		/**
+		 * Возвращает TRUE, если есть суб-строки и ячейки
+		 * @return bool
+		 */
 		public function has_rows(){
-			return is_array( $this->get() );
+			return is_array( $this->get() ) && count( $this->get() );
+		}
+
+
+		/**
+		 * Возвращает(устанавливает) текущую строку
+		 * @return mixed|null
+		 */
+		public function the_row(){
+			if( !$this->has_rows() ){
+				return null;
+			}
+			///
+			if( !is_array( $this->rows ) ){
+				$this->rows = $this->get();
+			}
+			///
+			if( count( $this->rows ) == 0 ){
+				return null;
+			}else{
+				$this->row = array_shift( $this->rows );
+				return $this->row;
+			}
+		}
+
+
+		/**
+		 * Получить содержимое суб-ячейки в текущей строке
+		 * @param $subfield_id
+		 * @return null
+		 */
+		public function sub_field( $subfield_id ){
+			if( !$this->has_rows() ){
+				return null;
+			}
+			if( is_null( $this->row ) ){
+				$row = reset( $this->get() );
+			}else{
+				$row = $this->row;
+			}
+			return array_key_exists( $subfield_id, $this->row ) ? $this->row[ $subfield_id ] : null;
+		}
+
+
+		/**
+		 * Выводит суб-ячейку (ECHO)
+		 * @param $subfield_id
+		 */
+		public function the_subfield($subfield_id){
+			echo $this->sub_field($subfield_id);
 		}
 	}

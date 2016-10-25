@@ -115,7 +115,10 @@
 			 * @return bool|hw_meta_field
 			 */
 			public function meta( $field_id = null, $screen_id = null ){
-				return $this->module( 'meta' )->get( $field_id );
+				$meta = $this->module( 'meta' )->get( $field_id );
+				if( !is_null( $screen_id ) )
+					$meta->object_id = $screen_id;
+				return $meta;
 			}
 
 
@@ -154,15 +157,6 @@
 			 */
 			public function post( $postOrId = null ){
 				return $this->module( 'posts' )->get( $postOrId );
-			}
-
-
-			/**
-			 * Получить класс мета боксов
-			 * @return bool|hw_screen_logic
-			 */
-			public function screen_logic(){
-				return $this->module( 'screen_logic', null, true );
 			}
 
 

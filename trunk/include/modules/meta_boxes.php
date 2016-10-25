@@ -1,5 +1,7 @@
 <?php
 
+	include_once 'meta_boxes/screen_logic.php';
+
 
 	class hw_meta_boxes{
 
@@ -50,7 +52,7 @@
 
 		public function __construct( $id ){
 			$this->_id = $id;
-			$this->screen_logic = hiweb()->screen_logic();
+			$this->screen_logic = new hw_screen_logic();
 			///Show META
 			add_action( 'add_meta_boxes', array( $this, 'add_action_add_meta_box' ), 10, 2 );
 			$taxonomies = array_keys( get_taxonomies() );
