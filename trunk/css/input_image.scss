@@ -1,0 +1,49 @@
+@mixin transition() {
+  transition: background-size 2s ease-in;
+  -moz-transition: background-size 2s ease-in;
+  -ms-transition: background-size 2s ease-in;
+  -o-transition: background-size 2s ease-in;
+  -webkit-transition: background-size 2s ease-in;
+}
+
+.hw-input-image {
+
+  .image-select {
+    min-height: 85px;
+    min-width: 85px;
+    position: relative;
+    background: 50% 50% no-repeat #ccc;
+    background-size: cover;
+    @include transition();
+    text-align: center;
+    &:hover {
+      background: 50% 50% no-repeat;
+      background-size: auto;
+      @include transition();
+      .dashicons {
+        font-size: 54px;
+        left: -16px;
+        top: 15px;
+      }
+    }
+
+    .dashicons {
+      font-size: 34px;
+      position: relative;
+      top: 24px; left: -5px;
+    }
+    .dashicons[data-icon="deselect"] {
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  &[data-has-image="1"] .dashicons[data-icon="select"] {
+    display: none;
+  }
+
+  &[data-has-image="0"] .dashicons[data-icon="deselect"] {
+    display: none;
+  }
+
+}

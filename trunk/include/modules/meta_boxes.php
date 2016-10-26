@@ -3,6 +3,9 @@
 	include_once 'meta_boxes/screen_logic.php';
 
 
+	/**
+	 * Class hw_meta_boxes
+	 */
 	class hw_meta_boxes{
 
 		private $meta_boxes = array();
@@ -196,7 +199,7 @@
 		/**
 		 * @param $idOrInput - ID нового поля, либо hw_input, либо hw_input[] (массив полей)
 		 * @param string $type
-		 * @return hw_input|hw_input_text|hw_input_checkbox|hw_input_repeat
+		 * @return hw_input|hw_input_text|hw_input_checkbox|hw_input_repeat|hw_input_image
 		 */
 		public function add_field( $idOrInput, $type = 'text' ){
 			if( $idOrInput instanceof hw_input ){
@@ -236,11 +239,13 @@
 
 
 		protected function the_post_update( $post_id = null ){
+			if( count( $_POST ) == 0 || wp_is_post_revision( $post_id ) )
+				return;
 			if( !is_null( $this->callback_save_post ) )
 				return call_user_func( $this->callback_save_post, $post_id );else{
 				if( is_array( $this->fields ) )
 					foreach( $this->fields as $id => $field ){
-						update_post_meta( $post_id, $field->name(), $_POST[ $field->name() ] );
+						update_post_meta( $post_id, $field->id(), isset( $_POST[ $field->id() ] ) ? $_POST[ $field->id() ] : null );
 					}
 			}
 			return $post_id;
@@ -287,9 +292,7 @@
 		protected function the_taxonomy_update( $term_id ){
 			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
-				if( isset( $_POST[ $field->name() ] ) ){
-					update_term_meta( $term_id, $field->name(), $_POST[ $field->name() ] );
-				}
+				update_term_meta( $term_id, $field->id(), isset( $_POST[ $field->id() ] ) ? $_POST[ $field->id() ] : null );
 			}
 		}
 
@@ -320,9 +323,7 @@
 		protected function the_user_update( $new_user_id = null ){
 			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
-				if( isset( $_POST[ $field->name() ] ) ){
-					$B = hiweb()->user( isset( $_POST['user_id'] ) ? $_POST['user_id'] : $new_user_id )->meta_update( $field->name(), $_POST[ $field->name() ] );
-				}
+				hiweb()->user( isset( $_POST['user_id'] ) ? $_POST['user_id'] : $new_user_id )->meta_update( $field->id(), $_POST[ $field->id() ] );
 			}
 		}
 

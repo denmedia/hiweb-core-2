@@ -70,6 +70,8 @@
 		/** @var string */
 		protected $value;
 		/** @var string */
+		protected $default;
+		/** @var string */
 		protected $label;
 		/** @var string */
 		protected $description;
@@ -87,6 +89,11 @@
 			$this->set_id( $id );
 			$this->type = trim( $type ) == '' ? 'text' : $type;
 			$this->global_id = md5( implode( '+', array( $this->id, $this->type, microtime() ) ) );
+			$this->init();
+		}
+
+
+		protected function init(){
 		}
 
 
@@ -196,13 +203,15 @@
 		public function label( $label = null ){
 			if( !is_null( $label ) ){
 				$this->label = $label;
+				if( trim( $this->title ) == '' )
+					$this->title = $label;
 				return $this;
 			}else return $this->label;
 		}
 
 
 		/**
-		 * Установить VALUE, либо
+		 * Установить VALUE, либо возвращает его
 		 * @param null $value - установить имя поля
 		 * @return string|$this
 		 */
@@ -210,12 +219,38 @@
 			if( !is_null( $value ) ){
 				$this->value = $value;
 				return $this;
-			}else return $this->value;
+			}else{
+			}
+			return ( ( is_array( $this->value ) && count( $this->value ) == 0 ) || hiweb()->string()->is_empty( $this->value ) ) ? $this->default_value() : $this->value;
 		}
 
 
+		/**
+		 * Выводит значение поля
+		 */
 		public function the_value(){
 			echo $this->value();
+		}
+
+
+		/**
+		 * Установить DEFAULT VALUE, либо возвращает его
+		 * @param null $value - установить имя поля
+		 * @return string|$this
+		 */
+		public function default_value( $value = null ){
+			if( !is_null( $value ) ){
+				$this->default = $value;
+				return $this;
+			}else return $this->default;
+		}
+
+
+		/**
+		 * Выводит default-значение поля
+		 */
+		public function the_default(){
+			echo $this->default_value();
 		}
 
 
@@ -228,14 +263,14 @@
 			if( !is_null( $placeholder ) ){
 				$this->placeholder = $placeholder;
 				return $this;
-			}else return $this->placeholder;
+			}else return trim( (string)$this->placeholder ) == '' ? $this->default_value() : $this->placeholder;
 		}
 
 
 		public function get_tags( array $tags = array( 'type', 'id', 'name', 'title', 'value' ), $use_additionTags = true, $returnStr = true ){
 			$R = array();
 			if( $use_additionTags && is_array( $tags ) && is_array( $this->tags ) ){
-				$tags = array_merge( $tags, array_keys($this->tags) );
+				$tags = array_merge( $tags, array_keys( $this->tags ) );
 			}
 			foreach( $tags as $tag ){
 				if( array_key_exists( $tag, $this->tags ) ){
@@ -259,21 +294,54 @@
 
 		/**
 		 * Возвращает HTML
+		 * @param null $arguments - Дополнительные аргументы
 		 * @return string
 		 */
-		public function get(){
+		public function get( $arguments = null ){
 			return '<input ' . $this->get_tags() . '/>';
 		}
 
 
 		/**
 		 * Выводит HTML
+		 * @param null $arguments - Дополнительные аргументы
 		 * @return string
 		 */
-		public function the(){
+		public function the( $arguments = null ){
 			$html = $this->get();
 			echo $html;
 			return $html;
+		}
+
+
+		/**
+		 * Возвращает
+		 * @return string
+		 */
+		public function get_content( $arguments = null ){
+			return $this->get( $arguments );
+		}
+
+
+		/**
+		 * @return string
+		 */
+		public function the_content( $arguments = null ){
+			$content = $this->get_content( $arguments );
+			echo $content;
+			return $content;
+		}
+
+
+		/**
+		 * @param $new_id
+		 * @return $this
+		 */
+		public function copy( $new_id ){
+			hiweb()->inputs()->inputs[ $new_id ] = clone $this;
+			hiweb()->inputs()->inputs[ $new_id ]->id = $new_id;
+			hiweb()->inputs()->inputs[ $new_id ]->name = $new_id;
+			return hiweb()->inputs()->inputs[ $new_id ];
 		}
 
 	}

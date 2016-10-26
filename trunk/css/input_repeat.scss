@@ -1,35 +1,32 @@
 .hw-input-repeat {
-
-  padding: 0; background: #eee; border: 1px dotted grey;
+  padding: 0; background: #ddd; border-top: 1px dotted grey; border-bottom: 1px dotted grey;
 
   table {
-    width: 100%; border: transparent 1px solid;
-    tr[data-source] {
-      display: none;
-    }
-    .col, .col-control {
-      width: 20px;
-    }
-    th { background: #777; color: #fff; font-weight: 500; padding: 4px 8px; }
-    td { text-align: center; border-bottom: 1px dotted grey; border-right: 1px dotted grey; }
+    width: 100%; border-collapse: collapse; padding: 0;
+    td { text-align: center; }
 
-    span[data-click] { cursor: pointer;
-      &:hover { opacity: 0.7; -moz-opacity: 0.7; }
-    }
+    .source { display: none; }
 
-    [data-help="first"] td {
-      font-size: 140%; height: 100px;
+    .message td { text-align: center; padding: 12px 16px; font-size: 16px; }
+
+    .drag, .control {
+      width: 35px;
+    }
+    .drag-handle {
+      cursor: move;
+      &:hover { color: #aaa; }
     }
 
-    [data-drag] {
-      cursor: n-resize;
+    .field {
+      border-right: 1px solid #ccc; padding: 3px 6px;
+      &:nth-last-child(2) { border-right: none; }
     }
 
-  }
+    .row {
+      border-bottom: 1px dashed #ccc; background: #eee; margin-bottom: 2px; min-height: 35px;
+      &:hover { background-color: #ddd; }
+    }
 
-
-  .bottom-control {
-    text-align: right;
   }
 
 }

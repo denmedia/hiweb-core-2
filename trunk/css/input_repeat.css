@@ -1,34 +1,37 @@
 .hw-input-repeat {
   padding: 0;
-  background: #eee;
-  border: 1px dotted grey; }
+  background: #ddd;
+  border-top: 1px dotted grey;
+  border-bottom: 1px dotted grey; }
   .hw-input-repeat table {
     width: 100%;
-    border: transparent 1px solid; }
-    .hw-input-repeat table tr[data-source] {
-      display: none; }
-    .hw-input-repeat table .col, .hw-input-repeat table .col-control {
-      width: 20px; }
-    .hw-input-repeat table th {
-      background: #777;
-      color: #fff;
-      font-weight: 500;
-      padding: 4px 8px; }
+    border-collapse: collapse;
+    padding: 0; }
     .hw-input-repeat table td {
+      text-align: center; }
+    .hw-input-repeat table .source {
+      display: none; }
+    .hw-input-repeat table .message td {
       text-align: center;
-      border-bottom: 1px dotted grey;
-      border-right: 1px dotted grey; }
-    .hw-input-repeat table span[data-click] {
-      cursor: pointer; }
-      .hw-input-repeat table span[data-click]:hover {
-        opacity: 0.7;
-        -moz-opacity: 0.7; }
-    .hw-input-repeat table [data-help="first"] td {
-      font-size: 140%;
-      height: 100px; }
-    .hw-input-repeat table [data-drag] {
-      cursor: n-resize; }
-  .hw-input-repeat .bottom-control {
-    text-align: right; }
+      padding: 12px 16px;
+      font-size: 16px; }
+    .hw-input-repeat table .drag, .hw-input-repeat table .control {
+      width: 35px; }
+    .hw-input-repeat table .drag-handle {
+      cursor: move; }
+      .hw-input-repeat table .drag-handle:hover {
+        color: #aaa; }
+    .hw-input-repeat table .field {
+      border-right: 1px solid #ccc;
+      padding: 3px 6px; }
+      .hw-input-repeat table .field:nth-last-child(2) {
+        border-right: none; }
+    .hw-input-repeat table .row {
+      border-bottom: 1px dashed #ccc;
+      background: #eee;
+      margin-bottom: 2px;
+      min-height: 35px; }
+      .hw-input-repeat table .row:hover {
+        background-color: #ddd; }
 
 /*# sourceMappingURL=input_repeat.css.map */

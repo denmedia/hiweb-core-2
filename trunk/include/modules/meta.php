@@ -26,8 +26,12 @@
 		public $object_type;
 		public $object_id = 0;
 		private $value;
+		/** @var  hw_meta_field_row[] */
 		private $rows;
+		/** @var  hw_meta_field_row */
 		private $row;
+		/** @var array */
+		private $cols;
 
 
 		public function __construct( $id ){
@@ -132,25 +136,50 @@
 		 * @return bool
 		 */
 		public function has_rows(){
-			return is_array( $this->get() ) && count( $this->get() );
+			if( !is_array( $this->cols ) ){
+				$this->cols = array();
+				$value = $this->get();
+				if( is_array( $value ) && count( $value ) > 0 ){
+					foreach( $value as $row ){
+						if( is_array( $row ) )
+							foreach( $row as $col_id => $col_val ){
+								$this->cols[] = $col_id;
+							}
+					}
+				}
+			}
+			return ( count( $this->cols ) > 0 );
+		}
+
+
+		/**
+		 * Возвращает массив ID колонок (в любом случае). Для определения наличия полей, используйте has_rows()
+		 * @return array
+		 */
+		public function cols(){
+			$this->has_rows();
+			return $this->cols;
 		}
 
 
 		/**
 		 * Возвращает(устанавливает) текущую строку
-		 * @return mixed|null
+		 * @return false|hw_meta_field_row
 		 */
 		public function the_row(){
 			if( !$this->has_rows() ){
-				return null;
+				return false;
 			}
 			///
 			if( !is_array( $this->rows ) ){
-				$this->rows = $this->get();
+				foreach( $this->get() as $row_values ){
+					if( is_array( $row_values ) )
+						$this->rows[] = new hw_meta_field_row( $this, $row_values );else hiweb()->console()->warn( 'hiweb()→meta()→the_row() error: once of the rows is not array!', 1 );
+				}
 			}
 			///
 			if( count( $this->rows ) == 0 ){
-				return null;
+				return false;
 			}else{
 				$this->row = array_shift( $this->rows );
 				return $this->row;
@@ -180,7 +209,54 @@
 		 * Выводит суб-ячейку (ECHO)
 		 * @param $subfield_id
 		 */
-		public function the_subfield($subfield_id){
-			echo $this->sub_field($subfield_id);
+		public function the_subfield( $subfield_id ){
+			echo $this->sub_field( $subfield_id );
+		}
+	}
+
+
+	class hw_meta_field_row{
+
+		/** @var  hw_meta_field */
+		private $parent_field;
+		private $row_values = array();
+
+
+		public function __construct( hw_meta_field $field, array $row_values ){
+			$this->parent_field = $field;
+			$this->row_values = $row_values;
+		}
+
+
+		/**
+		 * @return array
+		 */
+		public function cols(){
+			$R = array();
+			if( is_array( $this->parent_field->cols() ) )
+				foreach( $this->parent_field->cols() as $col_id ){
+					$R[ $col_id ] = array_key_exists( $col_id, $this->row_values ) ? $this->row_values[ $col_id ] : null;
+				}
+			return $R;
+		}
+
+
+		/**
+		 * @param $col_id
+		 * @return mixed|null
+		 */
+		public function get_cell( $col_id ){
+			return array_key_exists( $col_id, $this->row_values ) ? $this->row_values[ $col_id ] : null;
+		}
+
+
+		/**
+		 * @param $col_id
+		 * @return mixed|null
+		 */
+		public function the_cell( $col_id ){
+			$value = $this->get_cell( $col_id );
+			echo $value;
+			return $value;
 		}
 	}

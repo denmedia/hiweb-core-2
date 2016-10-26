@@ -209,7 +209,7 @@
 		/**
 		 * @var array
 		 */
-		private $meta;
+		private $meta = array();
 
 
 		public function __construct( $postOrId ){

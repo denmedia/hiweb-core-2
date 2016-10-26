@@ -3,56 +3,77 @@
 
 	class hw_input_repeat extends hw_input{
 
-		private $fields = array();
+		/** @var hw_input[]|hw_input_checkbox[]|hw_input_image[] */
+		private $cols = array();
 
 
-		public function cols( $fields ){
-			if( is_array( $fields ) ){
-				foreach( $fields as $field ){
-					$field->tags( 'data-col-id', $field->id() );
-					$field->tags( 'name' );
+		/**
+		 * Установить повторяющиеся поля
+		 * @param null $inputs
+		 * @return hw_input[]|hw_input_checkbox[]|hw_input_image[]
+		 */
+		public function cols( $inputs = null ){
+			if( is_array( $inputs ) ){
+				/** @var hw_input $field */
+				foreach( $inputs as $field ){
+					$id = $field->id();
+					$this->cols[ $id ] = $field->copy( hiweb()->string()->rand() );
+					$this->cols[ $id ]->tags( 'data-col-id', $id );
+					$this->cols[ $id ]->tags( 'name' );
 				}
-				$this->fields = $fields;
 			}
+			return $this->cols;
 		}
 
 
-		public function get(){
-			//todo
-			hiweb()->console( $this->value() );
+		private function get_rowNull(){
+			$R = '<th class="drag"></th>';
+			if( is_array( $this->cols ) && count( $this->cols ) > 0 ){
+				foreach( $this->cols as $field ){
+					$R .= '<th class="field">' . $field->title() . '</th>';
+				}
+			}else
+				$R .= '<th></th>';
+			$R .= '<th class="control"><span class="button button-small" data-click="add"><i class="dashicons dashicons-plus-alt"/></span></th>';
+			return '<thead><tr class="row">' . $R . '</tr>' . $this->get_row( array(), array( 'source' ) ) . '</thead>';
+		}
+
+
+		private function get_row( $row = array(), $additionClass = array() ){
+			$R = '<th class="drag-handle" title="Move row"><i class="dashicons dashicons-sort"/></th>';
+			if( is_array( $this->cols ) )
+				foreach( $this->cols as $id => $field ){
+					if( array_key_exists( $id, $row ) )
+						$field->value( $row[ $id ] );
+					$R .= '<td class="field">' . $field->get() . '</td>';
+				}else $R .= '<td></td>';
+			$R .= '<th class="control"><span class="button button-small button-link" data-click="remove" title="Remove row"><i class="dashicons dashicons-dismiss"/></span></th>';
+			return '<tr class="row ' . implode( $additionClass ) . '">' . $R . '</tr>';
+		}
+
+
+		/**
+		 * Возвращает TRUE, если имеются поля
+		 * @return bool|int
+		 */
+		private function have_rows(){
+			return ( is_array( $this->value ) ? count( $this->value ) : false );
+		}
+
+
+		public function get( $arguments = null ){
 			hiweb()->css( HIWEB_URL_CSS . '/input_repeat.css' );
 			hiweb()->js( HIWEB_URL_JS . '/input_repeat.js', array( 'jquery-ui-sortable' ) );
-			$R = '<div class="hw-input-repeat" data-name="' . $this->name . '"><input type="hidden" id="' . $this->id . '" name="' . $this->name . '">';
-			$R .= '<table class="hw-input-repeat-table"><thead><th class="col-drag"></th>';
-			///
-			$S = '';
-			if( is_array( $this->fields ) )
-				foreach( $this->fields as $field ){
-					$R .= '<th>' . $field->label() . '</th>';
-					$S .= '<td>' . $field->get() . '</td>';
+			$R = '';
+			$R .= $this->get_rowNull() . '<tbody class="wrap">';
+			if( $this->have_rows() != false ){
+				foreach( $this->value as $row ){
+					$R .= $this->get_row( $row );
 				}
-			$S = '<tr data-source><td data-drag><i class="dashicons dashicons-sort"></i></td>' . $S . '<td><span data-click="remove"><i class="dashicons dashicons-no-alt"></i></button></td></tr>';
-			///
-			$R .= '<th class="col-control"><span data-click="add"><i class="dashicons dashicons-plus-alt"></i></span></th></thead><tbody data-wrap>' . $S;
-			$value = $this->value();
-			if( is_array( $value ) && count( $value ) > 0 ){
-				foreach( $value as $row_index => $rows ){
-					$R .= '<tr><td></td>';
-					if( is_array( $this->fields ) && is_array( $rows ) )
-						foreach( $this->fields as $field ){
-							$field->tags( 'name', $this->id() . '[' . $row_index . '][' . $field->id() . ']' );
-							if( array_key_exists( $field->id(), $rows ) )
-								$field->value( $rows[ $field->id() ] );else $field->value( '' );
-							$R .= '<td>' . $field->get() . '</td>';
-						}
-					$R .= '<td></td></tr>';
-				}
-			}else{
-				$R .= '<tr data-help="first"><td colspan="' . ( count( $this->fields ) + 2 ) . '">Нажмите кнопку <span data-click="add"><i class="dashicons dashicons-plus-alt"></i></span>, чтобы добавить первое поле</tr>';
 			}
-			///
-			$R .= '</tbody></table></div>';
-			return $R;
+			$R .= '<tr class="message" style=" ' . ( $this->have_rows() == 0 ? '' : 'display:none;' ) . '"><td colspan="' . ( count( $this->cols ) + 2 ) . '">For add first row, press PLUS button...</td></tr>';
+			$R .= '</tbody>';
+			return '<div class="hw-input-repeat" id="' . $this->id . '"><table>' . $R . '</table></div>';
 		}
 
 	}

@@ -17,19 +17,20 @@
 
 	///
 	$field1 = hiweb()->input( 'test1' )->label( 'Тест-поле 1' );
-	$field2 = hiweb()->input( 'test2', 'image' );
+	$field2 = hiweb()->input( 'test2', 'image' )->label('Изображение');
 	$meta_box = hiweb()->meta_box( 'test' )->title( 'Пробное репит-поле' );
-	$field = $meta_box->add_field( 'test', 'repeat' );
-	$field->cols( array( $field1, $field2 ) );
+	$field_child = hiweb()->input( 'test', 'repeat' );
+	$field_child->cols( array( $field1, $field2 ) );
 	$field = $meta_box->add_field( 'test3', 'repeat' );
-	$field->cols( array( $field2, $field1 ) );
+	$field->cols( array( $field2, $field1, $field_child ) );
 	$meta_box->screen()->post_type()->or_in()->taxonomies()->or_in()->user_edit();
-	
+	$meta_box->add_field('test_image','image')->label('Одиночная картинка');
+
 	add_action( 'wp', function(){
 
 
 
-		if( hiweb()->meta( 'test3', 1 )->has_rows() ){
+		if( hiweb()->meta( 'test3' )->has_rows() ){
 			while( hiweb()->meta( 'test3' )->the_row() ){
 				?><p><?php hiweb()->meta('test3')->the_subfield('test1');?></p><?php
 			}

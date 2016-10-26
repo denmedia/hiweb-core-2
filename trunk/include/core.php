@@ -98,13 +98,21 @@
 
 
 			/**
+			 * @return hw_inputs
+			 */
+			public function inputs(){
+				return $this->module( 'inputs' );
+			}
+
+
+			/**
 			 * Корневой класс для работы с полями ввода
 			 * @param null $id
 			 * @param string $type
 			 * @return hw_input|hw_input_text|hw_input_checkbox|hw_input_repeat
 			 */
 			public function input( $id = null, $type = 'text' ){
-				return $this->module( 'inputs' )->get( $id, $type );
+				return $this->inputs()->get( $id, $type );
 			}
 
 
