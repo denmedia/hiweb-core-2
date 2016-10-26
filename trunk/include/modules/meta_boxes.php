@@ -237,7 +237,7 @@
 					<div class="hw-meta-box-section" data-id="<?php echo $field->id() ?>" data-block="<?php echo $field->width() == 100 ? '1' : '0' ?>" style="min-width: <?php echo $field->width() ?>%"><?php
 					$value = hiweb()->post( $post )->meta( $field->name() );
 					$field->value( $value );
-					?><div><strong><?php echo $field->title() ?></strong></div><label>
+					?><p><strong><?php echo $field->title() ?></strong></p><label>
 						<?php $field->the();
 							echo ' ' . $field->label(); ?>
 					</label><div class="howto"><?php echo $field->description() ?></div></div><?php
