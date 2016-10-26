@@ -83,6 +83,8 @@
 		protected $type;
 		/** @var array */
 		protected $tags = array();
+		/** @var int */
+		protected $width = 100;
 
 
 		public function __construct( $id = null, $type = 'text' ){
@@ -129,8 +131,31 @@
 
 
 		/**
+		 * Установить/получить ширину элемента в блоке
+		 * @param null $width_percent
+		 * @return int|hw_input|hw_input_image|hw_input_repeat
+		 */
+		public function width( $width_percent = null ){
+			if( !is_null( $width_percent ) ){
+				if( is_numeric( $width_percent ) ){
+					$width_percent = intval( $width_percent );
+					if( $width_percent < 1 ){
+						$width_percent = 1;
+					}
+					if( $width_percent > 100 ){
+						$width_percent = 100;
+					}
+					$this->width = $width_percent;
+				}
+				return $this;
+			}
+			return $this->width;
+		}
+
+
+		/**
 		 * @param null $set
-		 * @return string|$this
+		 * @return string|hw_input|hw_input_repeat|hw_input_repeat
 		 */
 		public function description( $set = null ){
 			if( !is_null( $set ) ){
@@ -145,7 +170,7 @@
 		 * Усттановить дополнительные тэги HTML, например array('class' => 'class_name')
 		 * @param null $key
 		 * @param null $value
-		 * @return $this|array
+		 * @return $this|array|hw_input_repeat|hw_input_repeat
 		 */
 		public function tags( $key = null, $value = null ){
 			if( is_string( $key ) ){
@@ -158,7 +183,7 @@
 
 		/**
 		 * @param null $set
-		 * @return $this|string
+		 * @return $this|string|hw_input_repeat|hw_input_repeat
 		 */
 		public function type( $set = null ){
 			if( is_string( $set ) ){
@@ -172,7 +197,7 @@
 		/**
 		 * Установить тэг NAME, либо
 		 * @param null $name - установить имя поля
-		 * @return string|$this
+		 * @return string|$this|hw_input_repeat|hw_input_repeat
 		 */
 		public function name( $name = null ){
 			if( !is_null( $name ) ){
@@ -185,7 +210,7 @@
 		/**
 		 * Установить TITLE
 		 * @param null $title - установить название поля
-		 * @return string|hw_input
+		 * @return string|hw_input|hw_input_repeat|hw_input_repeat
 		 */
 		public function title( $title = null ){
 			if( !is_null( $title ) ){
@@ -198,13 +223,14 @@
 		/**
 		 * Установить LABEL
 		 * @param null $label - установить название поля
-		 * @return string|hw_input
+		 * @return string|hw_input|hw_input_repeat|hw_input_repeat
 		 */
 		public function label( $label = null ){
 			if( !is_null( $label ) ){
 				$this->label = $label;
-				if( trim( $this->title ) == '' )
+				if( trim( $this->title ) == '' ){
 					$this->title = $label;
+				}
 				return $this;
 			}else return $this->label;
 		}
@@ -213,7 +239,7 @@
 		/**
 		 * Установить VALUE, либо возвращает его
 		 * @param null $value - установить имя поля
-		 * @return string|$this
+		 * @return string|$this|hw_input_repeat|hw_input_repeat
 		 */
 		public function value( $value = null ){
 			if( !is_null( $value ) ){
@@ -241,6 +267,8 @@
 		public function default_value( $value = null ){
 			if( !is_null( $value ) ){
 				$this->default = $value;
+				if( trim( (string)$this->placeholder ) == '' )
+					$this->placeholder = $value;
 				return $this;
 			}else return $this->default;
 		}
@@ -263,11 +291,11 @@
 			if( !is_null( $placeholder ) ){
 				$this->placeholder = $placeholder;
 				return $this;
-			}else return trim( (string)$this->placeholder ) == '' ? $this->default_value() : $this->placeholder;
+			}else return $this->placeholder;
 		}
 
 
-		public function get_tags( array $tags = array( 'type', 'id', 'name', 'title', 'value' ), $use_additionTags = true, $returnStr = true ){
+		public function get_tags( array $tags = array( 'type', 'id', 'name', 'title', 'value', 'placeholder' ), $use_additionTags = true, $returnStr = true ){
 			$R = array();
 			if( $use_additionTags && is_array( $tags ) && is_array( $this->tags ) ){
 				$tags = array_merge( $tags, array_keys( $this->tags ) );
@@ -342,6 +370,15 @@
 			hiweb()->inputs()->inputs[ $new_id ]->id = $new_id;
 			hiweb()->inputs()->inputs[ $new_id ]->name = $new_id;
 			return hiweb()->inputs()->inputs[ $new_id ];
+		}
+
+
+		/**
+		 * Возвращает TRUE, если имеются поля
+		 * @return bool|int
+		 */
+		public function have_rows(){
+			return ( is_array( $this->value ) ? count( $this->value ) : false );
 		}
 
 	}

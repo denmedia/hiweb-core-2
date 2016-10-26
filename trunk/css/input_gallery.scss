@@ -1,0 +1,53 @@
+.hw-input-gallery {
+  margin-bottom: 25px; background: #fff;
+  border: 1px dotted #eee;
+  padding: 5px;
+  -webkit-box-shadow: inset 2px 2px 15px 0px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 2px 2px 15px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 2px 2px 15px 0px rgba(0, 0, 0, 0.1);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  text-align: center;
+
+  a.button {
+    float: left;
+    display: inline-block;
+    margin: 0 5px 5px 0;
+    min-width: 85px;
+    min-height: 85px;
+    text-align: center;
+    background: #ccc 50% 50% no-repeat;
+    background-size: cover;
+    -webkit-box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
+
+    &[href="#source"] {
+      display: none;
+    }
+
+    .dashicons {
+      font-size: 34px;
+      position: relative;
+      top: 50%;
+      margin-top: -18px;
+      margin-left: -14px;
+      text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7);
+    }
+
+    &:hover {
+      background: 50% 50% no-repeat  #ccc;
+      background-size: cover;
+      .dashicons {
+        font-size: 54px;
+        margin-top: -28px;
+        margin-left: -34px;
+      }
+    }
+
+  }
+
+  .clear { clear: both; }
+
+}

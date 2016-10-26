@@ -15,27 +15,16 @@
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
 
-	///
-	$field1 = hiweb()->input( 'test1' )->label( 'Тест-поле 1' );
-	$field2 = hiweb()->input( 'test2', 'image' )->label('Изображение');
-	$meta_box = hiweb()->meta_box( 'test' )->title( 'Пробное репит-поле' );
-	$field_child = hiweb()->input( 'test', 'repeat' );
-	$field_child->cols( array( $field1, $field2 ) );
-	$field = $meta_box->add_field( 'test3', 'repeat' );
-	$field->cols( array( $field2, $field1, $field_child ) );
-	$meta_box->screen()->post_type()->or_in()->taxonomies()->or_in()->user_edit();
-	$meta_box->add_field('test_image','image')->label('Одиночная картинка');
 
-	add_action( 'wp', function(){
-
-
-
-		if( hiweb()->meta( 'test3' )->has_rows() ){
-			while( hiweb()->meta( 'test3' )->the_row() ){
-				?><p><?php hiweb()->meta('test3')->the_subfield('test1');?></p><?php
-			}
-		}
-
-
-
-	} );
+	$meta = hiweb()->meta_box('product_settings','Настройки товара');
+	$meta->screen()->post_type('post');
+	$meta->add_field('product_image','image')->title('Изображение товара')->description('Выберите изображение для своего продукта')->width(35)->preview_size(400,150);
+	$meta->add_field('product_price')->title('Стоимость товара')->label(' руб.')->default_value(0)->width(35);
+	$meta->add_field('product_price_2')->title('Добавочная стоимость')->label(' руб.')->default_value(0)->width(35);
+	$meta->add_field('product_gallery','gallery')->title('Остальные фотографии');
+	$meta->add_field('product_addition','repeat')->title('Дополнительно к товару')->cols(array(
+		hiweb()->input('enable','checkbox'),
+		hiweb()->input('color')->title('Цвет')->placholder('Название цвета'),
+		hiweb()->input('image','image')->title('Изорбражение цвета'),
+		hiweb()->input('price')->title('Стоимость')->default_value(0)
+	));

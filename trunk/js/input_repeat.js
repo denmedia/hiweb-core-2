@@ -23,8 +23,16 @@ var hw_input_repeat = {
             },
             distance: 5,
             handle: '.drag-handle',
-            opacity: 0.7,
-            revert: true
+            helper: function (e, ui) {
+                ui.find('th, td').each(function () {
+                    jQuery(this).width(jQuery(this).width());
+                });
+                return ui;
+            },
+            revert: true,
+            start: function (e, elements) {
+                elements.placeholder.height(elements.helper.height());
+            }
         });
         jQuery(hw_input_repeat.selector + ' tbody').disableSelection();
     },

@@ -21,7 +21,7 @@ var hw_input_image = {
             title: 'Выбор изображения',
             library: {type: 'image'},
             multiple: false,
-            button: {text: 'Insert'}
+            button: {text: 'Select Image'}
         });
         gallery_window.on('select', function () {
             hw_input_image.select_image(current, gallery_window.state().get('selection').first().toJSON());
@@ -32,7 +32,7 @@ var hw_input_image = {
     select_image: function (current, selection) {
         var input = current.find('input');
         var image_preview = current.find('.image-select');
-        var thumbnail_url = selection.sizes.thumbnail.url;
+        var thumbnail_url = selection.sizes.large.url;
         var media_id = selection.id;
         input.val(media_id);
         image_preview.css('background-image', 'url(' + thumbnail_url + ')').attr('data-click','deselect');

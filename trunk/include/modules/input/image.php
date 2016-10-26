@@ -5,6 +5,8 @@
 
 		private $has_image = array();
 
+		private $preview_width = 150;
+		private $preview_height = 80;
 
 
 		/**
@@ -25,11 +27,28 @@
 
 
 		/**
+		 * @param int $width
+		 * @param int $height
+		 * @return array|hw_input_image
+		 */
+		public function preview_size( $width = null, $height = null ){
+			if( !is_null( $width ) ){
+				if( is_numeric( $width ) )
+					$this->preview_width = $width;
+				if( is_numeric( $height ) )
+					$this->preview_height = $height;
+				return $this;
+			}
+			return array( $this->preview_width, $this->preview_height );
+		}
+
+
+		/**
 		 * Возвращает TRUE, если файл существует
 		 * @param string $size
 		 * @return bool
 		 */
-		public function has_image( $size = 'thumbnail' ){
+		public function have_image( $size = 'thumbnail' ){
 			$key = json_encode( $size );
 			if( array_key_exists( $key, $this->has_image ) ){
 				return $this->has_image[ $key ];
@@ -52,9 +71,9 @@
 			hiweb()->js( HIWEB_URL_JS . '/input_image.js' );
 			hiweb()->css( HIWEB_URL_CSS . '/input_image.css' );
 
-			return '<div class="hw-input-image" id="' . $this->id . '" data-has-image="' . ( $this->has_image( $size ) ? '1' : '0' ) . '">
+			return '<div class="hw-input-image" id="' . $this->id . '" data-has-image="' . ( $this->have_image( $this->preview_size() ) ? '1' : '0' ) . '">
 <input type="hidden" ' . $this->get_tags( array( 'value', 'id', 'name', 'title' ) ) . '/>
-	<a href="#" class="button image-select" title="Select/Deselect image..." data-click="' . ( $this->has_image( $size ) ? 'deselect' : 'select' ) . '" style="' . ( $this->has_image() ? 'background-image:url(' . $this->get_src() . ')' : '' ) . '">
+	<a href="#" class="button image-select" title="Select/Deselect image..." data-click="' . ( $this->have_image( $this->preview_size() ) ? 'deselect' : 'select' ) . '" style="width: ' . $this->preview_width . 'px; height: ' . $this->preview_height . 'px; ' . ( $this->have_image() ? 'background-image:url(' . $this->get_src($this->preview_size()) . ')' : '' ) . '">
 	<i class="dashicons dashicons-format-image" data-icon="select"></i>
 	<i class="dashicons dashicons-no-alt" data-icon="deselect"></i>
 	</a>

@@ -1,0 +1,18 @@
+.hw-meta-box-section {
+  margin: 5px 0;
+
+  &[data-block="0"] {
+    float: left; vertical-align: top; padding-right: 15px;
+  }
+
+  &[data-block="1"] {
+    border-bottom: 1px solid #eee;
+  }
+
+  p { margin-top: 0; }
+
+}
+
+.hw-meta-box-section-clear {
+  clear: both;
+}

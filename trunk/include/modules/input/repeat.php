@@ -52,15 +52,6 @@
 		}
 
 
-		/**
-		 * Возвращает TRUE, если имеются поля
-		 * @return bool|int
-		 */
-		private function have_rows(){
-			return ( is_array( $this->value ) ? count( $this->value ) : false );
-		}
-
-
 		public function get( $arguments = null ){
 			hiweb()->css( HIWEB_URL_CSS . '/input_repeat.css' );
 			hiweb()->js( HIWEB_URL_JS . '/input_repeat.js', array( 'jquery-ui-sortable' ) );
