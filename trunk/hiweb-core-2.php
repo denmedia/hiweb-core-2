@@ -15,16 +15,13 @@
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
 
+	//todo
 
-	$meta = hiweb()->meta_box('product_settings','Настройки товара');
-	$meta->screen()->post_type('post');
-	$meta->add_field('product_image','image')->title('Изображение товара')->description('Выберите изображение для своего продукта')->width(35)->preview_size(400,150);
-	$meta->add_field('product_price')->title('Стоимость товара')->label(' руб.')->default_value(0)->width(35);
-	$meta->add_field('product_price_2')->title('Добавочная стоимость')->label(' руб.')->default_value(0)->width(35);
-	$meta->add_field('product_gallery','gallery')->title('Остальные фотографии');
-	$meta->add_field('product_addition','repeat')->title('Дополнительно к товару')->cols(array(
-		hiweb()->input('enable','checkbox'),
-		hiweb()->input('color')->title('Цвет')->placholder('Название цвета'),
-		hiweb()->input('image','image')->title('Изорбражение цвета'),
-		hiweb()->input('price')->title('Стоимость')->default_value(0)
-	));
+	/*$page = hiweb()->admin()->menu()->add_page( 'test' )->function_echo( function(){
+		$form = hiweb()->form( 'test' );
+		$form->field( 'test_field_1' )->title( 'Test field...' );
+		$form->the();
+	} );*/
+
+	$page = hiweb()->admin()->menu()->add_theme_page( 'test' )->menu_title( 'Test' );
+	$page->add_option( 'test_option' );

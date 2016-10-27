@@ -6,7 +6,12 @@
 		/**
 		 * @var array
 		 */
-		public $inputs = array();
+		private $inputs = array();
+
+
+		public function get_all(){
+			return $this->inputs;
+		}
 
 
 		/**
@@ -15,8 +20,9 @@
 		 */
 		private function inc( $type ){
 			$path = HIWEB_DIR_MODULES . '/input/' . $type . '.php';
-			if( file_exists( $path ) && is_file( $path ) && is_readable( $path ) )
-				include_once $path;else{
+			if( file_exists( $path ) && is_file( $path ) && is_readable( $path ) ){
+				include_once $path;
+			}else{
 				hiweb()->console()->warn( 'Файла [' . $path . '] нет', true );
 			}
 		}
@@ -45,14 +51,28 @@
 
 		/**
 		 * @param $id
+		 * @return bool
+		 */
+		public function is_exist( $id ){
+			return array_key_exists( $id, $this->inputs );
+		}
+
+
+		/**
+		 * @param $id
 		 * @param string $type
 		 * @return hw_input
 		 */
 		public function get( $id, $type = 'text' ){
-			if( !array_key_exists( $id, $this->inputs ) ){
+			if( !$this->is_exist( $id ) ){
 				$this->inputs[ $id ] = $this->make( $id, $type );
 			}
 			return $this->inputs[ $id ];
+		}
+
+
+		public function put( hw_input $input ){
+			$this->inputs[ $input->id() ] = $input;
 		}
 
 
@@ -366,10 +386,11 @@
 		 * @return $this
 		 */
 		public function copy( $new_id ){
-			hiweb()->inputs()->inputs[ $new_id ] = clone $this;
-			hiweb()->inputs()->inputs[ $new_id ]->id = $new_id;
-			hiweb()->inputs()->inputs[ $new_id ]->name = $new_id;
-			return hiweb()->inputs()->inputs[ $new_id ];
+			$new_input = clone $this;
+			$new_input->id = $new_id;
+			$new_input->name = $new_id;
+			hiweb()->inputs()->put( $new_input );
+			return $new_input;
 		}
 
 

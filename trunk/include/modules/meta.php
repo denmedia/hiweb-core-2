@@ -32,12 +32,15 @@
 		private $row;
 		/** @var array */
 		private $cols;
+		/** @var  hw_input|hw_input_image|hw_input_repeat */
+		private $input;
 
 
 		public function __construct( $id ){
 			$this->id = $id;
-			if( !function_exists( 'get_queried_object' ) ){
-				hiweb()->console()->warn( 'hiweb()→meta() warn: function[get_queried_object] not exists!' );
+			$this->input = hiweb()->inputs()->is_exist( $id ) ? hiweb()->inputs()->get( $id ) : false;
+			if( !did_action( 'wp' ) ){
+				hiweb()->console()->warn( 'hiweb()→meta() warn: action [wp] dosen\'t did! Auto detect queried object is not possible!' );
 			}else{
 				switch( get_class( get_queried_object() ) ){
 					case 'WP_Post':
@@ -56,6 +59,7 @@
 						$this->object_type = 'post';
 						break;
 				}
+				if($this->input instanceof hw_input) $this->input->value($this->get());
 			}
 		}
 
@@ -83,6 +87,38 @@
 		 */
 		public function the(){
 			echo $this->get();
+		}
+
+
+		/**
+		 * Возвращает соответствующее поле. Если его не существует, создается новое
+		 * @return bool|hw_input|hw_input_image|hw_input_repeat|hw_meta_box
+		 */
+		public function get_input(){
+			return $this->input;
+		}
+
+
+		/**
+		 * @param null $arguments
+		 * @return null|string
+		 */
+		public function get_content( $arguments = null ){
+			if( $this->input instanceof hw_input ){
+				return $this->input->get_content( $arguments );
+			}
+			return null;
+		}
+
+
+		/**
+		 * @param null $arguments
+		 * @return null|string
+		 */
+		public function the_content( $arguments = null ){
+			$content = $this->get_content( $arguments );
+			echo $content;
+			return $content;
 		}
 
 
@@ -135,7 +171,7 @@
 		 * Возвращает TRUE, если есть суб-строки и ячейки
 		 * @return bool
 		 */
-		public function has_rows(){
+		public function have_rows(){
 			if( !is_array( $this->cols ) ){
 				$this->cols = array();
 				$value = $this->get();
@@ -157,7 +193,7 @@
 		 * @return array
 		 */
 		public function cols(){
-			$this->has_rows();
+			$this->have_rows();
 			return $this->cols;
 		}
 
@@ -167,7 +203,7 @@
 		 * @return false|hw_meta_field_row
 		 */
 		public function the_row(){
-			if( !$this->has_rows() ){
+			if( !$this->have_rows() ){
 				return false;
 			}
 			///
@@ -193,7 +229,7 @@
 		 * @return null
 		 */
 		public function sub_field( $subfield_id ){
-			if( !$this->has_rows() ){
+			if( !$this->have_rows() ){
 				return null;
 			}
 			if( is_null( $this->row ) ){

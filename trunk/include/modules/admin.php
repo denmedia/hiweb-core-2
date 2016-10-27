@@ -16,8 +16,9 @@
 		 */
 		public function menu(){
 			static $class;
-			if( !$class instanceof hw_admin_menu )
+			if( !$class instanceof hw_admin_menu ){
 				$class = new hw_admin_menu();
+			}
 			return $class;
 		}
 

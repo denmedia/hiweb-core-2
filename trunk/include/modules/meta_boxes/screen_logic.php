@@ -152,6 +152,16 @@
 
 
 		/**
+		 * @param $slug
+		 * @return hw_screen_logic_operators
+		 */
+		public function admin_menu( $slug ){
+			$this->chain[ $this->or_block_index ][] = array( 'admin_menu' => $slug );
+			return $this->operator();
+		}
+
+
+		/**
 		 * @return hw_screen_logic_operators
 		 */
 		private function operator(){
@@ -234,8 +244,8 @@
 						if( $type == 'taxonomy' ){
 							$taxonomies[] = $value;
 						}
-						if($type == 'taxonomies'){
-							$taxonomies = array_keys(get_taxonomies());
+						if( $type == 'taxonomies' ){
+							$taxonomies = array_keys( get_taxonomies() );
 							return $taxonomies;
 						}
 					}
@@ -256,7 +266,7 @@
 					foreach( $ands as $type => $value ){
 						switch( $type ){
 							case 'post_type':
-								$math = $math && ( $current->base == 'post' && ($current->post_type == $value || trim($value) == '') );
+								$math = $math && ( $current->base == 'post' && ( $current->post_type == $value || trim( $value ) == '' ) );
 								break;
 							case 'post_id':
 								$math = $math && ( $current->base == 'post' && isset( $_GET['post'] ) && $_GET['post'] == $value );
@@ -284,6 +294,9 @@
 								break;
 							case 'user_role':
 								$math = $math && ( ( $current->base == 'user-edit' && hiweb()->user( isset( $_GET['user_id'] ) ? $_GET['user_id'] : '' )->is_role( $value ) ) || ( $current->base == 'profile' && hiweb()->user()->is_role( $value ) ) );
+								break;
+							case 'admin_menu':
+								$math = $math && ( $current->base == 'toplevel_page_' . $value || $current->base == 'appearance_page_'.$value );
 								break;
 						}
 					}

@@ -52,11 +52,21 @@
 
 
 			/**
+			 * Возвращает класс-контроллер форм
+			 * @return bool|hw_forms
+			 */
+			public function forms(){
+				return $this->module( 'forms' );
+			}
+			
+
+			/**
+			 * Возвращает форму
 			 * @param null $id - необязательный параметр, задать ID формы
-			 * @return bool|hw_form_object
+			 * @return hw_form
 			 */
 			public function form( $id = null ){
-				return $this->module( 'form' )->get( $id );
+				return $this->forms()->get( $id );
 			}
 
 
@@ -131,13 +141,31 @@
 
 
 			/**
-			 * Получить класс мета боксов
+			 * Получить контроллер-класс мета боксов
+			 * @return bool|hw_meta_boxes
+			 */
+			public function meta_boxes(){
+				return $this->module( 'meta_boxes' );
+			}
+
+
+			/**
+			 * Получить мета бокс
 			 * @param null $id
 			 * @param null $title
 			 * @return bool|hw_meta_box
 			 */
 			public function meta_box( $id = null, $title = null ){
-				return $this->module( 'meta_boxes' )->get( $id, $title );
+				return $this->meta_boxes()->get( $id, $title );
+			}
+
+
+			/**
+			 * Класс-контроллер опций
+			 * @return bool|hw_options
+			 */
+			public function options(){
+				return $this->module( 'options' );
 			}
 
 

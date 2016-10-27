@@ -9,7 +9,7 @@
 
 		/**
 		 * Установить повторяющиеся поля
-		 * @param null $inputs
+		 * @param null|array $inputs
 		 * @return hw_input[]|hw_input_checkbox[]|hw_input_image[]
 		 */
 		public function cols( $inputs = null ){

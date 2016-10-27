@@ -11,6 +11,16 @@
 		private $meta_boxes = array();
 
 
+		public function is_exists( $id ){
+			return array_key_exists( $id, $this->meta_boxes );
+		}
+
+
+		public function get_all(){
+			return $this->meta_boxes;
+		}
+
+
 		/**
 		 * Возвращает метабокс, по необходимости создавая его
 		 * @param $id
@@ -67,6 +77,7 @@
 			add_action( 'show_user_profile', array( $this, 'the_user_edit' ) );
 			add_action( 'edit_user_profile', array( $this, 'the_user_edit' ) );
 			add_action( 'user_new_form', array( $this, 'the_user_edit' ) );
+			add_action( 'admin_notices', array( $this, 'the_options_edit' ), 9999999 ); //todo!!!
 			///Update Meta
 			add_action( 'save_post', array( $this, 'the_post_update' ), 10, 2 );
 			add_action( 'create_term', array( $this, 'the_taxonomy_update' ), 10, 2 );
@@ -103,6 +114,9 @@
 					break;
 				case 'the_user_update':
 					$this->the_user_update( $arguments[0] );
+					break;
+				case 'the_options_edit':
+					$this->the_options_edit( $arguments );
 					break;
 			}
 		}
@@ -230,19 +244,22 @@
 			}else{
 				hiweb()->css( HIWEB_URL_CSS . '/meta-boxes.css' );
 				foreach( $this->fields as $id => $field ){
-					if($field->width() == 100) {
-						?><div class="hw-meta-box-section-clear"></div><?php
+					if( $field->width() == 100 ){
+						?>
+						<div class="hw-meta-box-section-clear"></div><?php
 					}
 					?>
 					<div class="hw-meta-box-section" data-id="<?php echo $field->id() ?>" data-block="<?php echo $field->width() == 100 ? '1' : '0' ?>" style="min-width: <?php echo $field->width() ?>%"><?php
 					$value = hiweb()->post( $post )->meta( $field->name() );
 					$field->value( $value );
-					?><div><strong><?php echo $field->title() ?></strong></div><label>
+					?><p><strong><?php echo $field->title() ?></strong></p><label>
 						<?php $field->the();
 							echo ' ' . $field->label(); ?>
-					</label><div class="howto"><?php echo $field->description() ?></div></div><?php
-					if($field->width() == 100) {
-						?><div class="hw-meta-box-section-clear"></div><?php
+					</label>
+					<div class="howto"><?php echo $field->description() ?></div></div><?php
+					if( $field->width() == 100 ){
+						?>
+						<div class="hw-meta-box-section-clear"></div><?php
 					}
 				}
 			}
@@ -335,6 +352,30 @@
 			if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
 				hiweb()->user( isset( $_POST['user_id'] ) ? $_POST['user_id'] : $new_user_id )->meta_update( $field->id(), $_POST[ $field->id() ] );
+			}
+		}
+
+
+		//todo
+		protected function the_options_edit( $arguments = null ){
+			if( $this->screen()->detect()->detect() ){
+				?>
+				<div class="wrap"><h1><?php echo $this->title() ?></h1>
+				<form action="<?php admin_url(); ?>" method="post">
+					<?php wp_nonce_field( 'the_edit_options_' . $this->id() ) ?>
+					<table class="form-table">
+						<tbody><?php
+							if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+							}else foreach( $this->fields as $id => $field ){
+								?>
+								<tr>
+								<th scope="row"><?php echo $field->title() ?></th>
+								<td><?php $field->the(); ?><p class="description" id="tagline-description"><?php echo $field->description() ?></p></td></tr><?php
+							}
+						?></tbody>
+					</table>
+					<?php submit_button(); ?>
+				</form></div><?php
 			}
 		}
 

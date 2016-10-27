@@ -3,24 +3,24 @@
 
 	class hw_admin_menu{
 
-		/** @var hw_add_admin_menu_page[] */
+		/** @var hw_admin_menu_page[] */
 		private $_admin_menu_pages = array();
-		/** @var hw_add_admin_submenu_page[] */
+		/** @var hw_admin_submenu_page[] */
 		private $_admin_submenu_pages = array();
-		/** @var hw_add_admin_options_page[] */
+		/** @var hw_admin_options_page[] */
 		private $_admin_option_pages = array();
-		/** @var hw_add_admin_theme_page[] */
+		/** @var hw_admin_theme_page[] */
 		private $_admin_theme_pages = array();
 
 
 		/**
 		 * Возвращает объект для работы со страницей опций
 		 * @param $slug
-		 * @return hw_add_admin_menu_page
+		 * @return hw_admin_menu_page
 		 */
 		public function add_page( $slug ){
 			if( !array_key_exists( $slug, $this->_admin_menu_pages ) ){
-				$this->_admin_menu_pages[ $slug ] = new hw_add_admin_menu_page( $slug );
+				$this->_admin_menu_pages[ $slug ] = new hw_admin_menu_page( $slug );
 			}
 			return $this->_admin_menu_pages[ $slug ];
 		}
@@ -29,11 +29,12 @@
 		/**
 		 * Возвращает объект для работы со страницей опций
 		 * @param $slug
-		 * @return hw_add_admin_menu_page
+		 * @param null $parentSlug
+		 * @return hw_admin_submenu_page
 		 */
 		public function add_sub_page( $slug, $parentSlug = null ){
 			if( !array_key_exists( $slug, $this->_admin_submenu_pages ) ){
-				$this->_admin_submenu_pages[ $slug ] = new hw_add_admin_submenu_page( $slug, $parentSlug );
+				$this->_admin_submenu_pages[ $slug ] = new hw_admin_submenu_page( $slug, $parentSlug );
 			}
 			return $this->_admin_submenu_pages[ $slug ];
 		}
@@ -42,11 +43,11 @@
 		/**
 		 * Возвращает объект для работы со страницей опций
 		 * @param $slug
-		 * @return hw_add_admin_menu_page
+		 * @return hw_admin_options_page
 		 */
 		public function add_options_page( $slug ){
 			if( !array_key_exists( $slug, $this->_admin_option_pages ) ){
-				$this->_admin_option_pages[ $slug ] = new hw_add_admin_options_page( $slug );
+				$this->_admin_option_pages[ $slug ] = new hw_admin_options_page( $slug );
 			}
 			return $this->_admin_option_pages[ $slug ];
 		}
@@ -55,11 +56,11 @@
 		/**
 		 * Возвращает объект для работы со страницей опций
 		 * @param $slug
-		 * @return hw_add_admin_menu_page
+		 * @return hw_admin_theme_page
 		 */
 		public function add_theme_page( $slug ){
 			if( !array_key_exists( $slug, $this->_admin_theme_pages ) ){
-				$this->_admin_theme_pages[ $slug ] = new hw_add_admin_theme_page( $slug );
+				$this->_admin_theme_pages[ $slug ] = new hw_admin_theme_page( $slug );
 			}
 			return $this->_admin_theme_pages[ $slug ];
 		}
@@ -67,13 +68,15 @@
 	}
 
 
-	abstract class hw_add_admin_menu{
+	abstract class hw_admin_menu_abstract{
 
 		protected $page_title;
 		protected $menu_title;
 		protected $capability = 'administrator';
 		protected $menu_slug;
 		protected $function_echo;
+		/** @var  hw_options_page[] */
+		protected $options_pages;
 
 
 		public function __construct( $slug = null, $additionData = null ){
@@ -113,7 +116,7 @@
 			}elseif( is_string( $this->function_echo ) ){
 				echo $this->function_echo;
 			}else{
-				echo 'No function ECHO exists...';
+				//echo 'No function ECHO exists...';
 			}
 		}
 
@@ -188,10 +191,15 @@
 		}
 
 
+		public function add_option( $id, $type = 'text', $title = null, $default_value = null ){
+			$option = hiweb()->options()->get( $id );
+		}
+
+
 	}
 
 
-	class hw_add_admin_menu_page extends hw_add_admin_menu{
+	class hw_admin_menu_page extends hw_admin_menu_abstract{
 
 		private $icon_url;
 		private $position;
@@ -233,13 +241,13 @@
 	}
 
 
-	class hw_add_admin_submenu_page extends hw_add_admin_menu{
+	class hw_admin_submenu_page extends hw_admin_menu_abstract{
 
 		private $parent_slug;
 
 
 		protected function __construct2( $additionData ){
-			if( $additionData instanceof hw_add_admin_menu ){
+			if( $additionData instanceof hw_admin_menu_abstract ){
 				$this->parent_slug = $additionData->menu_slug();
 			}else
 				$this->parent_slug = $additionData;
@@ -268,7 +276,7 @@
 	}
 
 
-	class hw_add_admin_options_page extends hw_add_admin_menu{
+	class hw_admin_options_page extends hw_admin_menu_abstract{
 
 		protected function add_action_admin_menu(){
 			add_options_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
@@ -279,7 +287,7 @@
 	}
 
 
-	class hw_add_admin_theme_page extends hw_add_admin_menu{
+	class hw_admin_theme_page extends hw_admin_menu_abstract{
 
 		protected function add_action_admin_menu(){
 			add_theme_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
