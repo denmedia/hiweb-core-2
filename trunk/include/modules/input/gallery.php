@@ -1,12 +1,11 @@
 <?php
 
 
-
 	class hw_input_gallery extends hw_input{
 		
 
-		private $preview_width = 100;
-		private $preview_height = 100;
+		private $preview_width = 150;
+		private $preview_height = 80;
 
 
 		/**
@@ -27,11 +26,7 @@
 
 
 		private function get_rowAdd( $right = true ){
-<<<<<<< HEAD
 			return '<a href="#add-' . ( $right ? 'right' : 'left' ) . '" title="Add images to ' . ( $right ? 'right' : 'left' ) . '" class="button" style="' . ( ( !$right && $this->have_rows() == 0 ) ? 'display: none;' : '' ) . '"><i class="dashicons dashicons-format-image" data-icon="select"></i></a>';
-=======
-			return '<a href="#add-' . ( $right ? 'right' : 'left' ) . '" title="Add images to ' . ( $right ? 'right' : 'left' ) . '" class="button" style="'.( ( !$right && $this->have_rows() == 0 ) ? 'display: none;' : '' ).'; width: '.$this->preview_width.'px; height: '.$this->preview_height.'px;"><i class="dashicons dashicons-format-image" data-icon="select"></i></a>';
->>>>>>> origin/master
 		}
 
 
@@ -42,11 +37,7 @@
 				if( file_exists( $img_path ) )
 					$img_url = 'background-image: url(' . $img_url[0] . ');';else $img_url = '';
 			}
-<<<<<<< HEAD
 			return '<a href="#' . ( is_null( $img_id ) ? 'source' : 'image' ) . '" class="button" style="' . $img_url . '"><i class="dashicons dashicons-no-alt" data-icon="deselect"></i><input type="hidden" ' . ( trim( $img_url ) == '' ? 'data-name' : 'name' ) . '="' . $this->id . '[]" value="' . $img_id . '" /></a>';
-=======
-			return '<a href="#' . ( is_null( $img_id ) ? 'source' : 'image' ) . '" class="button" style="'.$img_url.'; width: '.$this->preview_width.'px; height: '.$this->preview_height.'px;"><i class="dashicons dashicons-no-alt" data-icon="deselect"></i><input type="hidden" '.( trim($img_url) == '' ? 'data-name' : 'name' ).'="' . $this->id . '[]" value="'.$img_id.'" /></a>';
->>>>>>> origin/master
 		}
 
 

@@ -356,7 +356,7 @@
 		 * @return string
 		 */
 		public function the( $arguments = null ){
-			$html = $this->get();
+			$html = $this->get($arguments);
 			echo $html;
 			return $html;
 		}
@@ -364,6 +364,7 @@
 
 		/**
 		 * Возвращает
+		 * @param null $arguments
 		 * @return string
 		 */
 		public function get_content( $arguments = null ){
@@ -372,6 +373,7 @@
 
 
 		/**
+		 * @param null $arguments
 		 * @return string
 		 */
 		public function the_content( $arguments = null ){

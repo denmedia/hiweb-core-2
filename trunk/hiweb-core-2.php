@@ -23,5 +23,15 @@
 		$form->the();
 	} );*/
 
-	$page = hiweb()->admin()->menu()->add_theme_page( 'test' )->menu_title( 'Test' );
-	$page->add_option( 'test_option' );
+	$page = hiweb()->options()->page('Photobank')->show_in_admin_menu('dashicons-format-gallery', 4);
+	$page->add_option('Test 1');
+	$page->add_option('Test 2','image');
+	$page->add_option('Test 3','gallery');
+
+
+	$page = hiweb()->options()->page('Photobank settings')->show_in_admin_submenu('options-general.php');
+	$page->add_option('sett_1');
+	$page->add_option('sett_2','repeat')->input()->cols(array(
+		hiweb()->input('img','image'),
+		hiweb()->input('text')
+	));

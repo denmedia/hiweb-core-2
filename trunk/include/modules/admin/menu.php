@@ -75,8 +75,9 @@
 		protected $capability = 'administrator';
 		protected $menu_slug;
 		protected $function_echo;
-		/** @var  hw_options_page[] */
-		protected $options_pages;
+		///
+		/** @var  hw_option[] */
+		protected $options;
 
 
 		public function __construct( $slug = null, $additionData = null ){
@@ -86,11 +87,11 @@
 				$this->page_title = $slug;
 			}
 			add_action( 'admin_menu', array( $this, 'add_action_admin_menu' ) );
-			$this->__construct2( $additionData );
+			$this->init( $additionData );
 		}
 
 
-		protected function __construct2( $additionData ){
+		protected function init( $additionData ){
 		}
 
 
@@ -99,32 +100,24 @@
 				case 'add_action_admin_menu':
 					$this->add_action_admin_menu();
 					break;
-				case 'echo_page':
-					$this->echo_page();
+				case 'the_page':
+					$this->the_page();
 					break;
 			}
 		}
 
 
+		/**
+		 *
+		 */
 		protected function add_action_admin_menu(){
-		}
-
-
-		protected function echo_page(){
-			if( is_callable( $this->function_echo ) ){
-				call_user_func( $this->function_echo );
-			}elseif( is_string( $this->function_echo ) ){
-				echo $this->function_echo;
-			}else{
-				//echo 'No function ECHO exists...';
-			}
 		}
 
 
 		/**
 		 * Возвращает / устанавливает значение
 		 * @param string|null $set
-		 * @return null|string|$this
+		 * @return null|string|hw_admin_menu|hw_admin_menu_abstract|hw_admin_menu_page
 		 */
 		public function page_title( $set = null ){
 			if( !is_null( $set ) ){
@@ -138,7 +131,7 @@
 		/**
 		 * Возвращает / устанавливает значение
 		 * @param null|string $set
-		 * @return null|string|$this
+		 * @return null|string|hw_admin_menu|hw_admin_menu_abstract|hw_admin_menu_page
 		 */
 		public function menu_title( $set = null ){
 			if( !is_null( $set ) ){
@@ -152,7 +145,7 @@
 		/**
 		 * Возвращает / устанавливает значение
 		 * @param array|string|int|null $set
-		 * @return null|string|$this
+		 * @return null|string|hw_admin_menu|hw_admin_menu_abstract|hw_admin_menu_page
 		 */
 		public function capability( $set = null ){
 			if( !is_null( $set ) ){
@@ -166,7 +159,7 @@
 		/**
 		 * Возвращает / устанавливает значение
 		 * @param string $set
-		 * @return null|string|$this
+		 * @return null|string|hw_admin_menu|hw_admin_menu_abstract|hw_admin_menu_page
 		 */
 		public function menu_slug( $set = null ){
 			if( !is_null( $set ) ){
@@ -180,7 +173,7 @@
 		/**
 		 * Возвращает / устанавливает функцию
 		 * @param callable $set
-		 * @return callable|$this|null
+		 * @return null|string|hw_admin_menu|hw_admin_menu_abstract|hw_admin_menu_page
 		 */
 		public function function_echo( $set = null ){
 			if( !is_null( $set ) ){
@@ -191,8 +184,30 @@
 		}
 
 
+		/**
+		 * @param $id
+		 * @param string $type
+		 * @param null $title
+		 * @param null $default_value
+		 * @return hw_option
+		 */
 		public function add_option( $id, $type = 'text', $title = null, $default_value = null ){
-			$option = hiweb()->options()->get( $id );
+			$option = hiweb()->options()->get( $id, $type );
+			$option->title( $title );
+			$option->parent( $this );
+			$this->options[ $id ] = $option;
+			return $this->options[ $id ];
+		}
+
+
+		public function the_page(){
+			if(is_callable($this->function_echo)){
+				call_user_func($this->function_echo);
+			}elseif(is_string($this->function_echo)){
+				echo $this->function_echo;
+			}else{
+				echo '<div class="wrap"><h1>This is empty options page</h1></div>';
+			}
 		}
 
 
@@ -207,7 +222,7 @@
 
 		protected function add_action_admin_menu(){
 			add_menu_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
-				$this, 'echo_page'
+				$this, 'the_page'
 			), $this->icon_url, $this->position );
 		}
 
@@ -215,7 +230,7 @@
 		/**
 		 * Возвращает / устанавливает значение
 		 * @param string $set
-		 * @return null|string|$this
+		 * @return null|string|hw_admin_menu|hw_admin_menu_page
 		 */
 		public function icon_url( $set = null ){
 			if( !is_null( $set ) ){
@@ -246,7 +261,7 @@
 		private $parent_slug;
 
 
-		protected function __construct2( $additionData ){
+		protected function init( $additionData ){
 			if( $additionData instanceof hw_admin_menu_abstract ){
 				$this->parent_slug = $additionData->menu_slug();
 			}else
@@ -256,7 +271,7 @@
 
 		protected function add_action_admin_menu(){
 			add_submenu_page( $this->parent_slug, $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
-				$this, 'echo_page'
+				$this, 'the_page'
 			) );
 		}
 
@@ -280,7 +295,7 @@
 
 		protected function add_action_admin_menu(){
 			add_options_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
-				$this, 'echo_page'
+				$this, 'the_page'
 			) );
 		}
 
@@ -291,7 +306,7 @@
 
 		protected function add_action_admin_menu(){
 			add_theme_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
-				$this, 'echo_page'
+				$this, 'the_page'
 			) );
 		}
 	}
