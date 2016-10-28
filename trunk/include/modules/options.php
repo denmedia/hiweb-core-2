@@ -229,7 +229,7 @@
 				foreach( $idOrOptions as $option ){
 					if( $option instanceof hw_option ){
 						$this->options[ $option->id() ] = $option;
-					}else hiweb()->console()->warn( 'hiwe()→options()→page()→add_option() error: in idOrOptions array once item is not hw_option!', true );
+					}else hiweb()->console()->warn( 'hiweb()→options()→page()→add_option() error: in idOrOptions array once item is not hw_option!', true );
 				}
 			}else{
 				if( !$this->option_exists( $idOrOptions ) ){

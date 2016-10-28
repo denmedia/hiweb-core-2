@@ -27,13 +27,18 @@
 
 
 		private function get_rowNull(){
-			$R = '<th class="drag"></th>';
+			$R = '<th class="drag"><span class="spacer"></span></th>';
 			if( is_array( $this->cols ) && count( $this->cols ) > 0 ){
+				$widthFull = 0;
 				foreach( $this->cols as $field ){
-					$R .= '<th class="field">' . $field->title() . '</th>';
+					$widthFull += $field->width();
+				}
+				foreach( $this->cols as $field ){
+					$width = round( $field->width() / $widthFull * 100 );
+					$R .= '<th class="field" style="width: ' . $width . '%">' . $field->title() . '</th>';
 				}
 			}else
-				$R .= '<th></th>';
+				$R .= '<th><span class="spacer"></span></th>';
 			$R .= '<th class="control"><span class="button button-small" data-click="add"><i class="dashicons dashicons-plus-alt"/></span></th>';
 			return '<thead><tr class="row">' . $R . '</tr>' . $this->get_row( array(), array( 'source' ) ) . '</thead>';
 		}

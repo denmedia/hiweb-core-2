@@ -18,7 +18,8 @@
     .message td { text-align: center; padding: 12px 16px; font-size: 16px; }
 
     .drag, .control {
-      width: 35px;
+      width: auto;
+      .spacer { display: block; width: 35px;}
     }
     .drag-handle {
       cursor: move;

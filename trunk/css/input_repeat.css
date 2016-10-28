@@ -22,7 +22,10 @@
       padding: 12px 16px;
       font-size: 16px; }
     .hw-input-repeat table .drag, .hw-input-repeat table .control {
-      width: 35px; }
+      width: auto; }
+      .hw-input-repeat table .drag .spacer, .hw-input-repeat table .control .spacer {
+        display: block;
+        width: 35px; }
     .hw-input-repeat table .drag-handle {
       cursor: move; }
       .hw-input-repeat table .drag-handle:hover {
