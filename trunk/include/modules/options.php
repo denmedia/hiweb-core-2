@@ -50,7 +50,7 @@
 		 * @return bool
 		 */
 		public function is_exist( $id ){
-			$id = sanitize_file_name(strtolower($id));
+			$id = sanitize_file_name( strtolower( $id ) );
 			return array_key_exists( $id, $this->options );
 		}
 
@@ -60,8 +60,8 @@
 	class hw_options_page{
 
 		private $slug;
-		private $menu_title;
-		private $page_title;
+		private $menu_title = '';
+		private $page_title = '';
 		private $show_in = 'admin_menu';
 		private $show_in_arg_1 = '';
 		private $show_in_arg_2 = '';
@@ -80,26 +80,32 @@
 		public function __call( $name, $arguments ){
 			switch( $name ){
 				case 'add_action_admin_init':
-					switch( $this->show_in ){
-						case 'admin_menu':
-							$page = hiweb()->admin()->menu()->add_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
-							$page->icon_url( $this->show_in_arg_1 );
-							$page->position( $this->show_in_arg_2 );
-							break;
-						case 'admin_submenu':
-							hiweb()->admin()->menu()->add_sub_page( $this->slug, $this->show_in_arg_1 )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
-							break;
-						case 'admin_options':
-							hiweb()->admin()->menu()->add_options_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
-							break;
-						case 'admin_theme':
-							hiweb()->admin()->menu()->add_theme_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
-							break;
+					if( preg_match( '/^options-([a-z]+).php$/', $this->slug, $page_slug ) > 0 ){
+						add_settings_field( 'hw_options_page', $this->page_title, array( $this, 'the_page_section' ), $page_slug[1] );
+					}else{
+						switch( $this->show_in ){
+							case 'admin_menu':
+								$page = hiweb()->admin()->menu()->add_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
+								if(trim($this->show_in_arg_1) != '') $page->icon_url( $this->show_in_arg_1 );
+								if(trim($this->show_in_arg_2) != '') $page->position( $this->show_in_arg_2 );
+								break;
+							case 'admin_submenu':
+								hiweb()->admin()->menu()->add_sub_page( $this->slug, $this->show_in_arg_1 )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
+								break;
+							case 'admin_options':
+								hiweb()->admin()->menu()->add_options_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
+								break;
+							case 'admin_theme':
+								hiweb()->admin()->menu()->add_theme_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
+								break;
+						}
 					}
-
 					break;
 				case 'the_page':
 					$this->the_page();
+					break;
+				case 'the_page_section':
+					$this->the_page_section();
 					break;
 			}
 		}
@@ -188,34 +194,35 @@
 		protected function the_page(){
 			?>
 			<div class="wrap">
-				<form action="options.php" method="post" class="hw-admin-menu-options">
+			<form action="options.php" method="post" class="hw-admin-menu-options">
+				<h1><?php echo $this->page_title ?></h1>
+				<?php
+					$this->the_page_section();
+					submit_button();
+				?>
+			</form>
+			</div><?php
+		}
 
-					<h1><?php echo $this->page_title ?></h1>
 
-					<?php
-						if( !$this->have_options() ){
-							?><h4>This Options page is empty!</h4><?php
-						}else{
-							settings_fields( $this->group() );
-							do_settings_sections( $this->group() );
-							/**
-							 * @var  $id
-							 * @var hw_option $option
-							 */
-							foreach( $this->options as $id => $option ) : ?>
-								<div class="hw-admin-menu-options-field">
-									<p><strong><?php echo $option->title() ?></strong></p>
-									<?php $option->the() ?>
-									<?php echo $option->description() != '' ? '<p class="description">' . $option->description() . '</p>' : '' ?>
-								</div>
-							<?php endforeach; ?>
-							<?php submit_button();
-						}
-
-					?>
-				</form>
-			</div>
-			<?php
+		protected function the_page_section(){
+			if( !$this->have_options() ){
+				?><h4>This Options page is empty!</h4><?php
+			}else{
+				settings_fields( $this->group() );
+				do_settings_sections( $this->group() );
+				/**
+				 * @var  $id
+				 * @var hw_option $option
+				 */
+				foreach( $this->options as $id => $option ) : ?>
+					<div class="hw-admin-menu-options-field">
+						<p><strong><?php echo $option->title() ?></strong></p>
+						<?php $option->the() ?>
+						<?php echo $option->description() != '' ? '<p class="description">' . $option->description() . '</p>' : '' ?>
+					</div>
+				<?php endforeach;
+			}
 		}
 
 
@@ -300,6 +307,18 @@
 					}
 					break;
 			}
+		}
+
+
+		/**
+		 * Вставить на страницу
+		 * @param $page_slug
+		 * @return hw_options_page
+		 */
+		public function page( $page_slug ){
+			$page = hiweb()->options()->page( $page_slug );
+			$page->add_option( $this->id() );
+			return $page;
 		}
 
 

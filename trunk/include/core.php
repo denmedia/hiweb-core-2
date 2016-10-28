@@ -170,6 +170,17 @@
 
 
 			/**
+			 * Возвращает опцию
+			 * @param $id
+			 * @param string $type
+			 * @return bool|hw_option
+			 */
+			public function option($id, $type = 'text'){
+				return $this->options()->get($id, $type);
+			}
+
+
+			/**
 			 * Получить / созлать новый тип записей.
 			 * @param string $post_type - вернуть указанный тип
 			 * @return bool|hw_post_type

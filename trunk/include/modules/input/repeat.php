@@ -45,6 +45,7 @@
 
 
 		private function get_row( $row = array(), $additionClass = array() ){
+			if(!is_array($row)) return '';
 			$R = '<th class="drag-handle" title="Move row"><i class="dashicons dashicons-sort"/></th>';
 			if( is_array( $this->cols ) )
 				foreach( $this->cols as $id => $field ){
