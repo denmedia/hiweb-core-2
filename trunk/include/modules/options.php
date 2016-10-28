@@ -71,13 +71,26 @@
 
 		public function __construct( $slug ){
 			$this->slug = sanitize_file_name( strtolower( $slug ) );
-			$this->page_title = $slug;
-			$this->menu_title = $slug;
 			add_action( '_admin_menu', array( $this, 'add_action_admin_init' ) );
 		}
 
 
 		public function __call( $name, $arguments ){
+
+			///
+			if( trim( $this->page_title ) == '' && trim( $this->menu_title ) != '' ){
+				$this->page_title = $this->menu_title;
+			}
+			if( trim( $this->menu_title ) == '' && trim( $this->page_title ) != '' ){
+				$this->menu_title = $this->page_title;
+			}
+			if( trim( $this->menu_title ) == '' && trim( $this->slug ) != '' ){
+				$this->menu_title = $this->slug;
+			}
+			if( trim( $this->page_title ) == '' && trim( $this->slug ) != '' ){
+				$this->page_title = $this->slug;
+			}
+			///
 			switch( $name ){
 				case 'add_action_admin_init':
 					if( preg_match( '/^options-([a-z]+).php$/', $this->slug, $page_slug ) > 0 ){
@@ -86,8 +99,10 @@
 						switch( $this->show_in ){
 							case 'admin_menu':
 								$page = hiweb()->admin()->menu()->add_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
-								if(trim($this->show_in_arg_1) != '') $page->icon_url( $this->show_in_arg_1 );
-								if(trim($this->show_in_arg_2) != '') $page->position( $this->show_in_arg_2 );
+								if( trim( $this->show_in_arg_1 ) != '' )
+									$page->icon_url( $this->show_in_arg_1 );
+								if( trim( $this->show_in_arg_2 ) != '' )
+									$page->position( $this->show_in_arg_2 );
 								break;
 							case 'admin_submenu':
 								hiweb()->admin()->menu()->add_sub_page( $this->slug, $this->show_in_arg_1 )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
