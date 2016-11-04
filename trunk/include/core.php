@@ -149,7 +149,7 @@
 			 * @return bool|hw_meta_field
 			 */
 			public function meta( $field_id = null, $screen_id = null ){
-				$meta = $this->module( 'meta' )->get( $field_id );
+				$meta = $this->module( 'meta' )->give( $field_id );
 				if( !is_null( $screen_id ) )
 					$meta->object_id = $screen_id;
 				return $meta;

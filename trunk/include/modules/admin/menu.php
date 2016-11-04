@@ -17,7 +17,7 @@
 		
 		/**
 		 * Возвращает объект для работы со страницей опций
-		 * @param $slug
+		 * @param string $slug
 		 * @return hw_admin_menu_page
 		 */
 		public function give_page( $slug ){
@@ -243,14 +243,12 @@
 		 * @param $id
 		 * @param string $type
 		 * @param null $title
-		 * @param null $default_value
 		 * @return hw_input
 		 */
-		public function add_field( $id, $type = 'text', $title = null, $default_value = null ){
+		public function add_field( $id, $type = 'text', $title = null ){
 			$input = hiweb()->input( $this->inputs_prepend.$id, $type );
 			$input->title( is_null($title) ? $id : $title );
-			$input->default_value( $default_value );
-			$input->value( get_option($input->id(), $default_value) );
+			$input->value( get_option($input->id()) );
 			$this->inputs[ $input->id() ] = $input;
 			return $this->inputs[ $input->id() ];
 		}

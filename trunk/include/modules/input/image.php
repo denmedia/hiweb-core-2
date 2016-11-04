@@ -86,7 +86,7 @@
 		 * @return string
 		 */
 		public function get_content( $size = 'thumbnail' ){
-			return '<img src="' . $this->get_src( $size ) . '"/>';
+			return wp_get_attachment_image($this->value(), $size);
 		}
 		
 	}

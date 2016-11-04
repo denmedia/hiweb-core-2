@@ -5,6 +5,98 @@
 		
 		/** @var hw_taxonomy[] */
 		private $taxonomies = array();
+		/** @var hw_input[] */
+		private $inputs = array();
+		
+		
+		public function __construct(){
+			add_action( 'init', array( $this, 'add_action_init' ) );
+		}
+		
+		
+		public function __call( $name, $arguments ){
+			switch( $name ){
+				case 'add_action_init':
+					if( function_exists( 'get_taxonomies' ) ){
+						foreach( get_taxonomies() as $taxonomy ){
+							add_action( $taxonomy . '_add_form_fields', array( $this, 'add_action_add_form_fields' ) );
+							add_action( $taxonomy . '_edit_form', array( $this, 'add_action_add_form_fields' ) );
+							add_action( 'create_term', array( $this, 'add_action_edited_terms' ), 99, 2 );
+							add_action( 'edited_' . $taxonomy, array( $this, 'add_action_edited_terms' ), 99, 2 );
+						}
+					}
+					break;
+				case 'add_action_add_form_fields':
+					$this->add_action_add_form_fields( $arguments[0] );
+				case 'add_action_edited_terms':
+					$this->add_action_edited_terms( isset( $arguments[0] ) ? $arguments[0] : null, isset( $arguments[1] ) ? $arguments[1] : null );
+			}
+		}
+		
+		
+		/**
+		 * @return hw_input[]
+		 */
+		public function get_fields(){
+			return $this->inputs;
+		}
+		
+		
+		/**
+		 * @param array $fields
+		 * @param bool $append
+		 * @return hw_taxonomies
+		 */
+		public function add_fields( $fields = array(), $append = true ){
+			if( $fields instanceof hw_input ){
+				$fields = array( $fields );
+			}
+			if( is_array( $fields ) ){
+				if( $append ){
+					$this->inputs = array_merge( $this->inputs, $fields );
+				}else $this->inputs = $fields;
+			}
+			return $this;
+		}
+		
+		
+		public function add_field( $id, $type = 'text', $title = null ){
+			$idSanit = sanitize_file_name( strtolower( $id ) );
+			if( !array_key_exists( $idSanit, $this->inputs ) ){
+				$input = hiweb()->input( $id, $type );
+				$input->title( $title );
+				$this->inputs[ $idSanit ] = $input;
+			}
+			return $this->inputs[ $idSanit ];
+		}
+		
+		
+		/**
+		 * @param null|WP_Term $term
+		 */
+		protected function add_action_add_form_fields( $term = null ){
+			$fields = $this->inputs;
+			if( $term instanceof WP_Term ){
+				foreach( $this->inputs as $fieldId => $input ){
+					$input->value( get_term_meta( $term->term_id, $fieldId, true ) );
+				}
+			}
+			hiweb()->form( 'hw_taxonomies' )->fields( $this->inputs )->the_noform();
+		}
+		
+		
+		/**
+		 * Сохранение термина
+		 * @param $term_id
+		 * @param $taxonomy_id
+		 */
+		protected function add_action_edited_terms( $term_id, $taxonomy_id = null ){
+			foreach( $this->get_fields() as $fieldId => $input ){
+				if( array_key_exists( $fieldId, $_POST ) ){
+					update_term_meta( $term_id, $fieldId, $_POST[ $fieldId ] );
+				}
+			}
+		}
 		
 		
 		public function is_exist( $taxonomy_name ){
@@ -47,6 +139,21 @@
 			return $this->taxonomies[ $taxonomy_name_dest ];
 		}
 		
+		
+		/**
+		 * @param int|object|WP_Term $termOrId
+		 * @return hw_taxonomy
+		 */
+		public function get_taxonomy_by_term( $termOrId ){
+			$term = get_term( $termOrId );
+			if( $term instanceof WP_Term ){
+				$R = $this->give( $term->taxonomy );
+			}else{
+				$R = $this->give( '' );
+			}
+			return $R;
+		}
+		
 	}
 	
 	
@@ -80,11 +187,16 @@
 		
 		
 		public function __construct( $name ){
-			$this->name = $name;
+			$this->name = sanitize_file_name( strtolower( $name ) );
 			$this->labels = $name;
 			$this->set_properties();
-			add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
-			add_action($this->name.'_add_form_fields', array($this,'add_action_add_form_fields')); //todo: найти подходищий хук
+			if( trim( $this->name ) != '' ){
+				add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
+				add_action( $this->name . '_add_form_fields', array( $this, 'add_action_add_form_fields' ) );
+				add_action( $this->name . '_edit_form', array( $this, 'add_action_add_form_fields' ) );
+				add_action( 'create_term', array( $this, 'add_action_edited_terms' ), 999, 2 );
+				add_action( 'edited_' . $this->name, array( $this, 'add_action_edited_terms' ), 999, 2 );
+			}
 		}
 		
 		
@@ -106,7 +218,10 @@
 					$this->register_taxonomy();
 					break;
 				case 'add_action_add_form_fields':
-					$this->add_action_add_form_fields();
+					$this->add_action_add_form_fields( $arguments[0] );
+					break;
+				case 'add_action_edited_terms':
+					$this->add_action_edited_terms( $arguments[0], $arguments[1] );
 					break;
 			}
 		}
@@ -460,14 +575,34 @@
 		 * @param string $title
 		 * @return hw_input
 		 */
-		public function add_fields($fieldId, $type = 'text', $title = null){
-			$fieldIdSanit = sanitize_file_name(strtolower($fieldId));
-			if(!array_key_exists($fieldIdSanit, $this->inputs)){
-				$input = hiweb()->input($fieldId,$type);
-				$input->title($title);
-				$this->inputs[$fieldIdSanit] = $input;
+		public function add_field( $fieldId, $type = 'text', $title = null ){
+			$fieldIdSanit = sanitize_file_name( strtolower( $fieldId ) );
+			if( !array_key_exists( $fieldIdSanit, $this->inputs ) ){
+				$input = hiweb()->input( $fieldId, $type );
+				$input->title( $title );
+				$this->inputs[ $fieldIdSanit ] = $input;
 			}
-			return $this->inputs[$fieldIdSanit];
+			return $this->inputs[ $fieldIdSanit ];
+		}
+		
+		
+		/**
+		 * @param $fields
+		 * @param bool $append
+		 * @return hw_taxonomy
+		 */
+		public function add_fields( $fields, $append = true ){
+			if( $fields instanceof hw_input ){
+				$fields = array( $fields );
+			}
+			if( is_array( $fields ) ){
+				if( $append ){
+					$this->inputs = array_merge( $this->inputs, $fields );
+				}else{
+					$this->inputs = $fields;
+				}
+			}
+			return $this;
 		}
 		
 		
@@ -475,12 +610,48 @@
 		 * @return hw_input[]
 		 */
 		public function get_fields(){
-			return $this->inputs;
+			return array_merge( hiweb()->taxonomies()->get_fields(), $this->inputs );
 		}
 		
 		
-		public function add_action_add_form_fields(){
-			hiweb()->form()->fields($this->inputs)->the_noform();
+		/**
+		 * @param $fieldId
+		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
+		 */
+		public function get_field( $fieldId ){
+			$fields = $this->get_fields();
+			if(  array_key_exists($fieldId,$fields) && $fields[ $fieldId ] instanceof hw_input ){
+				return $fields[ $fieldId ];
+			}
+			return hiweb()->input();
+		}
+		
+		
+		/**
+		 * Вывод формы полей
+		 */
+		protected function add_action_add_form_fields( $term = null ){
+			$fields = $this->inputs;
+			if( $term instanceof WP_Term ){
+				foreach( $this->inputs as $fieldId => $input ){
+					$input->value( get_term_meta( $term->term_id, $fieldId, true ) );
+				}
+			}
+			hiweb()->form()->fields( $this->inputs )->the_noform();
+		}
+		
+		
+		/**
+		 * Сохранение термина
+		 * @param $term_id
+		 * @param $taxonomy_id
+		 */
+		protected function add_action_edited_terms( $term_id, $taxonomy_id ){
+			foreach( $this->get_fields() as $fieldId => $input ){
+				if( array_key_exists( $fieldId, $_POST ) ){
+					update_term_meta( $term_id, $fieldId, $_POST[ $fieldId ] );
+				}
+			}
 		}
 		
 		

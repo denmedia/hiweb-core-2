@@ -14,6 +14,9 @@ var hw_input_image = {
             var current = jQuery(e.currentTarget).closest('.hw-input-image');
             hw_input_image.deselect_image(current);
         });
+        jQuery('body').on('change', '.hw-input-image input[name]', function(){
+           console.info('!!!'); //todo детек изменения поля для сброса
+        });
     },
 
     event_click_select: function (current) {

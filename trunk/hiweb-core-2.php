@@ -12,4 +12,5 @@
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
 	
 	
-	hiweb()->taxonomies()->give('category')->add_fields('test','image');
+	$my_page = hiweb()->admin()->menu()->give_page('My options page');
+	$my_page->add_field('My awesome field');

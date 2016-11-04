@@ -15,6 +15,7 @@
 		 * @return hw_form
 		 */
 		public function give( $id ){
+			$id = sanitize_file_name(strtolower($id));
 			if( !array_key_exists( $id, $this->forms ) ){
 				$this->forms[ $id ] = new hw_form( $id );
 			}

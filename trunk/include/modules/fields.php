@@ -57,7 +57,9 @@
 					$this->input = hiweb()->post($contextId)->get_field($fieldId);
 					break;
 				case 'term':
-					//todo
+					$this->input = hiweb()->taxonomies()->get_taxonomy_by_term($contextId)->get_field($fieldId);
+					$this->input->value( get_term_meta($contextId, $fieldId, true ) );
+					hiweb()->console( $this->input->type() ); //todo!!!
 					break;
 				case 'user':
 					//todo
