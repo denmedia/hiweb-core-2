@@ -10,3 +10,6 @@
 	
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
+	
+	
+	hiweb()->taxonomies()->give('category')->add_fields('test','image');

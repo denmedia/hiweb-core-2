@@ -16,7 +16,7 @@
 		 * @param null $taxonomy_name
 		 * @return hw_taxonomy
 		 */
-		public function get( $taxonomy_name = null ){
+		public function give( $taxonomy_name = null ){
 			if( !array_key_exists( $taxonomy_name, $this->taxonomies ) ){
 				$this->taxonomies[ $taxonomy_name ] = new hw_taxonomy( $taxonomy_name );
 			}
@@ -42,7 +42,7 @@
 			if( !$this->is_exist( $taxonomy_name_source ) ){
 				return false;
 			}
-			$this->taxonomies[ $taxonomy_name_dest ] = clone $this->get( $taxonomy_name_source );
+			$this->taxonomies[ $taxonomy_name_dest ] = clone $this->give( $taxonomy_name_source );
 			$this->taxonomies[ $taxonomy_name_dest ]->name( $taxonomy_name_dest );
 			return $this->taxonomies[ $taxonomy_name_dest ];
 		}
@@ -75,6 +75,8 @@
 		private $object_type = array();
 		/** @var array */
 		private $terms = array();
+		/** @var hw_input[] */
+		private $inputs = array();
 		
 		
 		public function __construct( $name ){
@@ -82,6 +84,7 @@
 			$this->labels = $name;
 			$this->set_properties();
 			add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
+			add_action($this->name.'_add_form_fields', array($this,'add_action_add_form_fields')); //todo: найти подходищий хук
 		}
 		
 		
@@ -101,6 +104,9 @@
 			switch( $name ){
 				case 'register_taxonomy':
 					$this->register_taxonomy();
+					break;
+				case 'add_action_add_form_fields':
+					$this->add_action_add_form_fields();
 					break;
 			}
 		}
@@ -445,6 +451,36 @@
 		 */
 		public function copy( $new_name ){
 			return hiweb()->taxonomies()->copy( $this->name, $new_name );
+		}
+		
+		
+		/**
+		 * @param $fieldId
+		 * @param string $type
+		 * @param string $title
+		 * @return hw_input
+		 */
+		public function add_fields($fieldId, $type = 'text', $title = null){
+			$fieldIdSanit = sanitize_file_name(strtolower($fieldId));
+			if(!array_key_exists($fieldIdSanit, $this->inputs)){
+				$input = hiweb()->input($fieldId,$type);
+				$input->title($title);
+				$this->inputs[$fieldIdSanit] = $input;
+			}
+			return $this->inputs[$fieldIdSanit];
+		}
+		
+		
+		/**
+		 * @return hw_input[]
+		 */
+		public function get_fields(){
+			return $this->inputs;
+		}
+		
+		
+		public function add_action_add_form_fields(){
+			hiweb()->form()->fields($this->inputs)->the_noform();
 		}
 		
 		

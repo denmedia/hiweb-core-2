@@ -49,19 +49,21 @@
 		
 		
 		public function __construct($fieldId, $contextId = '', $contextType = 'post'){
-			$this->id = $fieldId;
+			$this->id = sanitize_file_name(strtolower($fieldId));
 			$this->contextId = $contextId;
 			$this->contextType = $contextType;
 			switch($this->contextType){
 				case 'post':
+					$this->input = hiweb()->post($contextId)->get_field($fieldId);
 					break;
 				case 'term':
+					//todo
 					break;
 				case 'user':
+					//todo
 					break;
 				case 'options':
-					$page = hiweb()->admin()->menu()->get($contextId);
-					$this->input = $page->get_field($this->id);
+					$this->input = hiweb()->admin()->menu()->get($contextId)->get_field($this->id);
 					break;
 			}
 		}
@@ -130,7 +132,7 @@
 		 * @return bool|int
 		 */
 		public function have_rows(){
-			return $this->input->have_rows();
+			return ( is_array( $this->input->value() ) ? count( $this->input->value() ) : false );
 		}
 		
 		

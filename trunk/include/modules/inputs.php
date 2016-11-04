@@ -1,19 +1,19 @@
 <?php
-
-
+	
+	
 	class hw_inputs{
-
+		
 		/**
 		 * @var array
 		 */
 		private $inputs = array();
-
-
+		
+		
 		public function get_all(){
 			return $this->inputs;
 		}
-
-
+		
+		
 		/**
 		 * Подключить класс типа
 		 * @param $type
@@ -26,8 +26,8 @@
 				hiweb()->console()->warn( 'Файла [' . $path . '] нет', true );
 			}
 		}
-
-
+		
+		
 		/**
 		 * @param null $id
 		 * @param string $type
@@ -47,8 +47,8 @@
 			///
 			return $newInput;
 		}
-
-
+		
+		
 		/**
 		 * @param $id
 		 * @return bool
@@ -56,18 +56,18 @@
 		public function is_exist( $id ){
 			return array_key_exists( $id, $this->inputs );
 		}
-
-
+		
+		
 		public function put( hw_input $input ){
 			$this->inputs[ $input->id() ] = $input;
 		}
-
-
+		
+		
 	}
-
-
+	
+	
 	class hw_input{
-
+		
 		/** @var null|integer Глобалвьный ID */
 		protected $global_id = null;
 		/** @var string */
@@ -92,44 +92,44 @@
 		protected $tags = array();
 		/** @var int */
 		protected $width = 100;
-
-
+		
+		
 		public function __construct( $id = null, $type = 'text' ){
 			$this->set_id( $id );
 			$this->type = trim( $type ) == '' ? 'text' : $type;
 			$this->global_id = md5( implode( '+', array( $this->id, $this->type, microtime() ) ) );
 			$this->init();
 		}
-
-
+		
+		
 		protected function init(){
 		}
-
-
+		
+		
 		public function __call( $name, $arguments ){
 			hiweb()->console()->warn( 'Попытка обращения к несуществующему методу [' . $name . ']', true );
 		}
-
-
+		
+		
 		protected function set_id( $id ){
 			if( !is_string( $id ) && !is_int( $id ) ){
 				$this->id = hiweb()->string()->rand( 8, true, true, false );
-			}else $this->id = sanitize_file_name(strtolower($id));
+			}else $this->id = sanitize_file_name( strtolower( $id ) );
 			if( is_null( $this->name ) )
 				$this->name = $this->id;
 			if( is_null( $this->title ) )
 				$this->title = $id;
 		}
-
-
+		
+		
 		/**
 		 * Установка глобального ID
 		 */
 		public function global_id(){
 			return $this->global_id;
 		}
-
-
+		
+		
 		/**
 		 * Возвращает ID
 		 * @return string
@@ -137,8 +137,8 @@
 		public function id(){
 			return $this->id;
 		}
-
-
+		
+		
 		/**
 		 * Установить/получить ширину элемента в блоке
 		 * @param null $width_percent
@@ -160,8 +160,8 @@
 			}
 			return $this->width;
 		}
-
-
+		
+		
 		/**
 		 * @param null $set
 		 * @return string|hw_input|hw_input_repeat|hw_input_repeat
@@ -173,8 +173,8 @@
 			}
 			return $this->description;
 		}
-
-
+		
+		
 		/**
 		 * Усттановить дополнительные тэги HTML, например array('class' => 'class_name')
 		 * @param null $key
@@ -188,8 +188,8 @@
 			}
 			return $this->tags;
 		}
-
-
+		
+		
 		/**
 		 * @param null $set
 		 * @return $this|string|hw_input_repeat|hw_input_repeat
@@ -201,8 +201,8 @@
 			}
 			return $this->type;
 		}
-
-
+		
+		
 		/**
 		 * Установить тэг NAME, либо
 		 * @param null $name - установить имя поля
@@ -214,8 +214,8 @@
 				return $this;
 			}else return $this->name;
 		}
-
-
+		
+		
 		/**
 		 * Установить TITLE
 		 * @param null $title - установить название поля
@@ -227,8 +227,8 @@
 				return $this;
 			}else return $this->title;
 		}
-
-
+		
+		
 		/**
 		 * Установить LABEL
 		 * @param null $label - установить название поля
@@ -243,8 +243,8 @@
 				return $this;
 			}else return $this->label;
 		}
-
-
+		
+		
 		/**
 		 * Установить VALUE, либо возвращает его
 		 * @param null $value - установить имя поля
@@ -258,16 +258,16 @@
 			}
 			return ( ( is_array( $this->value ) && count( $this->value ) == 0 ) || hiweb()->string()->is_empty( $this->value ) ) ? $this->default_value() : $this->value;
 		}
-
-
+		
+		
 		/**
 		 * Выводит значение поля
 		 */
 		public function the_value(){
 			echo $this->value();
 		}
-
-
+		
+		
 		/**
 		 * Установить DEFAULT VALUE, либо возвращает его
 		 * @param null $value - установить имя поля
@@ -281,16 +281,16 @@
 				return $this;
 			}else return $this->default;
 		}
-
-
+		
+		
 		/**
 		 * Выводит default-значение поля
 		 */
 		public function the_default(){
 			echo $this->default_value();
 		}
-
-
+		
+		
 		/**
 		 * Установить PLACEHOLDER, либо
 		 * @param null $placeholder - установить имя поля
@@ -302,8 +302,8 @@
 				return $this;
 			}else return $this->placeholder;
 		}
-
-
+		
+		
 		public function get_tags( array $tags = array( 'type', 'id', 'name', 'title', 'value', 'placeholder' ), $use_additionTags = true, $returnStr = true ){
 			$R = array();
 			if( $use_additionTags && is_array( $tags ) && is_array( $this->tags ) ){
@@ -327,8 +327,8 @@
 			}
 			return implode( ' ', $R2 );
 		}
-
-
+		
+		
 		/**
 		 * Возвращает HTML
 		 * @param null $arguments - Дополнительные аргументы
@@ -337,30 +337,30 @@
 		public function get( $arguments = null ){
 			return '<input ' . $this->get_tags() . '/>';
 		}
-
-
+		
+		
 		/**
 		 * Выводит HTML
 		 * @param null $arguments - Дополнительные аргументы
 		 * @return string
 		 */
 		public function the( $arguments = null ){
-			$html = $this->get($arguments);
+			$html = $this->get( $arguments );
 			echo $html;
 			return $html;
 		}
-
-
+		
+		
 		/**
 		 * Возвращает
 		 * @param null $arguments
 		 * @return string
 		 */
 		public function get_content( $arguments = null ){
-			return $this->get( $arguments );
+			return $this->value();
 		}
-
-
+		
+		
 		/**
 		 * @param null $arguments
 		 * @return string
@@ -370,8 +370,8 @@
 			echo $content;
 			return $content;
 		}
-
-
+		
+		
 		/**
 		 * @param $new_id
 		 * @return $this
@@ -383,8 +383,8 @@
 			hiweb()->inputs()->put( $new_input );
 			return $new_input;
 		}
-
-
+		
+		
 		/**
 		 * Возвращает TRUE, если имеются поля
 		 * @return bool|int
@@ -393,5 +393,5 @@
 			return ( is_array( $this->value ) ? count( $this->value ) : false );
 		}
 		
-
+		
 	}

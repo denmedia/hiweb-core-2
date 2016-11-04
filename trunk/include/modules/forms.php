@@ -50,7 +50,7 @@
 		/**
 		 * @param $idOrField
 		 * @param string $type
-		 * @return hw_input|hw_input_image|hw_input_repeat|hw_input_gallery
+		 * @return hw_input|hw_input_image|hw_input_repeat|hw_input_images
 		 */
 		public function field( $idOrField, $type = 'text' ){
 			if( !array_key_exists( $idOrField, $this->fields ) ){
@@ -183,6 +183,17 @@
 				}
 			}
 			///
+			return '<form ' . implode( ' ', $formTags ) . '>' . $this->get_noform() . ( $this->submit ? '<button type="submit">'.$this->submit.'</button>' : '' ). '</form>';
+		}
+
+
+		/**
+		 * Возвращает HTML полей без формы
+		 * @return string
+		 */
+		public function get_noform(){
+			hiweb()->css(HIWEB_URL_CSS.'/forms.css');
+			///
 			$templatePath = HIWEB_DIR_MODULES . '/forms/' . $this->template . '.php';
 			if( !file_exists( $templatePath ) )
 				$templatePath = HIWEB_DIR_MODULES . '/forms/default.php';
@@ -190,7 +201,7 @@
 			include $templatePath;
 			$R = ob_get_clean();
 			///
-			return '<form ' . implode( ' ', $formTags ) . '>' . $R . ( $this->submit ? '<button type="submit">'.$this->submit.'</button>' : '' ). '</form>';
+			return $R;
 		}
 		
 
@@ -199,6 +210,16 @@
 		 */
 		public function the(){
 			$content = $this->get();
+			echo $content;
+			return $content;
+		}
+		
+
+		/**
+		 * @return string
+		 */
+		public function the_noform(){
+			$content = $this->get_noform();
 			echo $content;
 			return $content;
 		}

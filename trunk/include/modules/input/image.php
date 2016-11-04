@@ -5,8 +5,8 @@
 
 		private $has_image = array();
 
-		private $preview_width = 150;
-		private $preview_height = 80;
+		private $preview_width = 278;
+		private $preview_height = 120;
 
 
 		/**

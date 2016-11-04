@@ -2,17 +2,17 @@
  * Created by DenMedia on 26.10.2016.
  */
 
-var hw_input_gallery = {
+var hw_input_images = {
 
     init: function () {
         jQuery('body').on('click', '.hw-input-gallery a[href="#add-left"], .hw-input-gallery a[href="#add-right"]', function (e) {
             var current = jQuery(this).hide().closest('.hw-input-gallery');
-            hw_input_gallery.event_click_add(current, '#add-right' == jQuery(this).attr('href'));
+            hw_input_images.event_click_add(current, '#add-right' == jQuery(this).attr('href'));
         });
         jQuery('body').on('click', '.hw-input-gallery a[href="#image"]', function (e) {
-            hw_input_gallery.event_click_remove(jQuery(this));
+            hw_input_images.event_click_remove(jQuery(this));
         });
-        hw_input_gallery.make_sortable();
+        hw_input_images.make_sortable();
     },
 
     make_sortable: function () {
@@ -31,10 +31,10 @@ var hw_input_gallery = {
         });
         gallery_window.on('select', function () {
             gallery_window.state().get('selection').map(function (attachment) {
-                hw_input_gallery.select_image(current, add_right, attachment.toJSON());
+                hw_input_images.select_image(current, add_right, attachment.toJSON());
             });
-            hw_input_gallery.make_sortable();
-            hw_input_gallery.refresh_add_left_view(current);
+            hw_input_images.make_sortable();
+            hw_input_images.refresh_add_left_view(current);
         });
         gallery_window.on('close', function () {
             current.find('a[href="#add-left"], a[href="#add-right"]').fadeIn();
@@ -57,7 +57,7 @@ var hw_input_gallery = {
         var current = image.closest('.hw-input-gallery');
         image.hide('slow', function () {
             jQuery(this).remove();
-            hw_input_gallery.refresh_add_left_view(current);
+            hw_input_images.refresh_add_left_view(current);
         });
     },
 
@@ -73,4 +73,4 @@ var hw_input_gallery = {
 };
 
 
-jQuery(document).ready(hw_input_gallery.init);
+jQuery(document).ready(hw_input_images.init);

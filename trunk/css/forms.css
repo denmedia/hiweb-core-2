@@ -1,0 +1,15 @@
+.hw-form-field {
+  margin-bottom: 15px; }
+  .hw-form-field p {
+    margin: 7px 0 3px 0; }
+  .hw-form-field input[type="text"] {
+    width: 100%; }
+
+.hw-form-field-compact p {
+  margin: 0 0 5px 0; }
+.hw-form-field-compact .description {
+  font-style: italic;
+  font-size: 11px;
+  color: #919b9c; }
+
+/*# sourceMappingURL=forms.css.map */

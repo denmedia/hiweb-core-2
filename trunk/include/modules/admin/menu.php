@@ -100,7 +100,7 @@
 		protected $function_echo;
 		///
 		/** @var  hw_input[] */
-		protected $inputs;
+		protected $inputs = array();
 		protected $pattern_slug = '/(.)*(\.php)^/';
 		protected $inputs_prepend;
 		
@@ -247,12 +247,12 @@
 		 * @return hw_input
 		 */
 		public function add_field( $id, $type = 'text', $title = null, $default_value = null ){
-			$input = hiweb()->input( $this->inputs_prepend.$id, $type ); //todo
+			$input = hiweb()->input( $this->inputs_prepend.$id, $type );
 			$input->title( is_null($title) ? $id : $title );
 			$input->default_value( $default_value );
 			$input->value( get_option($input->id(), $default_value) );
-			$this->inputs[ $this->inputs_prepend.$id ] = $input;
-			return $this->inputs[ $this->inputs_prepend.$id ];
+			$this->inputs[ $input->id() ] = $input;
+			return $this->inputs[ $input->id() ];
 		}
 		
 		
@@ -289,7 +289,7 @@
 				hiweb()->forms()->give($this->menu_slug)->template('options')->settings_group($this->menu_slug)->fields($this->inputs)->action('options.php')->the();
 				?></div><?php
 			}else{
-				echo '<div class="wrap"><h1>This is empty options page</h1></div>';
+				echo '<div class="wrap"><h1>'.$this->page_title.'</h1><div class="notice notice-info"><p>This is empty options page</p><p>Add new field by PHP-code:<br><code>hiweb()->admin()->menu()->give_page("'.$this->menu_slug.'")->add_field("fieldId");</code></p></div></div>';
 			}
 		}
 		

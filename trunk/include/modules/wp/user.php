@@ -37,7 +37,7 @@
 				<?php
 					foreach( $this->fields as $id => $field ){
 						if( $user instanceof WP_User )
-							$field->value( get_user_meta( $user->ID, $field->name(), true ) );//todo
+							$field->value( get_user_meta( $user->ID, $field->name(), true ) );
 						?>
 						<tr id="<?php echo $field->id() ?>" class="user-<?php echo $field->id() ?>-wrap">
 							<th><label for="<?php echo $field->id() ?>"><?php echo $field->label() ?></label></th>

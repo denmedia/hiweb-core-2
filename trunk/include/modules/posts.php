@@ -137,7 +137,7 @@
 				if( $this->taxonomy_exist( $taxonomy ) ){
 					$this->taxonomies[ $taxonomy ] = false;
 				}
-				$this->taxonomies[ $taxonomy ] = hiweb()->taxonomies()->get( $taxonomy );
+				$this->taxonomies[ $taxonomy ] = hiweb()->taxonomies()->give( $taxonomy );
 			}
 
 			return $this->taxonomies[ $taxonomy ];
@@ -191,6 +191,33 @@
 
 			return $R;
 		}
+		
+		
+		/**
+		 * Возвращает все поля для данного поста
+		 * @return array|hw_input[]
+		 */
+		public function get_fields(){
+			$R = array();
+			if($this->exist()){
+				$R = hiweb()->post_type($this->object->post_type)->get_fields();
+			}
+			return $R;
+		}
+		
+		
+		/**
+		 * @param $fieldId
+		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text|mixed|null
+		 */
+		public function get_field($fieldId){
+			$fields = $this->get_fields();
+			$field = null;
+			if(array_key_exists($fieldId, $fields)){
+				$field = $fields[$fieldId]->copy($fieldId)->value( $this->meta($fieldId) );
+			} else $field = hiweb()->input($fieldId);
+			return $field;
+		}
 
 	}
 
@@ -202,7 +229,7 @@
 	class hw_post_meta{
 
 		/**
-		 * @return hw_wp_post
+		 * @return hw_post
 		 */
 		private $post;
 
