@@ -1,30 +1,38 @@
 <?php
-
-
+	
+	
 	class hw_taxonomies{
-
+		
 		/** @var hw_taxonomy[] */
 		private $taxonomies = array();
-
-
+		
+		
 		public function is_exist( $taxonomy_name ){
 			return taxonomy_exists( $taxonomy_name );
 		}
-
-
+		
+		
 		/**
 		 * @param null $taxonomy_name
 		 * @return hw_taxonomy
 		 */
-		public function taxonomy( $taxonomy_name = null ){
+		public function get( $taxonomy_name = null ){
 			if( !array_key_exists( $taxonomy_name, $this->taxonomies ) ){
 				$this->taxonomies[ $taxonomy_name ] = new hw_taxonomy( $taxonomy_name );
 			}
-
+			
 			return $this->taxonomies[ $taxonomy_name ];
 		}
-
-
+		
+		
+		/**
+		 * @return hw_taxonomy[]
+		 */
+		public function get_all(){
+			return $this->taxonomies;
+		}
+		
+		
 		/**
 		 * @param $taxonomy_name_source
 		 * @param $taxonomy_name_dest
@@ -34,16 +42,16 @@
 			if( !$this->is_exist( $taxonomy_name_source ) ){
 				return false;
 			}
-			$this->taxonomies[ $taxonomy_name_dest ] = clone $this->taxonomy( $taxonomy_name_source );
+			$this->taxonomies[ $taxonomy_name_dest ] = clone $this->get( $taxonomy_name_source );
 			$this->taxonomies[ $taxonomy_name_dest ]->name( $taxonomy_name_dest );
 			return $this->taxonomies[ $taxonomy_name_dest ];
 		}
-
+		
 	}
-
-
+	
+	
 	class hw_taxonomy{
-
+		
 		private $name;
 		private $labels;
 		private $description;
@@ -62,22 +70,21 @@
 		private $update_count_callback;
 		private $_builtin;
 		private $defaults = array(
-			'labels' => array(), 'description' => '', 'public' => true, 'publicly_queryable' => null, 'hierarchical' => false, 'show_ui' => null, 'show_in_menu' => null, 'show_in_nav_menus' => null, 'show_tagcloud' => null, 'show_in_quick_edit' => null,
-			'show_admin_column' => false, 'meta_box_cb' => null, 'capabilities' => array(), 'rewrite' => true, 'update_count_callback' => '', '_builtin' => false, 'object_type' => array()
+			'labels' => array(), 'description' => '', 'public' => true, 'publicly_queryable' => null, 'hierarchical' => false, 'show_ui' => null, 'show_in_menu' => null, 'show_in_nav_menus' => null, 'show_tagcloud' => null, 'show_in_quick_edit' => null, 'show_admin_column' => false, 'meta_box_cb' => null, 'capabilities' => array(), 'rewrite' => true, 'update_count_callback' => '', '_builtin' => false, 'object_type' => array()
 		);
 		private $object_type = array();
 		/** @var array */
 		private $terms = array();
-
-
+		
+		
 		public function __construct( $name ){
 			$this->name = $name;
 			$this->labels = $name;
 			$this->set_properties();
 			add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
 		}
-
-
+		
+		
 		private function set_properties(){
 			if( taxonomy_exists( $this->name ) ){
 				$properties = (array)get_taxonomy( $this->name );
@@ -88,8 +95,8 @@
 				}
 			}
 		}
-
-
+		
+		
 		public function __call( $name, $arguments ){
 			switch( $name ){
 				case 'register_taxonomy':
@@ -97,13 +104,13 @@
 					break;
 			}
 		}
-
-
+		
+		
 		public function __clone(){
 			add_action( 'init', array( $this, 'register_taxonomy' ), 99 );
 		}
-
-
+		
+		
 		private function register_taxonomy(){
 			if( !taxonomy_exists( $this->name ) ){
 				register_taxonomy( $this->name, $this->object_type(), $this->props() );
@@ -116,8 +123,8 @@
 				}
 			}
 		}
-
-
+		
+		
 		/**
 		 * Получить/Утсановить POST TYPE
 		 * @param null|array|string $object_type - post type
@@ -134,8 +141,8 @@
 				return $this;
 			}else return $this->object_type;
 		}
-
-
+		
+		
 		/**
 		 * @return array
 		 */
@@ -148,8 +155,8 @@
 				}
 			return $R;
 		}
-
-
+		
+		
 		/**
 		 * @param null $name
 		 * @return string
@@ -162,8 +169,8 @@
 			}
 			return $this->name;
 		}
-
-
+		
+		
 		/**
 		 * @param null $labels
 		 * @return $this|string
@@ -177,8 +184,8 @@
 			}
 			return $this->labels;
 		}
-
-
+		
+		
 		/**
 		 * @param null $description
 		 * @return $this|string
@@ -192,8 +199,8 @@
 			}
 			return $this->description;
 		}
-
-
+		
+		
 		/**
 		 * @param null $publicly_queryable
 		 * @return $this|string
@@ -207,8 +214,8 @@
 			}
 			return $this->publicly_queryable;
 		}
-
-
+		
+		
 		/**
 		 * @param null $show_in_menu
 		 * @return $this|string
@@ -222,8 +229,8 @@
 			}
 			return $this->show_in_menu;
 		}
-
-
+		
+		
 		/**
 		 * @param null $show_in_quick_edit
 		 * @return $this|string
@@ -237,8 +244,8 @@
 			}
 			return $this->show_in_quick_edit;
 		}
-
-
+		
+		
 		/**
 		 * @param null $meta_box_cb
 		 * @return $this|string
@@ -252,8 +259,8 @@
 			}
 			return $this->meta_box_cb;
 		}
-
-
+		
+		
 		/**
 		 * @param null $capabilities
 		 * @return $this|string
@@ -267,8 +274,8 @@
 			}
 			return $this->capabilities;
 		}
-
-
+		
+		
 		/**
 		 * @param null $rewrite
 		 * @return $this|string
@@ -282,8 +289,8 @@
 			}
 			return $this->rewrite;
 		}
-
-
+		
+		
 		/**
 		 * @param null $update_count_callback
 		 * @return $this|string
@@ -297,8 +304,8 @@
 			}
 			return $this->update_count_callback;
 		}
-
-
+		
+		
 		/**
 		 * @param null $_builtin
 		 * @return $this|string
@@ -312,8 +319,8 @@
 			}
 			return $this->_builtin;
 		}
-
-
+		
+		
 		/**
 		 * @param null $hierarchical
 		 * @return $this|string
@@ -325,8 +332,8 @@
 			}
 			return $this->hierarchical;
 		}
-
-
+		
+		
 		/**
 		 * @param null $public
 		 * @return $this|string
@@ -338,8 +345,8 @@
 			}
 			return $this->public;
 		}
-
-
+		
+		
 		/**
 		 * @param null $show_ui
 		 * @return $this|string
@@ -351,8 +358,8 @@
 			}
 			return $this->show_ui;
 		}
-
-
+		
+		
 		/**
 		 * @param null $show_admin_column
 		 * @return $this|string
@@ -364,8 +371,8 @@
 			}
 			return $this->show_admin_column;
 		}
-
-
+		
+		
 		/**
 		 * @param null $show_in_nav_menus
 		 * @return $this|string
@@ -377,8 +384,8 @@
 			}
 			return $this->show_in_nav_menus;
 		}
-
-
+		
+		
 		/**
 		 * @param null $show_tagcloud
 		 * @return $this|string
@@ -390,8 +397,8 @@
 			}
 			return $this->show_tagcloud;
 		}
-
-
+		
+		
 		/**
 		 * Возвращает все термины таксономии
 		 * @param string $returnKeyGoup
@@ -426,7 +433,7 @@
 					$this->terms[ $argsString ] = array();
 				}
 			}
-
+			
 			return $this->terms[ $argsString ];
 		}
 		
@@ -439,6 +446,6 @@
 		public function copy( $new_name ){
 			return hiweb()->taxonomies()->copy( $this->name, $new_name );
 		}
-
-
+		
+		
 	}

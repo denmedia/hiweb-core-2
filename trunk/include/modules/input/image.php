@@ -86,7 +86,7 @@
 		 * @return string
 		 */
 		public function get_content( $size = 'thumbnail' ){
-			return '<img src="' . $this->get( $size ) . '"/>';
+			return '<img src="' . $this->get_src( $size ) . '"/>';
 		}
 		
 	}

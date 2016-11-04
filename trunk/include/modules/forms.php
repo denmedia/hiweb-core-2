@@ -1,6 +1,9 @@
 <?php
-
-
+	
+	
+	/**
+	 * Class hw_forms
+	 */
 	class hw_forms{
 
 		/** @var hw_form[] */
@@ -11,7 +14,7 @@
 		 * @param $id
 		 * @return hw_form
 		 */
-		public function get( $id ){
+		public function give( $id ){
 			if( !array_key_exists( $id, $this->forms ) ){
 				$this->forms[ $id ] = new hw_form( $id );
 			}
@@ -20,16 +23,23 @@
 
 	}
 	
-
+	
+	/**
+	 * Class hw_form
+	 */
 	class hw_form{
-
-		public $id = '';
-		public $action = '';
-		public $method = 'get';
-		public $template = 'default';
+		
+		protected $id = '';
+		protected $action = '';
+		protected $method = 'post';
+		protected $template = 'default';
 		
 		/** @var hw_input[] */
 		private $fields = array();
+		
+		private $submit = false;
+		
+		private $settings_group;
 
 
 		public function __construct( $id = '' ){
@@ -44,14 +54,112 @@
 		 */
 		public function field( $idOrField, $type = 'text' ){
 			if( !array_key_exists( $idOrField, $this->fields ) ){
-				$this->fields[ $idOrField ] = hiweb()->inputs()->get( $idOrField, $type );
+				$this->fields[ $idOrField ] = hiweb()->inputs()->give( $idOrField, $type );
 			}
 			return $this->fields[ $idOrField ];
 		}
-
-
-		public function fields(){
-			return is_array( $this->fields ) ? $this->fields : array();
+		
+		
+		/**
+		 * @param array $inputs
+		 * @param bool|int $append - укажите 1 или TRUE для добавления в конец массива полей, -1 для добавления в начало массива
+		 * @return hw_form
+		 */
+		public function fields($inputs = array(), $append = true){
+			if( is_array($inputs) && count($inputs) > 0) {
+				if($append != false) {
+					if($append < 0) {
+						$this->fields = array_merge($inputs, $this->fields);
+					} else {
+						$this->fields = array_merge($this->fields,$inputs);
+					}
+				} else {
+					$this->fields = $inputs;
+				}
+			}
+			return $this;
+		}
+		
+		public function get_fields(){
+			return $this->fields;
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function submit($set = null){
+			if(!is_null($set)){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function settings_group($set = null){
+			if(!is_null($set)){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function id($set = null){
+			if(!is_null($set)){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function action($set = null){
+			if(!is_null($set)){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function method($set = null){
+			if(!is_null($set)){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function template($set = null){
+			if(!is_null($set)){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
 		}
 
 
@@ -82,7 +190,7 @@
 			include $templatePath;
 			$R = ob_get_clean();
 			///
-			return '<form ' . implode( ' ', $formTags ) . '>' . $R . '</form>';
+			return '<form ' . implode( ' ', $formTags ) . '>' . $R . ( $this->submit ? '<button type="submit">'.$this->submit.'</button>' : '' ). '</form>';
 		}
 		
 

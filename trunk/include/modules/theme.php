@@ -11,7 +11,7 @@
 
 
 		public function __construct( $theme ){
-			$this->theme = $theme;
+			$this->theme = trim($theme) == '' ? get_option('stylesheet') : $theme;
 		}
 
 

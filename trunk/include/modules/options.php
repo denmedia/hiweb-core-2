@@ -36,11 +36,19 @@
 		 * @param string $type
 		 * @return hw_option
 		 */
-		public function get( $id, $type = 'text' ){
+		public function give( $id, $type = 'text' ){
 			if( !$this->is_exist( $id ) ){
 				$this->options[ $id ] = new hw_option( $id, $type );
 			}
 			return $this->options[ $id ];
+		}
+
+		
+		/**
+		 * @return hw_option[]
+		 */
+		public function get_options(){
+			return $this->options;
 		}
 
 
@@ -98,20 +106,20 @@
 					}else{
 						switch( $this->show_in ){
 							case 'admin_menu':
-								$page = hiweb()->admin()->menu()->add_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
+								$page = hiweb()->admin()->menu()->give_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
 								if( trim( $this->show_in_arg_1 ) != '' )
 									$page->icon_url( $this->show_in_arg_1 );
 								if( trim( $this->show_in_arg_2 ) != '' )
 									$page->position( $this->show_in_arg_2 );
 								break;
 							case 'admin_submenu':
-								hiweb()->admin()->menu()->add_sub_page( $this->slug, $this->show_in_arg_1 )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
+								hiweb()->admin()->menu()->give_subpage( $this->slug, $this->show_in_arg_1 )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
 								break;
 							case 'admin_options':
-								hiweb()->admin()->menu()->add_options_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
+								hiweb()->admin()->menu()->give_options_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
 								break;
 							case 'admin_theme':
-								hiweb()->admin()->menu()->add_theme_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
+								hiweb()->admin()->menu()->give_theme_page( $this->slug )->menu_title( $this->menu_title )->page_title( $this->page_title )->function_echo( array( $this, 'the_page' ) );
 								break;
 						}
 					}
@@ -255,7 +263,7 @@
 				}
 			}else{
 				if( !$this->option_exists( $idOrOptions ) ){
-					$this->options[ $idOrOptions ] = hiweb()->options()->get( $idOrOptions, $type );
+					$this->options[ $idOrOptions ] = hiweb()->options()->give( $idOrOptions, $type );
 					$this->options[ $idOrOptions ]->parent( $this );
 				}
 				return $this->options[ $idOrOptions ];

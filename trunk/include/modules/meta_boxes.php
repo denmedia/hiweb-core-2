@@ -9,8 +9,12 @@
 	class hw_meta_boxes{
 
 		private $meta_boxes = array();
-
-
+		
+		
+		/**
+		 * @param $id
+		 * @return bool
+		 */
 		public function is_exists( $id ){
 			return array_key_exists( $id, $this->meta_boxes );
 		}
@@ -26,7 +30,7 @@
 		 * @param $id
 		 * @return hw_meta_box|mixed
 		 */
-		public function get( $id = null, $title = null ){
+		public function give( $id = null, $title = null ){
 			if( array_key_exists( $id, $this->meta_boxes ) ){
 				if( !is_null( $title ) )
 					$this->meta_boxes[ $id ]->title( $title );
@@ -91,8 +95,9 @@
 		public function __call( $name, $arguments ){
 			switch( $name ){
 				case 'add_action_add_meta_box':
-					if( $this->screen_logic->detect()->detect() )
+					if( $this->screen_logic->detect()->detect() ){
 						add_meta_box( $this->_id, $this->title, is_null( $this->callback ) ? array( $this, 'the_post_edit' ) : $this->callback, $this->screen, $this->context, $this->priority, $this->callback_args );
+					}
 					break;
 				case 'the_post_edit':
 					$this->the_post_edit( $arguments[0], $arguments[1] );
@@ -126,7 +131,7 @@
 		 * Установить логику отображения
 		 * @return hw_screen_logic
 		 */
-		public function screen(){
+		public function show_in(){
 			return $this->screen_logic;
 		}
 
@@ -240,7 +245,7 @@
 
 
 		protected function the_post_edit( $post, $meta_box ){
-			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+			if( !$this->show_in()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else{
 				hiweb()->css( HIWEB_URL_CSS . '/meta-boxes.css' );
 				foreach( $this->fields as $id => $field ){
@@ -281,7 +286,7 @@
 
 
 		protected function the_taxonomy_add( $taxonomy ){
-			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+			if( !$this->show_in()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
 				?>
 				<div class="form-field term-slug-wrap">
@@ -296,7 +301,7 @@
 
 
 		protected function the_taxonomy_edit( $taxonomy ){
-			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+			if( !$this->show_in()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else foreach( $this->fields as $id => $field ){
 				$field->value( get_term_meta( $_GET['tag_ID'], $field->name(), true ) );
 				?>
@@ -326,7 +331,7 @@
 
 
 		protected function the_user_edit(){
-			if( !$this->screen()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+			if( !$this->show_in()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else{
 				?>
 				<table class="form-table">
@@ -358,7 +363,7 @@
 
 		//todo
 		protected function the_options_edit( $arguments = null ){
-			if( $this->screen()->detect()->detect() ){
+			if( $this->show_in()->detect()->detect() ){
 				?>
 				<div class="wrap"><h1><?php echo $this->title() ?></h1>
 				<form action="<?php admin_url(); ?>" method="post">

@@ -33,7 +33,7 @@
 		 * @param string $type
 		 * @return hw_input
 		 */
-		private function make( $id = null, $type = 'text' ){
+		public function make( $id = null, $type = 'text' ){
 			$this->inc( $type );
 			$className = 'hw_input_' . $type;
 			if( !class_exists( $className ) ){
@@ -55,19 +55,6 @@
 		 */
 		public function is_exist( $id ){
 			return array_key_exists( $id, $this->inputs );
-		}
-
-
-		/**
-		 * @param $id
-		 * @param string $type
-		 * @return hw_input
-		 */
-		public function get( $id, $type = 'text' ){
-			if( !$this->is_exist( $id ) ){
-				$this->inputs[ $id ] = $this->make( $id, $type );
-			}
-			return $this->inputs[ $id ];
 		}
 
 
@@ -120,16 +107,18 @@
 
 
 		public function __call( $name, $arguments ){
-			hiweb()->console()->warn( 'Попытка образения к несуществующему методу [' . $name . ']', true );
+			hiweb()->console()->warn( 'Попытка обращения к несуществующему методу [' . $name . ']', true );
 		}
 
 
 		protected function set_id( $id ){
 			if( !is_string( $id ) && !is_int( $id ) ){
 				$this->id = hiweb()->string()->rand( 8, true, true, false );
-			}else $this->id = $id;
+			}else $this->id = sanitize_file_name(strtolower($id));
 			if( is_null( $this->name ) )
 				$this->name = $this->id;
+			if( is_null( $this->title ) )
+				$this->title = $id;
 		}
 
 
@@ -259,7 +248,7 @@
 		/**
 		 * Установить VALUE, либо возвращает его
 		 * @param null $value - установить имя поля
-		 * @return string|$this|hw_input_repeat|hw_input_repeat
+		 * @return string|hw_input|hw_input_repeat|hw_input_repeat
 		 */
 		public function value( $value = null ){
 			if( !is_null( $value ) ){
@@ -403,5 +392,6 @@
 		public function have_rows(){
 			return ( is_array( $this->value ) ? count( $this->value ) : false );
 		}
+		
 
 	}

@@ -137,7 +137,7 @@
 				if( $this->taxonomy_exist( $taxonomy ) ){
 					$this->taxonomies[ $taxonomy ] = false;
 				}
-				$this->taxonomies[ $taxonomy ] = hiweb()->taxonomies()->taxonomy( $taxonomy );
+				$this->taxonomies[ $taxonomy ] = hiweb()->taxonomies()->get( $taxonomy );
 			}
 
 			return $this->taxonomies[ $taxonomy ];

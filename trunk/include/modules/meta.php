@@ -10,7 +10,7 @@
 		 * @param $field_id
 		 * @return hw_meta_field
 		 */
-		public function get( $field_id ){
+		public function give( $field_id ){
 			if( !array_key_exists( $field_id, $this->meta ) ){
 				$this->meta[ $field_id ] = new hw_meta_field( $field_id );
 			}
@@ -38,7 +38,7 @@
 
 		public function __construct( $id ){
 			$this->id = $id;
-			$this->input = hiweb()->inputs()->is_exist( $id ) ? hiweb()->inputs()->get( $id ) : false;
+			$this->input = hiweb()->inputs()->is_exist( $id ) ? hiweb()->inputs()->give( $id ) : false;
 			if( !did_action( 'wp' ) ){
 				hiweb()->console()->warn( 'hiweb()→meta() warn: action [wp] dosen\'t did! Auto detect queried object is not possible!' );
 			}else{

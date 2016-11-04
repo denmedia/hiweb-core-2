@@ -12,7 +12,7 @@
 		 * @param $post_type
 		 * @return hw_post_type
 		 */
-		public function post_type( $post_type ){
+		public function give( $post_type ){
 			if( !array_key_exists( $post_type, $this->post_types ) ){
 				$this->post_types[ $post_type ] = new hw_post_type( $post_type );
 			}
@@ -510,11 +510,11 @@
 
 		/**
 		 * @param $name
-		 * @return hw_wp_add_taxonomy
+		 * @return hw_taxonomy
 		 */
 		public function add_taxonomy( $name ){
 			if( !isset( $this->_taxonomies[ $name ] ) ){
-				$this->_taxonomies[ $name ] = hiweb()->wp()->add_taxonomy( $name );
+				$this->_taxonomies[ $name ] = hiweb()->taxonomies()->get($name);
 				$this->_taxonomies[ $name ]->object_type( $this->_type );
 			}
 			return $this->_taxonomies[ $name ];
