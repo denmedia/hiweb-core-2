@@ -10,9 +10,3 @@
 	
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
-	
-	
-	$my_page = hiweb()->post_type('post');
-	$repeat = $my_page->add_field('Test','repeat');
-	$repeat->add_field('Image','image');
-	$repeat->add_field('Text','text');

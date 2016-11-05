@@ -5,7 +5,17 @@
 		
 		private $fields = array();
 		
+		private $the_rows_current_field = array( '', '', '' );
+		private $the_rows;
+		private $the_row;
 		
+		
+		/**
+		 * @param $fieldId
+		 * @param null $contextId
+		 * @param null $contextType
+		 * @return hw_field
+		 */
 		public function give( $fieldId, $contextId = null, $contextType = null ){
 			if( is_null( $contextId ) ){
 				if( function_exists( 'get_queried_object' ) ){
@@ -36,6 +46,55 @@
 				$this->fields[ $contextType ][ $contextId ] = new hw_field( $fieldId, $contextId, $contextType );
 			}
 			return $this->fields[ $contextType ][ $contextId ];
+		}
+		
+		
+		/**
+		 * @param $fieldId
+		 * @param null $contextId
+		 * @param null $contextType
+		 * @return bool
+		 */
+		public function have_rows( $fieldId, $contextId = null, $contextType = null ){
+			$field = $this->give( $fieldId, $contextId, $contextType );
+			if( !$field->have_rows() ){
+				return false;
+			}else{
+				if( $this->the_rows_current_field[0] != $field->id() || $this->the_rows_current_field[1] != $field->context_id() || $this->the_rows_current_field[2] != $field->context_type() ){
+					$this->the_rows = $field->get();
+					$this->the_rows_current_field[0] = $field->id();
+					$this->the_rows_current_field[1] = $field->context_id();
+					$this->the_rows_current_field[2] = $field->context_type();
+				}
+				return ( is_array( $this->the_rows ) && count( $this->the_rows ) > 0 );
+			}
+		}
+		
+		
+		/**
+		 * Возвращает следующий массив строки, либо FALSE
+		 * @return bool|mixed
+		 */
+		public function the_row(){
+			if( is_array( $this->the_rows ) && count( $this->the_rows ) > 0 ){
+				$this->the_row = array_shift( $this->the_rows );
+				return $this->the_row;
+			}else{
+				return false;
+			}
+		}
+		
+		
+		/**
+		 * Возвращает значение клетки в текущей строке полей
+		 * @param $subFieldId
+		 * @return mixed|null
+		 */
+		public function get_sub_field( $subFieldId ){
+			if( is_array( $this->the_row ) ){
+				return array_key_exists( $subFieldId, $this->the_row ) ? $this->the_row[ $subFieldId ] : null;
+			}
+			return $this->the_row;
 		}
 		
 	}
@@ -100,7 +159,7 @@
 		/**
 		 * @return string
 		 */
-		public function type_id(){
+		public function context_id(){
 			return $this->contextId;
 		}
 		
@@ -108,7 +167,7 @@
 		/**
 		 * @return string
 		 */
-		public function type(){
+		public function context_type(){
 			return $this->contextType;
 		}
 		
@@ -142,6 +201,7 @@
 		
 		/**
 		 * @param null $args
+		 * @return mixed
 		 */
 		public function the( $args = null ){
 			return $this->input->the_value( $args );
@@ -152,44 +212,7 @@
 		 * @return bool|int
 		 */
 		public function have_rows(){
-			if( !is_array( $this->cols ) ){
-				$this->cols = array();
-				$value = $this->get();
-				if( is_array( $value ) && count( $value ) > 0 ){
-					foreach( $value as $row ){
-						if( is_array( $row ) )
-							foreach( $row as $col_id => $col_val ){
-								$this->cols[] = $col_id;
-							}
-					}
-				}
-			}
 			return ( is_array( $this->input->value() ) ? count( $this->input->value() ) : false );
-		}
-		
-		
-		public function the_row(){
-			if( !$this->have_rows() ){
-				return false;
-			}
-			///
-			if( !is_array( $this->rows ) ){
-				foreach( $this->input->value() as $row_values ){
-					if( is_array( $row_values ) )
-						$this->rows[] = new hw_field_row( $this, $row_values );else hiweb()->console()->warn( 'hiweb()→meta()→the_row() error: once of the rows is not array!', 1 );
-				}
-			}
-			///
-			if( count( $this->rows ) == 0 ){
-				return false;
-			}else{
-				$this->row = array_shift( $this->rows );
-				return $this->row;
-			}
-		}
-		
-		public function cols(){
-			
 		}
 		
 		
@@ -200,51 +223,4 @@
 			return $this->input;
 		}
 		
-	}
-	
-	
-	class hw_field_row{
-		
-		/** @var  hw_field */
-		private $parent_field;
-		private $row_values = array();
-		
-		
-		public function __construct( hw_field $field, array $row_values ){
-			$this->parent_field = $field;
-			$this->row_values = $row_values;
-		}
-		
-		
-		/**
-		 * @return array
-		 */
-		public function cols(){
-			$R = array();
-			if( is_array( $this->parent_field->cols() ) )
-				foreach( $this->parent_field->cols() as $col_id ){
-					$R[ $col_id ] = array_key_exists( $col_id, $this->row_values ) ? $this->row_values[ $col_id ] : null;
-				}
-			return $R;
-		}
-		
-		
-		/**
-		 * @param $col_id
-		 * @return mixed|null
-		 */
-		public function get_cell( $col_id ){
-			return array_key_exists( $col_id, $this->row_values ) ? $this->row_values[ $col_id ] : null;
-		}
-		
-		
-		/**
-		 * @param $col_id
-		 * @return mixed|null
-		 */
-		public function the_cell( $col_id ){
-			$value = $this->get_cell( $col_id );
-			echo $value;
-			return $value;
-		}
 	}

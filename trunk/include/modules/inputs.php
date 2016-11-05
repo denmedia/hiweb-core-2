@@ -264,7 +264,9 @@
 		 * Выводит значение поля
 		 */
 		public function the_value(){
-			echo $this->value();
+			$value = $this->value();
+			echo $value;
+			return $value;
 		}
 		
 		

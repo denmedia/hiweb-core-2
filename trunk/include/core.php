@@ -6,18 +6,9 @@
 	 * Time: 15:34
 	 */
 	
+	include_once 'short_functions.php';
+	
 	if( !class_exists( 'hw_core' ) ){
-		
-		/**
-		 * Запрос к корневому классу hiweb
-		 * @return hw_core
-		 */
-		function hiweb(){
-			static $class;
-			if( !$class instanceof hw_core )
-				$class = new hw_core();
-			return $class;
-		}
 		
 		
 		class hw_core{
@@ -61,6 +52,24 @@
 			public function console( $data = null ){
 				if( !is_null( $data ) || trim( $data ) != '' )
 					return $this->module( 'console' )->info( $data );else return $this->module( 'console', $data );
+			}
+			
+			
+			/**
+			 * @return hw_fields
+			 */
+			public function fields(){
+				return $this->module('fields');
+			}
+			
+			/**
+			 * @param $fieldId
+			 * @param null $contextId
+			 * @param null $contextType
+			 * @return hw_field
+			 */
+			public function field( $fieldId, $contextId = null, $contextType = null ){
+				return $this->fields()->give( $fieldId, $contextId, $contextType );
 			}
 			
 			
@@ -136,17 +145,6 @@
 			 */
 			public function input( $id = null, $type = 'text' ){
 				return $this->inputs()->make( $id, $type );
-			}
-			
-			
-			/**
-			 * @param $fieldId
-			 * @param null $contextId
-			 * @param null $contextType
-			 * @return hw_field
-			 */
-			public function field( $fieldId, $contextId = null, $contextType = null ){
-				return $this->module( 'fields' )->give( $fieldId, $contextId, $contextType );
 			}
 			
 			
