@@ -323,7 +323,8 @@
 			foreach( $R as $key => $val ){
 				if( is_null( $val ) )
 					continue;
-				$R2[] = $key . '="' . htmlentities( $val, ENT_QUOTES, 'utf-8' ) . '"';
+				if( !is_array( $val ) && !is_object( $val ) )
+					$R2[] = $key . '="' . htmlentities( $val, ENT_QUOTES, 'utf-8' ) . '"';
 			}
 			return implode( ' ', $R2 );
 		}

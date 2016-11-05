@@ -30,4 +30,3 @@
 	?>
 	</tbody>
 </table>
-<?php submit_button(); ?>

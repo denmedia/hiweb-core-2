@@ -26,7 +26,15 @@
 			
 			
 			public function __call( $name, $arguments ){
-				$this->console()->warn('hiweb()->'.$name.'() error: вызван не существующий метод ['.$name.']', true);
+				$this->console()->warn( 'hiweb()->' . $name . '() error: вызван не существующий метод [' . $name . ']', true );
+			}
+			
+			
+			/**
+			 * @return bool|hw_admin
+			 */
+			public function admin(){
+				return $this->module( 'admin' );
 			}
 			
 			
@@ -137,8 +145,8 @@
 			 * @param null $contextType
 			 * @return hw_field
 			 */
-			public function field($fieldId, $contextId = null, $contextType = null){
-				return $this->module('fields')->give($fieldId, $contextId, $contextType);
+			public function field( $fieldId, $contextId = null, $contextType = null ){
+				return $this->module( 'fields' )->give( $fieldId, $contextId, $contextType );
 			}
 			
 			
@@ -254,14 +262,6 @@
 			 */
 			public function user( $loginOrId = null ){
 				return $this->module( 'users' )->get( $loginOrId );
-			}
-			
-			
-			/**
-			 * @return bool|hw_admin
-			 */
-			public function admin(){
-				return $this->module( 'admin' );
 			}
 			
 			

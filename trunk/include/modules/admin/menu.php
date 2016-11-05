@@ -14,6 +14,8 @@
 		/** @var hw_admin_theme_page[] */
 		private $_admin_theme_pages = array();
 		
+		private $_sections = array();
+		
 		
 		/**
 		 * Возвращает объект для работы со страницей опций
@@ -21,10 +23,10 @@
 		 * @return hw_admin_menu_page
 		 */
 		public function give_page( $slug ){
-			$slug_sanitize = sanitize_file_name(strtolower($slug));
+			$slug_sanitize = sanitize_file_name( strtolower( $slug ) );
 			if( !array_key_exists( $slug_sanitize, $this->_admin_menu_pages ) ){
 				$this->_admin_menu_pages[ $slug_sanitize ] = new hw_admin_menu_page( $slug );
-				$this->pages[$slug_sanitize] = $this->_admin_menu_pages[ $slug_sanitize ];
+				$this->pages[ $slug_sanitize ] = $this->_admin_menu_pages[ $slug_sanitize ];
 			}
 			return $this->_admin_menu_pages[ $slug_sanitize ];
 		}
@@ -37,10 +39,10 @@
 		 * @return hw_admin_submenu_page
 		 */
 		public function give_subpage( $slug, $parentSlug = null ){
-			$slug_sanitize = sanitize_file_name(strtolower($slug));
+			$slug_sanitize = sanitize_file_name( strtolower( $slug ) );
 			if( !array_key_exists( $slug_sanitize, $this->_admin_submenu_pages ) ){
 				$this->_admin_submenu_pages[ $slug_sanitize ] = new hw_admin_submenu_page( $slug, $parentSlug );
-				$this->pages[$slug_sanitize] = $this->_admin_submenu_pages[ $slug_sanitize ];
+				$this->pages[ $slug_sanitize ] = $this->_admin_submenu_pages[ $slug_sanitize ];
 			}
 			return $this->_admin_submenu_pages[ $slug_sanitize ];
 		}
@@ -52,10 +54,10 @@
 		 * @return hw_admin_options_page
 		 */
 		public function give_options_page( $slug ){
-			$slug_sanitize = sanitize_file_name(strtolower($slug));
+			$slug_sanitize = sanitize_file_name( strtolower( $slug ) );
 			if( !array_key_exists( $slug_sanitize, $this->_admin_option_pages ) ){
 				$this->_admin_option_pages[ $slug_sanitize ] = new hw_admin_options_page( $slug );
-				$this->pages[$slug_sanitize] = $this->_admin_option_pages[ $slug_sanitize ];
+				$this->pages[ $slug_sanitize ] = $this->_admin_option_pages[ $slug_sanitize ];
 			}
 			return $this->_admin_option_pages[ $slug_sanitize ];
 		}
@@ -67,10 +69,10 @@
 		 * @return hw_admin_theme_page
 		 */
 		public function give_theme_page( $slug ){
-			$slug_sanitize = sanitize_file_name(strtolower($slug));
+			$slug_sanitize = sanitize_file_name( strtolower( $slug ) );
 			if( !array_key_exists( $slug_sanitize, $this->_admin_theme_pages ) ){
 				$this->_admin_theme_pages[ $slug_sanitize ] = new hw_admin_theme_page( $slug );
-				$this->pages[$slug_sanitize] = $this->_admin_theme_pages[ $slug_sanitize ];
+				$this->pages[ $slug_sanitize ] = $this->_admin_theme_pages[ $slug_sanitize ];
 			}
 			return $this->_admin_theme_pages[ $slug_sanitize ];
 		}
@@ -80,12 +82,52 @@
 		 * @param $menu_slug
 		 * @return bool|hw_admin_menu_abstract
 		 */
-		public function get($menu_slug){
-			$menu_slug = sanitize_file_name(strtolower($menu_slug));
-			if(array_key_exists($menu_slug,$this->pages)){
-				return $this->pages[$menu_slug];
+		public function get( $menu_slug ){
+			$menu_slug = sanitize_file_name( strtolower( $menu_slug ) );
+			if( array_key_exists( $menu_slug, $this->pages ) ){
+				return $this->pages[ $menu_slug ];
 			}
 			return new hw_admin_menu_abstract();
+		}
+		
+		
+		/**
+		 * @param $section_slug
+		 * @param string $options_slug
+		 * @param null $section_title
+		 * @return hw_admin_menu_section
+		 */
+		public function give_options( $options_slug = 'options-general.php', $section_slug = '', $section_title = null ){
+			$section_slug_sanitize = sanitize_file_name( strtolower( $section_slug ) );
+			if( !array_key_exists( $section_slug_sanitize, $this->_sections ) ){
+				$section = new hw_admin_menu_section( $section_slug, $options_slug );
+				$this->_sections[ $section_slug_sanitize ] = $section;
+			}
+			return $this->_sections[ $section_slug_sanitize ];
+		}
+		
+		
+		/**
+		 * @param bool $pages
+		 * @param bool $sections
+		 * @param bool $subpages
+		 * @param bool $options
+		 * @param bool $themes
+		 * @return hw_admin_menu_abstract[]|hw_admin_menu_section[]
+		 */
+		public function get_pages( $pages = true, $sections = true, $subpages = true, $options = true, $themes = true ){
+			$R = array();
+			if( $pages )
+				$R = array_merge( $R, $this->_admin_menu_pages );
+			if( $subpages )
+				$R = array_merge( $R, $this->_admin_submenu_pages );
+			if( $options )
+				$R = array_merge( $R, $this->_admin_option_pages );
+			if( $themes )
+				$R = array_merge( $R, $this->_admin_theme_pages );
+			if( $sections )
+				$R = array_merge( $R, $this->_sections );
+			return $R;
 		}
 		
 	}
@@ -101,29 +143,19 @@
 		///
 		/** @var  hw_input[] */
 		protected $inputs = array();
-		protected $pattern_slug = '/(.)*(\.php)^/';
 		protected $inputs_prepend;
 		
 		
 		public function __construct( $slug = null, $additionData = null ){
 			if( !is_null( $slug ) && trim( $slug ) != '' ){
-				$this->menu_slug = sanitize_file_name(strtolower($slug));
+				$slug_sanitize = sanitize_file_name( strtolower( $slug ) );
+				$this->menu_slug = $slug_sanitize;
+				$this->inputs_prepend = $this->menu_slug . '-';
 				$this->menu_title = $slug;
 				$this->page_title = $slug;
-				$this->inputs_prepend = $this->menu_slug.'-';
 			}
 			$this->init( $additionData );
-			$this->hooks();
-		}
-		
-		
-		protected function hooks(){
-			add_action( 'admin_init', array( $this, 'register_setting' ) );
-			if( preg_match( $this->pattern_slug, $this->menu_slug ) > 0 ){
-				hiweb()->console( $this->menu_slug );
-			}else{
-				add_action( 'admin_menu', array( $this, 'add_action_admin_menu' ) );
-			}
+			add_action( 'admin_menu', array( $this, 'add_action_admin_menu' ) );
 		}
 		
 		
@@ -138,13 +170,6 @@
 					break;
 				case 'the_page':
 					$this->the_page();
-					break;
-				case 'register_setting':
-					foreach($this->inputs as $input){
-						if($input instanceof hw_input){
-							register_setting( $this->menu_slug(), $input->id() );
-						}
-					}
 					break;
 			}
 		}
@@ -161,13 +186,14 @@
 		 * @param null $set
 		 * @return hw_admin_menu_abstract|mixed
 		 */
-		public function inputs_prepend($set = null){
-			if(!is_null($set)){
+		public function inputs_prepend( $set = null ){
+			if( !is_null( $set ) ){
 				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
 			return $this->{__FUNCTION__};
 		}
+		
 		
 		/**
 		 * Возвращает / устанавливает значение
@@ -246,9 +272,9 @@
 		 * @return hw_input
 		 */
 		public function add_field( $id, $type = 'text', $title = null ){
-			$input = hiweb()->input( $this->inputs_prepend.$id, $type );
-			$input->title( is_null($title) ? $id : $title );
-			$input->value( get_option($input->id()) );
+			$input = hiweb()->input( $this->inputs_prepend() . $id, $type );
+			$input->title( is_null( $title ) ? $id : $title );
+			$input->value( get_option( $input->id() ) );
 			$this->inputs[ $input->id() ] = $input;
 			return $this->inputs[ $input->id() ];
 		}
@@ -258,8 +284,8 @@
 		 * @param $fieldId
 		 * @return bool
 		 */
-		public function field_exists($fieldId){
-			return array_key_exists($this->inputs_prepend().$fieldId, $this->inputs);
+		public function field_exists( $fieldId ){
+			return array_key_exists( $this->inputs_prepend() . $fieldId, $this->inputs );
 		}
 		
 		
@@ -267,27 +293,28 @@
 		 * @param $fieldId
 		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
 		 */
-		public function get_field($fieldId){
-			if($this->field_exists($fieldId)){
-				$inp = $this->inputs[$this->inputs_prepend().$fieldId];
+		public function get_field( $fieldId ){
+			if( $this->field_exists( $fieldId ) ){
+				$inp = $this->inputs[ $this->inputs_prepend() . $fieldId ];
 				return $inp;
-			} else {
-				return hiweb()->input($fieldId);
+			}else{
+				return hiweb()->input( $fieldId );
 			}
 		}
 		
 		
-		public function the_page(){
+		protected function the_page(){
 			if( is_callable( $this->function_echo ) ){
 				call_user_func( $this->function_echo );
 			}elseif( is_string( $this->function_echo ) ){
 				echo $this->function_echo;
-			}elseif(is_array($this->inputs) && count($this->inputs) > 0){
-				?><div class="wrap"><?php do_action('admin_notices') ?><h1><?php echo $this->page_title ?></h1><?php
-				hiweb()->forms()->give($this->menu_slug)->template('options')->settings_group($this->menu_slug)->fields($this->inputs)->action('options.php')->the();
+			}elseif( is_array( $this->inputs ) && count( $this->inputs ) > 0 ){
+				?>
+				<div class="wrap"><?php do_action( 'admin_notices' ) ?><h1><?php echo $this->page_title ?></h1><?php
+				hiweb()->forms()->give( $this->menu_slug )->template( 'options' )->settings_group( $this->menu_slug )->submit( true )->fields( $this->inputs )->action( 'options.php' )->the();
 				?></div><?php
 			}else{
-				echo '<div class="wrap"><h1>'.$this->page_title.'</h1><div class="notice notice-info"><p>This is empty options page</p><p>Add new field by PHP-code:<br><code>hiweb()->admin()->menu()->give_page("'.$this->menu_slug.'")->add_field("fieldId");</code></p></div></div>';
+				echo '<div class="wrap"><h1>' . $this->page_title . '</h1><div class="notice notice-info"><p>This is empty options page</p><p>Add new field by PHP-code:<br><code>hiweb()->admin()->menu()->give_page("' . $this->menu_slug . '")->add_field("fieldId");</code></p></div></div>';
 			}
 		}
 		
@@ -390,4 +417,105 @@
 				$this, 'the_page'
 			) );
 		}
+	}
+	
+	
+	class hw_admin_menu_section{
+		
+		private $id = '';
+		private $title;
+		private $parent_slug;
+		private $parent_slug_short;
+		private $inputs = array();
+		///
+		private $pattern_slug = '/options-(.*)(\.php)$/';
+		
+		
+		public function __construct( $id, $parent_slug = 'options-general.php' ){
+			$this->id = sanitize_file_name( strtolower( $id ) );
+			if( trim( $this->id ) == '' )
+				$this->id = 'hw_admin_menu_sections_' . $parent_slug;
+			if( preg_match( $this->pattern_slug, $parent_slug, $math ) > 0 ){
+				$this->parent_slug = $parent_slug;
+				$this->parent_slug_short = $math[1];
+				add_action( 'admin_init', array( $this, 'add_settings_section' ) );
+				add_action( 'admin_init', array( $this, 'register_setting' ) );
+			}
+		}
+		
+		
+		public function __call( $name, $arguments ){
+			switch( $name ){
+				case 'register_setting':
+					foreach( $this->inputs as $input ){
+						if( $input instanceof hw_input ){
+							register_setting( $this->id, $input->id() );
+						}
+					}
+					break;
+				case 'add_settings_section':
+					add_settings_section( $this->id, $this->title, array( $this, 'the_fields' ), $this->parent_slug_short ); //todo!!!
+					break;
+				case 'the_fields':
+					$this->the_fields();
+					break;
+			}
+		}
+		
+		
+		/**
+		 * @param null|string $set
+		 * @return string|null|hw_admin_menu_section
+		 */
+		public function title( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param $id
+		 * @param string $type
+		 * @param null $title
+		 * @return hw_input
+		 */
+		public function add_field( $id, $type = 'text', $title = null ){
+			$input = hiweb()->input( $id, $type );
+			$input->title( is_null( $title ) ? $id : $title );
+			$input->value( get_option( $input->id() ) );
+			$this->inputs[ $input->id() ] = $input;
+			return $this->inputs[ $input->id() ];
+		}
+		
+		
+		/**
+		 * @param $fieldId
+		 * @return bool
+		 */
+		public function field_exists( $fieldId ){
+			return array_key_exists( $fieldId, $this->inputs );
+		}
+		
+		
+		/**
+		 * @param $fieldId
+		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
+		 */
+		public function get_field( $fieldId ){
+			if( $this->field_exists( $fieldId ) ){
+				$inp = $this->inputs[ $fieldId ];
+				return $inp;
+			}else{
+				return hiweb()->input( $fieldId );
+			}
+		}
+		
+		
+		protected function the_fields(){
+			hiweb()->form( $this->id )->template( 'options' )->settings_group( $this->id )->fields( $this->inputs )->the_noform();
+		}
+		
 	}
