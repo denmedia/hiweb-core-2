@@ -43,9 +43,9 @@
 			}
 			///
 			if( !isset( $this->fields[ $contextType ][ $contextId ] ) ){
-				$this->fields[ $contextType ][ $contextId ] = new hw_field( $fieldId, $contextId, $contextType );
+				$this->fields[$fieldId][ $contextType ][ $contextId ] = new hw_field( $fieldId, $contextId, $contextType );
 			}
-			return $this->fields[ $contextType ][ $contextId ];
+			return $this->fields[$fieldId][ $contextType ][ $contextId ];
 		}
 		
 		
@@ -91,6 +91,7 @@
 		 * @return mixed|null
 		 */
 		public function get_sub_field( $subFieldId ){
+			$subFieldId = sanitize_file_name(strtolower($subFieldId));
 			if( is_array( $this->the_row ) ){
 				return array_key_exists( $subFieldId, $this->the_row ) ? $this->the_row[ $subFieldId ] : null;
 			}

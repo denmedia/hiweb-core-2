@@ -156,6 +156,7 @@
 			}
 			$this->init( $additionData );
 			add_action( 'admin_menu', array( $this, 'add_action_admin_menu' ) );
+			add_action( 'admin_init', array( $this, 'register_setting' ) );
 		}
 		
 		
@@ -170,6 +171,13 @@
 					break;
 				case 'the_page':
 					$this->the_page();
+					break;
+				case 'register_setting':
+					foreach( $this->inputs as $input ){
+						if( $input instanceof hw_input ){
+							register_setting( $this->menu_slug, $input->id() );
+						}
+					}
 					break;
 			}
 		}
@@ -310,7 +318,7 @@
 				echo $this->function_echo;
 			}elseif( is_array( $this->inputs ) && count( $this->inputs ) > 0 ){
 				?>
-				<div class="wrap"><?php do_action( 'admin_notices' ) ?><h1><?php echo $this->page_title ?></h1><?php
+				<div class="wrap"><h1><?php echo $this->page_title ?></h1><?php
 				hiweb()->forms()->give( $this->menu_slug )->template( 'options' )->settings_group( $this->menu_slug )->submit( true )->fields( $this->inputs )->action( 'options.php' )->the();
 				?></div><?php
 			}else{

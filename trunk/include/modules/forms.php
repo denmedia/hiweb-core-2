@@ -185,7 +185,7 @@
 				}
 			}
 			///
-			return '<form ' . implode( ' ', $formTags ) . '>' . $this->get_noform() . ( $this->submit ? get_submit_button( $this->submit ) : '' ) . '</form>';
+			return '<form ' . implode( ' ', $formTags ) . '>' . $this->get_noform() . ( $this->submit ? get_submit_button( is_string($this->submit) ? $this->submit : '' ) : '' ) . '</form>';
 		}
 		
 		
