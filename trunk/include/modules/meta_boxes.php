@@ -215,35 +215,6 @@
 		}
 
 
-		/**
-		 * @param $idOrInput - ID нового поля, либо hw_input, либо hw_input[] (массив полей)
-		 * @param string $type
-		 * @return hw_input|hw_input_text|hw_input_checkbox|hw_input_repeat|hw_input_image
-		 */
-		public function add_field( $idOrInput, $type = 'text' ){
-			if( $idOrInput instanceof hw_input ){
-				$this->fields[ $idOrInput->id() ] = $idOrInput;
-				return $idOrInput;
-			}elseif( is_array( $idOrInput ) ){
-				foreach( $idOrInput as $field ){
-					$this->fields[ $field->id() ] = $field;
-				}
-				return reset( $idOrInput );
-			}else{
-				$this->fields[ $idOrInput ] = hiweb()->input( $idOrInput, $type );
-				return $this->fields[ $idOrInput ];
-			}
-		}
-
-
-		/**
-		 * @return hw_input[]
-		 */
-		public function fields(){
-			return $this->fields;
-		}
-
-
 		protected function the_post_edit( $post, $meta_box ){
 			if( !$this->show_in()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else{

@@ -25,6 +25,7 @@
 			 * @return bool|hw_admin
 			 */
 			public function admin(){
+				$this->inputs();
 				return $this->module( 'admin' );
 			}
 			
@@ -78,6 +79,7 @@
 			 * @return bool|hw_forms
 			 */
 			public function forms(){
+				$this->inputs();
 				return $this->module( 'forms' );
 			}
 			
@@ -203,12 +205,20 @@
 			
 			
 			/**
+			 * @return hw_post_types
+			 */
+			public function post_types(){
+				$this->inputs();
+				return $this->module('post_types');
+			}
+			
+			/**
 			 * Получить / созлать новый тип записей.
 			 * @param string $post_type - вернуть указанный тип
 			 * @return bool|hw_post_type
 			 */
 			public function post_type( $post_type = 'post' ){
-				return $this->module( 'post_types' )->give( $post_type );
+				return $this->post_types()->give( $post_type );
 			}
 			
 			
@@ -233,6 +243,7 @@
 			 * @return hw_taxonomies
 			 */
 			public function taxonomies(){
+				$this->input();
 				return $this->module( 'taxonomies' );
 			}
 			

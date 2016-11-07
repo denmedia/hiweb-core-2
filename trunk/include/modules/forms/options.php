@@ -7,11 +7,10 @@
 		settings_fields( $this->settings_group() );
 		do_settings_sections( $this->settings_group() );
 		
-		if( !is_array( $this->fields ) || count( $this->fields ) == 0 ){
+		if( !$this->have_fields() ){
 			hiweb()->console()->warn( 'Для формы опций id[' . $this->id . '] нет полей ввода.', true );
-			?>Для формы опций id[<b><?php echo $this->id ?></b>] нет полей ввода.<?php
 		}else
-			foreach( $this->get_fields() as $id => $field ){
+			foreach( $this->get_fields() as $field ){
 				?>
 				<tr class="hw-form-field"><?php
 				if( $field instanceof hw_input ){

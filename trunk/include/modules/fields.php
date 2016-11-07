@@ -17,31 +17,6 @@
 		 * @return hw_field
 		 */
 		public function give( $fieldId, $contextId = null, $contextType = null ){
-			if( is_null( $contextId ) ){
-				if( function_exists( 'get_queried_object' ) ){
-					$contextId = get_queried_object();
-				}elseif( is_string( $fieldId ) && trim( $fieldId ) != '' ){
-					$contextId = '';
-					$contextType = 'options';
-				}
-			}
-			///
-			if( $contextId instanceof WP_Post ){
-				$contextId = $contextId->ID;
-				$contextType = 'post';
-			}elseif( $contextId instanceof WP_Term ){
-				$contextId = $contextId->term_id;
-				$contextType = 'term';
-			}elseif( $contextId instanceof WP_User ){
-				$contextId = $contextId->ID;
-				$contextType = 'user';
-			}elseif( is_string( $contextId ) ){
-				$contextId = sanitize_file_name( strtolower( $contextId ) );
-				$contextType = 'options';
-			}elseif( is_integer( $contextId ) ){
-				$contextType = 'post';
-			}
-			///
 			if( !isset( $this->fields[ $contextType ][ $contextId ] ) ){
 				$this->fields[$fieldId][ $contextType ][ $contextId ] = new hw_field( $fieldId, $contextId, $contextType );
 			}
@@ -91,7 +66,7 @@
 		 * @return mixed|null
 		 */
 		public function get_sub_field( $subFieldId ){
-			$subFieldId = sanitize_file_name(strtolower($subFieldId));
+			$subFieldId = sanitize_file_name(mb_strtolower($subFieldId));
 			if( is_array( $this->the_row ) ){
 				return array_key_exists( $subFieldId, $this->the_row ) ? $this->the_row[ $subFieldId ] : null;
 			}
@@ -115,36 +90,31 @@
 		
 		
 		public function __construct( $fieldId, $contextId = '', $contextType = 'post' ){
-			$this->id = sanitize_file_name( strtolower( $fieldId ) );
-			$this->contextId = $contextId;
-			$this->contextType = $contextType;
-			switch( $this->contextType ){
-				case 'post':
-					$this->input = hiweb()->post( $contextId )->get_field( $fieldId );
-					break;
-				case 'term':
-					$this->input = hiweb()->taxonomies()->get_taxonomy_by_term( $contextId )->get_field( $fieldId );
-					$this->input->value( get_term_meta( $contextId, $fieldId, true ) );
-					hiweb()->console( $this->input->type() ); //todo!!!
-					break;
-				case 'user':
-					//todo
-					break;
-				case 'options':
-					if( trim( $contextId ) == '' ){
-						foreach( hiweb()->admin()->menu()->get_pages( 0, 1, 0, 0, 0 ) as $section ){
-							if( $section->field_exists( $this->id ) ){
-								$this->input = $section->get_field( $this->id );
-							}
-						}
-						if( !$this->input instanceof hw_input )
-							$this->input = hiweb()->input()->value( get_option( $this->id ) );
-					}else{
-						$this->input = hiweb()->admin()->menu()->get( $contextId )->get_field( $this->id );
-					}
-					break;
-				default:
-					$this->input = hiweb()->input();
+			$this->id = sanitize_file_name( mb_strtolower( $fieldId ) );
+			////
+			if( is_null( $contextId ) ){
+				if( function_exists( 'get_queried_object' ) ){
+					$contextId = get_queried_object();
+				}elseif( is_string( $fieldId ) && trim( $fieldId ) != '' ){
+					$contextId = '';
+					$contextType = 'options';
+				}
+			}
+			///
+			if( $contextId instanceof WP_Post ){
+				$home = hiweb()->inputs()->give_home(array('post_types',$contextId->post_type));
+				$this->input = $home->give_input( $this->id, false, true )->value(get_post_meta($contextId->ID, $this->id, true));
+			}elseif( $contextId instanceof WP_Term ){
+				$home = hiweb()->inputs()->give_home(array('taxonomies',$contextId->taxonomy));
+				$this->input = $home->give_input( $this->id, false, true )->value(get_term_meta($contextId->term_id, $this->id, true));
+			}elseif( $contextId instanceof WP_User ){
+				$home = hiweb()->inputs()->give_home(array('users',$contextId->user_login));
+				$this->input = $home->give_input( $this->id, false, true )->value(get_user_meta($contextId->ID, $this->id, true));
+			}elseif( is_string( $contextId ) ){
+				$home = hiweb()->inputs()->give_home(array('options',$contextId));
+				$this->input = $home->give_input( $this->id, false, true )->value( get_option( $this->id ) );
+			}elseif( is_integer( $contextId ) ){
+				//todo
 			}
 		}
 		

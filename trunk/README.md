@@ -1,3 +1,3 @@
-## hiWeb Core v2.1.3.0
+## hiWeb Core v2.0.0.0
 ===================
 ## On development stage...

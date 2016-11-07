@@ -5,11 +5,13 @@
 		
 		/** @var hw_taxonomy[] */
 		private $taxonomies = array();
-		/** @var hw_input[] */
-		private $inputs = array();
+		
+		
+		use hw_inputs_home_functions;
 		
 		
 		public function __construct(){
+			$this->inputs_home_make('taxonomies');
 			add_action( 'init', array( $this, 'add_action_init' ) );
 		}
 		
@@ -35,53 +37,17 @@
 		
 		
 		/**
-		 * @return hw_input[]
-		 */
-		public function get_fields(){
-			return $this->inputs;
-		}
-		
-		
-		/**
-		 * @param array $fields
-		 * @param bool $append
-		 * @return hw_taxonomies
-		 */
-		public function add_fields( $fields = array(), $append = true ){
-			if( $fields instanceof hw_input ){
-				$fields = array( $fields );
-			}
-			if( is_array( $fields ) ){
-				if( $append ){
-					$this->inputs = array_merge( $this->inputs, $fields );
-				}else $this->inputs = $fields;
-			}
-			return $this;
-		}
-		
-		
-		public function add_field( $id, $type = 'text', $title = null ){
-			$idSanit = sanitize_file_name( strtolower( $id ) );
-			if( !array_key_exists( $idSanit, $this->inputs ) ){
-				$input = hiweb()->input( $id, $type );
-				$input->title( $title );
-				$this->inputs[ $idSanit ] = $input;
-			}
-			return $this->inputs[ $idSanit ];
-		}
-		
-		
-		/**
 		 * @param null|WP_Term $term
 		 */
 		protected function add_action_add_form_fields( $term = null ){
-			$fields = $this->inputs;
 			if( $term instanceof WP_Term ){
-				foreach( $this->inputs as $fieldId => $input ){
+				foreach( $this->get_fields() as $fieldId => $input ){
 					$input->value( get_term_meta( $term->term_id, $fieldId, true ) );
 				}
 			}
-			hiweb()->form( 'hw_taxonomies' )->fields( $this->inputs )->the_noform();
+			$form =hiweb()->form( 'hw_taxonomies' );
+			$form->add_fields( $this->get_fields() );
+			$form->the_noform();
 		}
 		
 		
@@ -91,9 +57,9 @@
 		 * @param $taxonomy_id
 		 */
 		protected function add_action_edited_terms( $term_id, $taxonomy_id = null ){
-			foreach( $this->get_fields() as $fieldId => $input ){
-				if( array_key_exists( $fieldId, $_POST ) ){
-					update_term_meta( $term_id, $fieldId, $_POST[ $fieldId ] );
+			foreach( $this->get_fields() as $input ){
+				if( array_key_exists( $input->name(), $_POST ) ){
+					update_term_meta( $term_id, $input->name(), $_POST[ $input->name() ] );
 				}
 			}
 		}
@@ -179,16 +145,20 @@
 		private $defaults = array(
 			'labels' => array(), 'description' => '', 'public' => true, 'publicly_queryable' => null, 'hierarchical' => false, 'show_ui' => null, 'show_in_menu' => null, 'show_in_nav_menus' => null, 'show_tagcloud' => null, 'show_in_quick_edit' => null, 'show_admin_column' => false, 'meta_box_cb' => null, 'capabilities' => array(), 'rewrite' => true, 'update_count_callback' => '', '_builtin' => false, 'object_type' => array()
 		);
+		/** @var array */
 		private $object_type = array();
 		/** @var array */
 		private $terms = array();
 		/** @var hw_input[] */
-		private $inputs = array();
+		
+		
+		use hw_inputs_home_functions;
 		
 		
 		public function __construct( $name ){
 			$this->name = sanitize_file_name( strtolower( $name ) );
 			$this->labels = $name;
+			$this->inputs_home_make(array('taxonomies',$this->name));
 			$this->set_properties();
 			if( trim( $this->name ) != '' ){
 				add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
@@ -250,7 +220,7 @@
 		 * Получить/Утсановить POST TYPE
 		 * @param null|array|string $object_type - post type
 		 * @param bool $append - добавлять к текущему значению
-		 * @return $this|array
+		 * @return hw_taxonomy|array
 		 */
 		public function object_type( $object_type = null, $append = false ){
 			if( !is_null( $object_type ) ){
@@ -570,74 +540,17 @@
 		
 		
 		/**
-		 * @param $fieldId
-		 * @param string $type
-		 * @param string $title
-		 * @return hw_input
-		 */
-		public function add_field( $fieldId, $type = 'text', $title = null ){
-			$fieldIdSanit = sanitize_file_name( strtolower( $fieldId ) );
-			if( !array_key_exists( $fieldIdSanit, $this->inputs ) ){
-				$input = hiweb()->input( $fieldId, $type );
-				$input->title( $title );
-				$this->inputs[ $fieldIdSanit ] = $input;
-			}
-			return $this->inputs[ $fieldIdSanit ];
-		}
-		
-		
-		/**
-		 * @param $fields
-		 * @param bool $append
-		 * @return hw_taxonomy
-		 */
-		public function add_fields( $fields, $append = true ){
-			if( $fields instanceof hw_input ){
-				$fields = array( $fields );
-			}
-			if( is_array( $fields ) ){
-				if( $append ){
-					$this->inputs = array_merge( $this->inputs, $fields );
-				}else{
-					$this->inputs = $fields;
-				}
-			}
-			return $this;
-		}
-		
-		
-		/**
-		 * @return hw_input[]
-		 */
-		public function get_fields(){
-			return array_merge( hiweb()->taxonomies()->get_fields(), $this->inputs );
-		}
-		
-		
-		/**
-		 * @param $fieldId
-		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
-		 */
-		public function get_field( $fieldId ){
-			$fields = $this->get_fields();
-			if(  array_key_exists($fieldId,$fields) && $fields[ $fieldId ] instanceof hw_input ){
-				return $fields[ $fieldId ];
-			}
-			return hiweb()->input();
-		}
-		
-		
-		/**
 		 * Вывод формы полей
 		 */
 		protected function add_action_add_form_fields( $term = null ){
-			$fields = $this->inputs;
 			if( $term instanceof WP_Term ){
-				foreach( $this->inputs as $fieldId => $input ){
-					$input->value( get_term_meta( $term->term_id, $fieldId, true ) );
+				foreach( $this->get_fields() as $input ){
+					$input->value( get_term_meta( $term->term_id, $input->name(), true ) );
 				}
 			}
-			hiweb()->form()->fields( $this->inputs )->the_noform();
+			$form =hiweb()->form('hw_taxonomies');
+			$form->add_fields( $this->get_fields() );
+			$form->the_noform();
 		}
 		
 		
@@ -647,9 +560,9 @@
 		 * @param $taxonomy_id
 		 */
 		protected function add_action_edited_terms( $term_id, $taxonomy_id ){
-			foreach( $this->get_fields() as $fieldId => $input ){
-				if( array_key_exists( $fieldId, $_POST ) ){
-					update_term_meta( $term_id, $fieldId, $_POST[ $fieldId ] );
+			foreach( $this->get_fields() as $input ){
+				if( array_key_exists( $input->name(), $_POST ) ){
+					$B = update_term_meta( $term_id, $input->name(), $_POST[ $input->name() ] );
 				}
 			}
 		}

@@ -3,8 +3,30 @@
 	
 	class hw_post_types{
 		
+		use hw_inputs_home_multi_functions;
+		
 		/** @var hw_post_type[] */
 		private $types = array();
+		
+		
+		public function __construct(){
+			$this->inputs_home_make('post_types');
+			add_action('init',array($this,'_autocreate_not_register_post_types'));
+		}
+		
+		public function __call( $name, $arguments ){
+			switch($name){
+				case '_autocreate_not_register_post_types':
+					$post_types = get_post_types();
+					foreach($post_types as $post_type){
+						if(!isset($this->types[$post_type])){
+							if(array_key_exists($post_type, array_flip(array('attachment','revision','nav_menu_item')))) continue;
+							$this->give($post_type);
+						}
+					}
+					break;
+			}
+		}
 		
 		
 		/**
@@ -408,20 +430,28 @@
 		private $_meta_boxes = array();
 		
 		
+		use hw_inputs_home_multi_functions;
+		
+		
 		public function __construct( $post_type ){
 			$this->_type = sanitize_file_name( strtolower( $post_type ) );
 			$this->label = $post_type;
 			$this->set_props();
+			$this->hooks();
+			$this->inputs_home_make(array('post_types',$this->_type));
+		}
+		
+		private function hooks(){
 			add_action( 'init', array( $this, 'add_action_init_create' ), 99999 );
 			///Add metas...
 			add_action( 'edit_form_top', array( $this, 'add_action_edit_form_top' ) );
 			add_action( 'edit_form_before_permalink', array( $this, 'add_action_edit_form_before_permalink' ) );
 			add_action( 'edit_form_after_title', array( $this, 'add_action_edit_form_after_title' ) );
 			add_action( 'edit_form_after_editor', array( $this, 'add_action_edit_form_after_editor' ) );
-			if( $post_type == 'page' )
+			if( $this->_type == 'page' )
 				add_action( 'submitpage_box', array( $this, 'add_action_submitpage_box' ) );else
 				add_action( 'submitpost_box', array( $this, 'add_action_submitpage_box' ) );
-			if( $post_type == 'page' )
+			if( $this->_type == 'page' )
 				add_action( 'edit_page_form', array( $this, 'add_action_edit_form_advanced' ) );else
 				add_action( 'edit_form_advanced', array( $this, 'add_action_edit_form_advanced' ) );
 			///Save Meta
@@ -445,6 +475,7 @@
 					break;
 				case 'add_action_edit_form_after_editor':
 					$this->add_action_simple_fields( $arguments[0], 3 );
+					$this->add_action_simple_fields( $arguments[0], '' );
 					break;
 				case 'add_action_submitpage_box':
 					$this->add_action_simple_fields( $arguments[0], 5 );
@@ -555,45 +586,13 @@
 		 * @return hw_taxonomy
 		 */
 		public function add_taxonomy( $name ){
-			if( !isset( $this->_taxonomies[ $name ] ) ){
-				$this->_taxonomies[ $name ] = hiweb()->taxonomies()->give( $name );
-				$this->_taxonomies[ $name ]->object_type( $this->_type );
+			$name_sanitize = sanitize_file_name(mb_strtolower($name));
+			if( !isset( $this->_taxonomies[ $name_sanitize ] ) ){
+				$this->_taxonomies[ $name_sanitize ] = hiweb()->taxonomies()->give( $name_sanitize );
+				$this->_taxonomies[ $name_sanitize ]->object_type( $this->_type );
+				$this->_taxonomies[ $name_sanitize ]->name($name);
 			}
-			return $this->_taxonomies[ $name ];
-		}
-		
-		
-		/**
-		 * @param $id
-		 * @param string $type
-		 * @param null $title - титл поля
-		 * @param int $position - позиция блока полей: 0 - над титлом, 1 - под титлом, 2 - над редатором WYSIWYG, 3 - под редактором WYSIWYG (позиция normal), 4 - внизу (позиция advanced), 5 - позиция вверху сайдбара
-		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
-		 */
-		public function add_field( $id, $type = 'text', $title = null, $position = 3 ){
-			$input = hiweb()->input( $id, $type );
-			$input->title( $title );
-			$this->fields[ $position ][ $id ] = $input;
-			return $input;
-		}
-		
-		
-		/**
-		 * Добавить поле / поля
-		 * @param array $fields - либо hw_input, либо array(hw_input, hw_input)
-		 * @param int $position - позиция блока полей: 0 - над титлом, 1 - под титлом, 2 - над редатором WYSIWYG, 3 - под редактором WYSIWYG (позиция normal), 4 - внизу (позиция advanced), 5 - позиция вверху сайдбара
-		 * @return array|bool|hw_input[]
-		 */
-		public function add_fields( $fields = array(), $position = 3 ){
-			if( $fields instanceof hw_input ){
-				$fields = array( $fields );
-			}
-			if( !is_array( $fields ) )
-				return false;
-			foreach( $fields as $id => $field ){
-				$this->fields[ $position ][ $id ] = $field;
-			}
-			return $this->get_fields();
+			return $this->_taxonomies[ $name_sanitize ];
 		}
 		
 		
@@ -609,15 +608,16 @@
 			if( get_current_screen()->base != 'post' || get_current_screen()->post_type != $this->_type )
 				return;
 			////
-			if( isset( $this->fields[ $position ] ) && is_array( $this->fields[ $position ] ) && count( $this->fields[ $position ] ) > 0 ){
+			if( $this->have_fields($position) || hiweb()->post_types()->have_fields($position) ){
 				$inputs = array();
-				foreach( $this->fields[ $position ] as $id => $input ){
+				foreach( array_merge(hiweb()->post_types()->get_fields($position), $this->get_fields($position)) as $id => $input ){
 					if( $post instanceof WP_Post ){
 						$input->value( get_post_meta( $post->ID, $input->id(), true ) );
 					}
 					$inputs[ $id ] = $input;
 				}
-				$form = hiweb()->form()->fields( $inputs, false );
+				$form = hiweb()->form();
+				$form->add_fields( $inputs, false );
 				if( $position == 5 )
 					$form->template( 'compact' );
 				$form->the_noform();
@@ -626,30 +626,12 @@
 		
 		
 		protected function add_action_save_post( $post ){
-			foreach( $this->get_fields() as $id => $input ){
+			foreach( array_merge(hiweb()->post_types()->get_fields(), $this->get_fields()) as $input ){
+				$id = $input->id();
 				if( array_key_exists( $id, $_POST ) ){
 					update_post_meta( $post->ID, $id, $_POST[ $id ] );
 				}
 			}
-		}
-		
-		
-		/**
-		 * Возвращает все поля для данного типа файлов
-		 * @return array|hw_input[]
-		 */
-		public function get_fields(){
-			$R = array();
-			if( is_array( $this->fields ) )
-				foreach( $this->fields as $position => $fields ){
-					if( is_array( $fields ) )
-						foreach( $fields as $id => $field ){
-							if( $field instanceof hw_input ){
-								$R[ $field->id() ] = $field;
-							}
-						}
-				}
-			return $R;
 		}
 		
 		
@@ -663,7 +645,7 @@
 		
 	}
 	
-	
+	//todo full
 	class hw_post_type_meta_boxes{
 		
 		/** @var string */
@@ -798,12 +780,6 @@
 					$this->generate_meta_box( $arguments[0], $arguments[1] );
 					break;
 			}
-		}
-		
-		
-		public function add_field( $id ){
-			$this->fields[ $id ] = hiweb()->input()->make( $id );
-			return $this->fields[ $id ];
 		}
 		
 		

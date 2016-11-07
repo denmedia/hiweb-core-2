@@ -35,55 +35,17 @@
 		protected $method = 'post';
 		protected $template = 'default';
 		
-		/** @var hw_input[] */
-		private $fields = array();
-		
 		private $submit = false;
-		
 		private $settings_group;
+		
+		
+		use hw_inputs_home_functions;
 		
 		
 		public function __construct( $id = '' ){
 			$this->id = $id;
-		}
-		
-		
-		/**
-		 * @param $idOrField
-		 * @param string $type
-		 * @return hw_input|hw_input_image|hw_input_repeat|hw_input_images
-		 */
-		public function field( $idOrField, $type = 'text' ){
-			if( !array_key_exists( $idOrField, $this->fields ) ){
-				$this->fields[ $idOrField ] = hiweb()->inputs()->give( $idOrField, $type );
-			}
-			return $this->fields[ $idOrField ];
-		}
-		
-		
-		/**
-		 * @param array $inputs
-		 * @param bool|int $append - укажите 1 или TRUE для добавления в конец массива полей, -1 для добавления в начало массива
-		 * @return hw_form
-		 */
-		public function fields( $inputs = array(), $append = true ){
-			if( is_array( $inputs ) && count( $inputs ) > 0 ){
-				if( $append != false ){
-					if( $append < 0 ){
-						$this->fields = array_merge( $inputs, $this->fields );
-					}else{
-						$this->fields = array_merge( $this->fields, $inputs );
-					}
-				}else{
-					$this->fields = $inputs;
-				}
-			}
-			return $this;
-		}
-		
-		
-		public function get_fields(){
-			return $this->fields;
+			$this->settings_group = $id;
+			$this->inputs_home_make(array('forms',$id));
 		}
 		
 		

@@ -94,13 +94,14 @@
 		/**
 		 * @param $section_slug
 		 * @param string $options_slug
-		 * @param null $section_title
+		 * @param null|string $section_title
 		 * @return hw_admin_menu_section
 		 */
 		public function give_options( $options_slug = 'options-general.php', $section_slug = '', $section_title = null ){
 			$section_slug_sanitize = sanitize_file_name( strtolower( $section_slug ) );
 			if( !array_key_exists( $section_slug_sanitize, $this->_sections ) ){
 				$section = new hw_admin_menu_section( $section_slug, $options_slug );
+				$section->title( $section_title );
 				$this->_sections[ $section_slug_sanitize ] = $section;
 			}
 			return $this->_sections[ $section_slug_sanitize ];
@@ -138,22 +139,21 @@
 		protected $page_title;
 		protected $menu_title;
 		protected $capability = 'administrator';
-		protected $menu_slug;
+		protected $menu_slug = '';
 		protected $function_echo;
-		///
-		/** @var  hw_input[] */
-		protected $inputs = array();
-		protected $inputs_prepend;
+		
+		use hw_inputs_home_functions;
 		
 		
 		public function __construct( $slug = null, $additionData = null ){
 			if( !is_null( $slug ) && trim( $slug ) != '' ){
 				$slug_sanitize = sanitize_file_name( strtolower( $slug ) );
 				$this->menu_slug = $slug_sanitize;
-				$this->inputs_prepend = $this->menu_slug . '-';
 				$this->menu_title = $slug;
 				$this->page_title = $slug;
 			}
+			$this->inputs_home_make( array( 'options', $this->menu_slug ) );
+			$this->inputs_name_prepend( $this->menu_slug . '-' );
 			$this->init( $additionData );
 			add_action( 'admin_menu', array( $this, 'add_action_admin_menu' ) );
 			add_action( 'admin_init', array( $this, 'register_setting' ) );
@@ -173,9 +173,9 @@
 					$this->the_page();
 					break;
 				case 'register_setting':
-					foreach( $this->inputs as $input ){
+					foreach( $this->get_fields() as $input ){
 						if( $input instanceof hw_input ){
-							register_setting( $this->menu_slug, $input->id() );
+							register_setting( $this->menu_slug, $input->name() );
 						}
 					}
 					break;
@@ -273,55 +273,23 @@
 		}
 		
 		
-		/**
-		 * @param $id
-		 * @param string $type
-		 * @param null $title
-		 * @return hw_input
-		 */
-		public function add_field( $id, $type = 'text', $title = null ){
-			$input = hiweb()->input( $this->inputs_prepend() . $id, $type );
-			$input->title( is_null( $title ) ? $id : $title );
-			$input->value( get_option( $input->id() ) );
-			$this->inputs[ $input->id() ] = $input;
-			return $this->inputs[ $input->id() ];
-		}
-		
-		
-		/**
-		 * @param $fieldId
-		 * @return bool
-		 */
-		public function field_exists( $fieldId ){
-			return array_key_exists( $this->inputs_prepend() . $fieldId, $this->inputs );
-		}
-		
-		
-		/**
-		 * @param $fieldId
-		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
-		 */
-		public function get_field( $fieldId ){
-			if( $this->field_exists( $fieldId ) ){
-				$inp = $this->inputs[ $this->inputs_prepend() . $fieldId ];
-				return $inp;
-			}else{
-				return hiweb()->input( $fieldId );
-			}
-		}
-		
-		
 		protected function the_page(){
 			if( is_callable( $this->function_echo ) ){
 				call_user_func( $this->function_echo );
-			}elseif( is_string( $this->function_echo ) ){
+			} elseif( is_string( $this->function_echo ) ) {
 				echo $this->function_echo;
-			}elseif( is_array( $this->inputs ) && count( $this->inputs ) > 0 ){
+			} elseif( $this->have_fields() ) {
+				///set values
+				foreach( $this->get_fields() as $field ){
+					$field->value( get_option( $field->name(), $field->default_value() ) );
+				}
+				$form = hiweb()->forms()->give( $this->menu_slug )->template( 'options' )->settings_group( $this->menu_slug )->submit( true )->action( 'options.php' );
+				$form->add_fields( $this->get_fields() );
 				?>
 				<div class="wrap"><h1><?php echo $this->page_title ?></h1><?php
-				hiweb()->forms()->give( $this->menu_slug )->template( 'options' )->settings_group( $this->menu_slug )->submit( true )->fields( $this->inputs )->action( 'options.php' )->the();
+				$form->the();
 				?></div><?php
-			}else{
+			} else {
 				echo '<div class="wrap"><h1>' . $this->page_title . '</h1><div class="notice notice-info"><p>This is empty options page</p><p>Add new field by PHP-code:<br><code>hiweb()->admin()->menu()->give_page("' . $this->menu_slug . '")->add_field("fieldId");</code></p></div></div>';
 			}
 		}
@@ -380,7 +348,7 @@
 		protected function init( $additionData ){
 			if( $additionData instanceof hw_admin_menu_abstract ){
 				$this->parent_slug = $additionData->menu_slug();
-			}else
+			} else
 				$this->parent_slug = $additionData;
 		}
 		
@@ -439,6 +407,9 @@
 		private $pattern_slug = '/options-(.*)(\.php)$/';
 		
 		
+		use hw_inputs_home_functions;
+		
+		
 		public function __construct( $id, $parent_slug = 'options-general.php' ){
 			$this->id = sanitize_file_name( strtolower( $id ) );
 			if( trim( $this->id ) == '' )
@@ -449,15 +420,16 @@
 				add_action( 'admin_init', array( $this, 'add_settings_section' ) );
 				add_action( 'admin_init', array( $this, 'register_setting' ) );
 			}
+			$this->inputs_home_make( array( 'options', $id, $parent_slug ) );
 		}
 		
 		
 		public function __call( $name, $arguments ){
 			switch( $name ){
 				case 'register_setting':
-					foreach( $this->inputs as $input ){
+					foreach( $this->get_fields() as $input ){
 						if( $input instanceof hw_input ){
-							register_setting( $this->id, $input->id() );
+							register_setting( $this->id, $input->name() );
 						}
 					}
 					break;
@@ -484,46 +456,13 @@
 		}
 		
 		
-		/**
-		 * @param $id
-		 * @param string $type
-		 * @param null $title
-		 * @return hw_input
-		 */
-		public function add_field( $id, $type = 'text', $title = null ){
-			$input = hiweb()->input( $id, $type );
-			$input->title( is_null( $title ) ? $id : $title );
-			$input->value( get_option( $input->id() ) );
-			$this->inputs[ $input->id() ] = $input;
-			return $this->inputs[ $input->id() ];
-		}
-		
-		
-		/**
-		 * @param $fieldId
-		 * @return bool
-		 */
-		public function field_exists( $fieldId ){
-			return array_key_exists( $fieldId, $this->inputs );
-		}
-		
-		
-		/**
-		 * @param $fieldId
-		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
-		 */
-		public function get_field( $fieldId ){
-			if( $this->field_exists( $fieldId ) ){
-				$inp = $this->inputs[ $fieldId ];
-				return $inp;
-			}else{
-				return hiweb()->input( $fieldId );
-			}
-		}
-		
-		
 		protected function the_fields(){
-			hiweb()->form( $this->id )->template( 'options' )->settings_group( $this->id )->fields( $this->inputs )->the_noform();
+			$form = hiweb()->form( $this->id )->template( 'options' )->settings_group( $this->id );
+			foreach($this->get_fields() as $field){
+				$field->value( get_option($field->name(), $field->default_value()) );
+			}
+			$form->add_fields( $this->get_fields() );
+			$form->the_noform();
 		}
 		
 	}
