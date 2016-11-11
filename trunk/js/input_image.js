@@ -14,6 +14,9 @@ var hw_input_image = {
             var current = jQuery(e.currentTarget).closest('.hw-input-image');
             hw_input_image.deselect_image(current);
         });
+        jQuery('body').on('change', '.hw-input-image input[name]', function(){
+           console.info('!!!'); //todo детек изменения поля для сброса
+        });
     },
 
     event_click_select: function (current) {
@@ -32,7 +35,13 @@ var hw_input_image = {
     select_image: function (current, selection) {
         var input = current.find('input');
         var image_preview = current.find('.image-select');
+        if (typeof selection.sizes.large == 'object') {
         var thumbnail_url = selection.sizes.large.url;
+        } else if(typeof selection.sizes.medium == 'object'){
+            var thumbnail_url = selection.sizes.medium.url;
+        }else{
+            var thumbnail_url = selection.sizes.full.url;
+        }
         var media_id = selection.id;
         input.val(media_id);
         image_preview.css('background-image', 'url(' + thumbnail_url + ')').attr('data-click','deselect');

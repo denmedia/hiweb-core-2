@@ -5,8 +5,8 @@
 
 		private $has_image = array();
 
-		private $preview_width = 150;
-		private $preview_height = 80;
+		private $preview_width = 278;
+		private $preview_height = 120;
 
 
 		/**
@@ -86,7 +86,7 @@
 		 * @return string
 		 */
 		public function get_content( $size = 'thumbnail' ){
-			return '<img src="' . $this->get( $size ) . '"/>';
+			return wp_get_attachment_image($this->value(), $size);
 		}
 		
 	}

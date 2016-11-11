@@ -1,7 +1,7 @@
 <?php
 
 
-	class hw_input_gallery extends hw_input{
+	class hw_input_images extends hw_input{
 		
 
 		private $preview_width = 150;
@@ -43,8 +43,8 @@
 
 		public function get( $arguments = null ){
 			wp_enqueue_media();
-			hiweb()->js( HIWEB_URL_JS . '/input_gallery.js', array( 'jquery-ui-sortable' ) );
-			hiweb()->css( HIWEB_URL_CSS . '/input_gallery.css' );
+			hiweb()->js( HIWEB_URL_JS . '/input_images.js', array( 'jquery-ui-sortable' ) );
+			hiweb()->css( HIWEB_URL_CSS . '/input_images.css' );
 			$R = '';
 			if( $this->have_rows() === false || $this->have_rows() === 0 ){
 			}else{

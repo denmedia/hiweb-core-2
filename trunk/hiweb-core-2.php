@@ -3,16 +3,18 @@
 	Plugin Name: hiWeb Core 2
 	Plugin URI: http://plugins.hiweb.moscow/core
 	Description: Special framework plugin
-	Version: 2.7.0.0
+	Version: 2.0.0.0
 	Author: Den Media
 	Author URI: http://hiweb.moscow
 	*/
 	
 	require_once 'define.php';
 	require_once HIWEB_DIR_INCLUDE . '/core.php';
-
-	$option = hiweb()->option( 'test', 'repeat' )->title( '' );
-	$option->input()->cols( array(
-		hiweb()->input( 'image', 'image' )->width( 10 ), hiweb()->input( 'text' )->width( 90 )
-	) );
-	$option->page( 'My Options' )->page_title( 'Мои тестовые настройки' );
+	
+	//todo
+	hiweb()->post_types()->add_field('test');
+	$repeat = hiweb()->post_types()->add_field( 'My test field', 'repeat' );
+	$repeat->add_col('test1','image')->width(20);
+	$repeat->add_col('test2');
+	hiweb()->post_type('post')->add_field('Test isert field');
+	hiweb()->post_type('page')->add_field('Test isert field 3');

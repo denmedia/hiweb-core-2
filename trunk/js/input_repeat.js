@@ -42,7 +42,7 @@ var hw_input_repeat = {
         current.each(function () {
             var subcurrent = jQuery(this);
             subcurrent.find(hw_input_repeat.selector_wrap + ' > tr').not(hw_input_repeat.selector_source).each(function () {
-                var tr = jQuery(this)
+                var tr = jQuery(this);
                 tr.find('[data-col-id]').each(function () {
                     jQuery(this).attr('name', subcurrent.attr('id') + '[' + tr.index() + '][' + jQuery(this).attr('data-col-id') + ']')
                 });

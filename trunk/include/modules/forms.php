@@ -1,60 +1,132 @@
 <?php
-
-
+	
+	
+	/**
+	 * Class hw_forms
+	 */
 	class hw_forms{
-
+		
 		/** @var hw_form[] */
 		private $forms = array();
-
-
+		
+		
 		/**
 		 * @param $id
 		 * @return hw_form
 		 */
-		public function get( $id ){
+		public function give( $id ){
+			$id = sanitize_file_name( strtolower( $id ) );
 			if( !array_key_exists( $id, $this->forms ) ){
 				$this->forms[ $id ] = new hw_form( $id );
 			}
 			return $this->forms[ $id ];
 		}
-
+		
 	}
 	
-
+	
+	/**
+	 * Class hw_form
+	 */
 	class hw_form{
-
-		public $id = '';
-		public $action = '';
-		public $method = 'get';
-		public $template = 'default';
 		
-		/** @var hw_input[] */
-		private $fields = array();
-
-
+		protected $id = '';
+		protected $action = '';
+		protected $method = 'post';
+		protected $template = 'default';
+		
+		private $submit = false;
+		private $settings_group;
+		
+		
+		use hw_inputs_home_functions;
+		
+		
 		public function __construct( $id = '' ){
 			$this->id = $id;
+			$this->settings_group = $id;
+			$this->inputs_home_make(array('forms',$id));
 		}
 		
-
+		
 		/**
-		 * @param $idOrField
-		 * @param string $type
-		 * @return hw_input|hw_input_image|hw_input_repeat|hw_input_gallery
+		 * @param null $set
+		 * @return $this
 		 */
-		public function field( $idOrField, $type = 'text' ){
-			if( !array_key_exists( $idOrField, $this->fields ) ){
-				$this->fields[ $idOrField ] = hiweb()->inputs()->get( $idOrField, $type );
+		public function submit( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
 			}
-			return $this->fields[ $idOrField ];
+			return $this->{__FUNCTION__};
 		}
-
-
-		public function fields(){
-			return is_array( $this->fields ) ? $this->fields : array();
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function settings_group( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
 		}
-
-
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function id( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function action( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function method( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function template( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
+				return $this;
+			}
+			return $this->{__FUNCTION__};
+		}
+		
+		
 		/**
 		 * Возвращает HTML формы
 		 * @return string
@@ -75,6 +147,17 @@
 				}
 			}
 			///
+			return '<form ' . implode( ' ', $formTags ) . '>' . $this->get_noform() . ( $this->submit ? get_submit_button( is_string($this->submit) ? $this->submit : '' ) : '' ) . '</form>';
+		}
+		
+		
+		/**
+		 * Возвращает HTML полей без формы
+		 * @return string
+		 */
+		public function get_noform(){
+			hiweb()->css( HIWEB_URL_CSS . '/forms.css' );
+			///
 			$templatePath = HIWEB_DIR_MODULES . '/forms/' . $this->template . '.php';
 			if( !file_exists( $templatePath ) )
 				$templatePath = HIWEB_DIR_MODULES . '/forms/default.php';
@@ -82,15 +165,25 @@
 			include $templatePath;
 			$R = ob_get_clean();
 			///
-			return '<form ' . implode( ' ', $formTags ) . '>' . $R . '</form>';
+			return $R;
 		}
 		
-
+		
 		/**
 		 * @return string
 		 */
 		public function the(){
 			$content = $this->get();
+			echo $content;
+			return $content;
+		}
+		
+		
+		/**
+		 * @return string
+		 */
+		public function the_noform(){
+			$content = $this->get_noform();
 			echo $content;
 			return $content;
 		}
