@@ -27,7 +27,7 @@
 		/** @var WP_Error|WP_Post_Type */
 		private $_object;
 		private $_defaults = array(
-			'label' => null, 'labels' => array(), 'description' => '', 'public' => false, 'hierarchical' => false, 'exclude_from_search' => null, 'publicly_queryable' => null, 'show_ui' => true, 'show_in_menu' => null, 'show_in_nav_menus' => null,
+			'label' => null, 'labels' => array(), 'description' => '', 'public' => true, 'hierarchical' => false, 'exclude_from_search' => null, 'publicly_queryable' => null, 'show_ui' => true, 'show_in_menu' => null, 'show_in_nav_menus' => null,
 			'show_in_admin_bar' => null, 'menu_position' => null, 'menu_icon' => 'dashicons-sticky', 'capability_type' => 'post', 'capabilities' => array(), 'map_meta_cap' => null, 'supports' => array(), 'register_meta_box_cb' => null,
 			'taxonomies' => array(), 'has_archive' => false, 'rewrite' => true, 'query_var' => true, 'can_export' => true, 'delete_with_user' => null, '_builtin' => false, '_edit_link' => 'post.php?post=%d',
 		);
@@ -79,10 +79,10 @@
 		 */
 		public function public_( $set = null ){
 			if( !is_null( $set ) ){
-				$this->{__FUNCTION__} = $set;
+				$this->public = $set;
 				return $this;
 			}
-			return $this->{__FUNCTION__};
+			return $this->public;
 		}
 
 
