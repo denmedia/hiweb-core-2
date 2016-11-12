@@ -44,7 +44,23 @@ var hw_input_images = {
 
     select_image: function (current, add_right, selection) {
         var wrap = current.find('[data-wrap]');
-        var source = current.find('a[href="#source"]').clone().attr('href', '#image').css('background-image', 'url(' + selection.sizes.large.url + ')');
+        switch('object'){
+            case typeof selection.sizes.medium:
+                var url = selection.sizes.medium.url;
+                break;
+            case typeof selection.sizes.large:
+                var url = selection.sizes.large.url;
+                break;
+            case typeof selection.sizes.thumbnail:
+                var url = selection.sizes.thumbnail.url;
+                break;
+            case typeof selection.sizes.full:
+                var url = selection.sizes.full.url;
+                break;
+            default:
+                var url = false;
+        }
+        var source = current.find('a[href="#source"]').clone().attr('href', '#image').css('background-image', 'url(' + url + ')');
         var input = source.find('input');
         input.attr('name', input.attr('data-name')).val(selection.id);
         if (add_right) wrap.append(source);

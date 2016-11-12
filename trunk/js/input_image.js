@@ -35,16 +35,25 @@ var hw_input_image = {
     select_image: function (current, selection) {
         var input = current.find('input');
         var image_preview = current.find('.image-select');
-        if (typeof selection.sizes.large == 'object') {
-        var thumbnail_url = selection.sizes.large.url;
-        } else if(typeof selection.sizes.medium == 'object'){
-            var thumbnail_url = selection.sizes.medium.url;
-        }else{
-            var thumbnail_url = selection.sizes.full.url;
+        switch('object'){
+            case typeof selection.sizes.medium:
+                var url = selection.sizes.medium.url;
+                break;
+            case typeof selection.sizes.large:
+                var url = selection.sizes.large.url;
+                break;
+            case typeof selection.sizes.thumbnail:
+                var url = selection.sizes.thumbnail.url;
+                break;
+            case typeof selection.sizes.full:
+                var url = selection.sizes.full.url;
+                break;
+            default:
+                var url = false;
         }
         var media_id = selection.id;
         input.val(media_id);
-        image_preview.css('background-image', 'url(' + thumbnail_url + ')').attr('data-click','deselect');
+        image_preview.css('background-image', 'url(' + url + ')').attr('data-click','deselect');
         current.attr('data-has-image', '1');
     },
 

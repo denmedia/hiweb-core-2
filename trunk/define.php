@@ -6,34 +6,36 @@
 	 * Time: 15:44
 	 */
 	
-	function hw_path_base_url(){
-		//if(hiweb()->cacheExists()) return hiweb()->cache();
-		$root = ltrim( rtrim( current( explode( "wp-", getcwd() ) ), '\\/' ), '/' );
-		$query = ltrim( str_replace( '\\', '/', dirname( $_SERVER['PHP_SELF'] ) ), '/' );
-		$rootArr = array();
-		$queryArr = array();
-		foreach( array_reverse( explode( '/', $root ) ) as $dir ){
-			$rootArr[] = rtrim( $dir . '/' . end( $rootArr ), '/' );
-		}
-		foreach( explode( '/', $query ) as $dir ){
-			$queryArr[] = ltrim( end( $queryArr ) . '/' . $dir, '/' );
-		}
-		$rootArr = array_reverse( $rootArr );
-		$queryArr = array_reverse( $queryArr );
-		$r = '';
-		foreach( $queryArr as $dir ){
-			foreach( $rootArr as $rootDir ){
-				if( $dir == $rootDir ){
-					$r = $dir;
-					break 2;
+	if( !function_exists( 'hw_path_base_url' ) ) :
+		function hw_path_base_url(){
+			//if(hiweb()->cacheExists()) return hiweb()->cache();
+			$root = ltrim( rtrim( current( explode( "wp-", getcwd() ) ), '\\/' ), '/' );
+			$query = ltrim( str_replace( '\\', '/', dirname( $_SERVER['PHP_SELF'] ) ), '/' );
+			$rootArr = array();
+			$queryArr = array();
+			foreach( array_reverse( explode( '/', $root ) ) as $dir ){
+				$rootArr[] = rtrim( $dir . '/' . end( $rootArr ), '/' );
+			}
+			foreach( explode( '/', $query ) as $dir ){
+				$queryArr[] = ltrim( end( $queryArr ) . '/' . $dir, '/' );
+			}
+			$rootArr = array_reverse( $rootArr );
+			$queryArr = array_reverse( $queryArr );
+			$r = '';
+			foreach( $queryArr as $dir ){
+				foreach( $rootArr as $rootDir ){
+					if( $dir == $rootDir ){
+						$r = $dir;
+						break 2;
+					}
 				}
 			}
+			$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
+			$R = rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . $r, '/' );
+			return $R;
 		}
-		$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
-		$R = rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . $r, '/' );
-		return $R;
-	}
-
+	endif;
+	
 	if( !defined( 'HIWEB_DIR_ROOT' ) )
 		define( 'HIWEB_DIR_ROOT', rtrim( current( explode( "wp-", getcwd() ) ), '\\/' ) );
 	if( !defined( 'HIWEB_URL_ROOT' ) )
