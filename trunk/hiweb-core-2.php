@@ -7,14 +7,13 @@
 	Author: Den Media
 	Author URI: http://hiweb.moscow
 	*/
-	
-	require_once 'define.php';
-	require_once HIWEB_DIR_INCLUDE . '/core.php';
-	
-	//todo
-	hiweb()->post_types()->add_field('test');
-	$repeat = hiweb()->post_types()->add_field( 'My test field', 'repeat' );
-	$repeat->add_col('test1','image')->width(20);
-	$repeat->add_col('test2');
-	hiweb()->post_type('post')->add_field('Test isert field');
-	hiweb()->post_type('page')->add_field('Test isert field 3');
+	if( version_compare( PHP_VERSION, '5.4.0' ) >= 0 ){
+		require_once 'include/core.php';
+		require_once 'include/short_functions.php';
+	} else {
+		function hw_core_php_version_error(){
+			echo '<div class="error notice"><p>hiWeb Core 2 error! Request PHP version great that 5.4.0!</p></div>';
+		}
+		
+		add_action( 'admin_notices', 'hw_core_php_version_error' );
+	}

@@ -10,7 +10,6 @@
 	
 	if( !class_exists( 'hw_core' ) ){
 		
-		
 		class hw_core{
 			
 			private $modules = array();
@@ -18,6 +17,24 @@
 			
 			public function __call( $name, $arguments ){
 				$this->console()->warn( 'hiweb()->' . $name . '() error: вызван не существующий метод [' . $name . ']', true );
+			}
+			
+			
+			/**
+			 * Возвращает корневую папку плагина hiweb
+			 * @return string
+			 */
+			public function _dir(){
+				return dirname( dirname( __FILE__ ) );
+			}
+			
+			
+			/**
+			 * Возращает URL корневой папки плагина   hiweb
+			 * @return mixed
+			 */
+			public function _url(){
+				return $this->path()->path_to_url( $this->_dir() );
 			}
 			
 			
@@ -52,7 +69,7 @@
 			 */
 			public function console( $data = null ){
 				if( !is_null( $data ) || trim( $data ) != '' )
-					return $this->module( 'console' )->info( $data );else return $this->module( 'console', $data );
+					return $this->module( 'console' )->info( $data ); else return $this->module( 'console', $data );
 			}
 			
 			
@@ -60,8 +77,9 @@
 			 * @return hw_fields
 			 */
 			public function fields(){
-				return $this->module('fields');
+				return $this->module( 'fields' );
 			}
+			
 			
 			/**
 			 * @param $fieldId
@@ -185,32 +203,13 @@
 			
 			
 			/**
-			 * Класс-контроллер опций
-			 * @return bool|hw_options
-			 */
-			public function options(){
-				return $this->module( 'options' );
-			}
-			
-			
-			/**
-			 * Возвращает опцию
-			 * @param $id
-			 * @param string $type
-			 * @return bool|hw_option
-			 */
-			public function option( $id, $type = 'text' ){
-				return $this->options()->give( $id, $type );
-			}
-			
-			
-			/**
 			 * @return hw_post_types
 			 */
 			public function post_types(){
 				$this->inputs();
-				return $this->module('post_types');
+				return $this->module( 'post_types' );
 			}
+			
 			
 			/**
 			 * Получить / созлать новый тип записей.
@@ -288,7 +287,7 @@
 			 * @param null|mixed $data
 			 * @param bool $newInstance
 			 * @return mixed
-			 * @version 1.0
+			 * @version 1.1
 			 */
 			protected function module( $name, $data = null, $newInstance = false ){
 				if( !array_key_exists( $name, $this->modules ) )
@@ -296,8 +295,10 @@
 				$index = count( $this->modules[ $name ] );
 				if( $index == 0 || $newInstance ){
 					$className = 'hw_' . $name;
-					$this->modules[ $name ][ $index ] = null;
-					include_once HIWEB_DIR_MODULES . '/' . $name . '.php';
+					if( !class_exists( $className ) ){
+						$this->modules[ $name ][ $index ] = null;
+						include_once HIWEB_DIR_MODULES . '/' . $name . '.php';
+					}
 					$this->modules[ $name ][ $index ] = new $className( $data );
 				}
 				return end( $this->modules[ $name ] );

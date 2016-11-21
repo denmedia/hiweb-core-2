@@ -218,7 +218,7 @@
 		protected function the_post_edit( $post, $meta_box ){
 			if( !$this->show_in()->detect()->detect() || !is_array( $this->fields ) || count( $this->fields ) == 0 ){
 			}else{
-				hiweb()->css( HIWEB_URL_CSS . '/meta-boxes.css' );
+				hiweb()->css( hiweb()->_url() . '/css/meta-boxes.css' );
 				foreach( $this->fields as $id => $field ){
 					if( $field->width() == 100 ){
 						?>

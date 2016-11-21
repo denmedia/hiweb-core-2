@@ -1,15 +1,9 @@
 <?php
-
-
-	/**
-	 * Created by PhpStorm.
-	 * User: hiweb
-	 * Date: 30.06.2016
-	 * Time: 15:38
-	 */
+	
+	
 	class hw_path{
-
-
+		
+		
 		/**
 		 * Возвращает текущий адрес URL
 		 * @version 1.0.2
@@ -18,8 +12,8 @@
 			$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
 			return rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'], '/' ) . ( $trimSlashes ? rtrim( $_SERVER['REQUEST_URI'], '/\\' ) : $_SERVER['REQUEST_URI'] );
 		}
-
-
+		
+		
 		/**
 		 * Возвращает запрошенный GET или POST параметр
 		 * @param $key
@@ -34,8 +28,8 @@
 				$R = $_POST[ $key ];
 			return $R;
 		}
-
-
+		
+		
 		/**
 		 * Возвращает корневой URL
 		 * @return string
@@ -67,8 +61,8 @@
 			$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
 			return rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . $r, '/' );
 		}
-
-
+		
+		
 		/**
 		 * Возвращает корневую папку сайта. Данная функция автоматически определяет корневую папку сайта, отталкиваясь на поиске папок с файлом index.php
 		 * @return string
@@ -79,8 +73,8 @@
 			$ar = explode( "wp-", $full_path );
 			return rtrim( $ar[0], '\\/' );
 		}
-
-
+		
+		
 		/**
 		 * Возвращает URL с измененным QUERY фрагмнтом
 		 * @param null $url
@@ -111,7 +105,7 @@
 				foreach( $addData as $key => $value ){
 					$paramsPair[ $key ] = $value;
 				}
-			}elseif( is_string( $addData ) && trim( $addData ) != '' ){
+			} elseif( is_string( $addData ) && trim( $addData ) != '' ) {
 				$paramsPair[] = $addData;
 			}
 			///Remove
@@ -119,11 +113,11 @@
 				foreach( $removeKeys as $key => $value ){
 					if( is_string( $key ) && isset( $paramsPair[ $key ] ) ){
 						unset( $paramsPair[ $key ] );
-					}elseif( isset( $paramsPair[ $value ] ) ){
+					} elseif( isset( $paramsPair[ $value ] ) ) {
 						unset( $paramsPair[ $value ] );
 					}
 				}
-			}else if( is_string( $removeKeys ) && trim( $removeKeys ) != '' && isset( $paramsPair[ $removeKeys ] ) ){
+			} else if( is_string( $removeKeys ) && trim( $removeKeys ) != '' && isset( $paramsPair[ $removeKeys ] ) ){
 				unset( $paramsPair[ $removeKeys ] );
 			}
 			///
@@ -134,8 +128,8 @@
 			///
 			return count( $paramsPair ) > 0 ? $urlPath . '?' . implode( '&', $params ) : $urlPath;
 		}
-
-
+		
+		
 		/**
 		 * Возвращает расширение файла, уть которого указан в аргументе $path
 		 * @param $path
@@ -145,8 +139,8 @@
 			$pathInfo = pathinfo( $path );
 			return isset( $pathInfo['extension'] ) ? $pathInfo['extension'] : '';
 		}
-
-
+		
+		
 		/**
 		 * Конвертирует путь в URL до файла
 		 * @version 2.1
@@ -154,12 +148,13 @@
 		 * @return mixed
 		 */
 		public function path_to_url( $path ){
-			if(strpos($path,'http') === 0) return $path;
+			if( strpos( $path, 'http' ) === 0 )
+				return $path;
 			$path = str_replace( '\\', '/', $this->realpath( $path ) );
 			return str_replace( $this->base_dir(), $this->base_url(), $path );
 		}
-
-
+		
+		
 		/**
 		 * Конвертирует URL в путь
 		 * @param $url
@@ -169,8 +164,8 @@
 			$url = str_replace( '\\', '/', $url );
 			return str_replace( $this->base_url(), $this->base_dir(), $url );
 		}
-
-
+		
+		
 		/**
 		 * @param null $url
 		 * @return array
@@ -206,8 +201,8 @@
 				'url' => $url, 'base_url' => $baseUrl, 'shema' => $shema, 'domain' => $domain, 'dirs' => implode( '/', $dirs ), 'dirs_arr' => $dirs, 'params' => $query, 'params_arr' => $paramsPair
 			);
 		}
-
-
+		
+		
 		/**
 		 * Возвращает папки или папку(если указать индекс) из URL
 		 * @param null $url
@@ -218,8 +213,8 @@
 			$urlArr = $this->url_info( $url );
 			return is_int( $index ) ? ( isset( $urlArr['dirs_arr'][ $index ] ) ? $urlArr['dirs_arr'][ $index ] : false ) : $urlArr['dirs_arr'];
 		}
-
-
+		
+		
 		/**
 		 * Нормализация URL, так же возвращает парсированный URL
 		 * @version 1.2
@@ -238,7 +233,7 @@
 					$startUrlParse = parse_url( $startUrl );
 					$urlParse['scheme'] = $startUrlParse['scheme'];
 					$urlParse['host'] = $startUrlParse['host'];
-				}else{
+				} else {
 					$urlParse['scheme'] = 'http';
 					$urlParse['path'] = explode( '/', $urlParse['path'] );
 					$urlParse['host'] = array_shift( $urlParse['path'] );
@@ -251,14 +246,14 @@
 			}
 			if( !isset( $urlParse['query'] ) ){
 				$urlParse['query'] = '';
-			}else{
+			} else {
 				$urlParse['query'] = '?' . $urlParse['query'];
 			}
 			$urlParse['base'] = $urlParse['scheme'] . '://' . $urlParse['host'];
 			return $returnParseArray ? $urlParse : $urlParse['scheme'] . '://' . $urlParse['host'] . $urlParse['path'] . $urlParse['query'];
 		}
-
-
+		
+		
 		/**
 		 * Возвращает TRUE, если текущая страница являеться домашней
 		 * @return bool
@@ -266,8 +261,8 @@
 		public function is_home(){
 			return $this->base_url() == $this->url_full();
 		}
-
-
+		
+		
 		/**
 		 * Возвращает TRUE, если текущая страница соответствует указанному SLUG
 		 * @param string $pageSlug
@@ -278,8 +273,8 @@
 			$pageSlug = ltrim( $pageSlug, '/\\' );
 			return ( strpos( $currentUrl, $pageSlug ) === 0 );
 		}
-
-
+		
+		
 		/**
 		 * Возвращает DIRECTORY SEPARATOR, отталкиваясь от данных
 		 */
@@ -288,8 +283,8 @@
 			$right = substr_count( $_SERVER['DOCUMENT_ROOT'], '//' );
 			return $left > $right ? '\\' : '/';
 		}
-
-
+		
+		
 		/**
 		 * Возвращает путь с правильными разделителями
 		 * @param $path - исходный путь
@@ -305,8 +300,8 @@
 			$r = strtr( $path, array( '\\' => $this->separator(), '/' => $this->separator() ) );
 			return $removeLastSeparators ? rtrim( $r, $this->separator() ) : $r;
 		}
-
-
+		
+		
 		/**
 		 * Конвертация относитльного пути к коневой папке в реальный
 		 * @version 1.0.0.0
@@ -317,8 +312,8 @@
 			$fileOrDirPath = $this->prepare_separator( $fileOrDirPath );
 			return ( strpos( $fileOrDirPath, $this->base_dir() ) !== 0 ) ? $this->base_dir() . $this->separator() . $fileOrDirPath : $fileOrDirPath;
 		}
-
-
+		
+		
 		/**
 		 * Функция атоматически создает папки
 		 * @param $dirPath - путь до папи, которую необходимо создать
@@ -339,14 +334,14 @@
 				//$stat = @stat( $newDirStr );
 				if( !@file_exists( $newDirStr ) || @is_file( $newDirStr ) ){
 					$newDirDoneArr[ $name ] = @mkdir( $newDirStr, 0755 );
-				}else{
+				} else {
 					$newDirDoneArr[ $newDirStr ] = 0;
 				}
 			}
 			return $newDirDoneArr;
 		}
-
-
+		
+		
 		/**
 		 * Удалить папку вместе с вложенными папками и файлами
 		 * @param $dirPath
@@ -363,14 +358,14 @@
 			foreach( $files as $file ){
 				if( is_dir( $file ) ){
 					$this->rmdir( $file );
-				}else{
+				} else {
 					unlink( $file );
 				}
 			}
 			return rmdir( $dirPath );
 		}
-
-
+		
+		
 		/**
 		 * Копирует папку целиком вместе с вложенными файлами и папками
 		 * @param $sourcePath - исходная папка
@@ -385,7 +380,7 @@
 				if( ( $file != '.' ) && ( $file != '..' ) ){
 					if( is_dir( $sourcePath . '/' . $file ) ){
 						$r = $r && $this->copy_dir( $sourcePath . '/' . $file, $destinationDir . '/' . $file );
-					}else{
+					} else {
 						$r = $r && copy( $sourcePath . '/' . $file, $destinationDir . '/' . $file );
 					}
 				}
@@ -393,8 +388,8 @@
 			closedir( $dir );
 			return $r;
 		}
-
-
+		
+		
 		/**
 		 * Возвращает форматированный вид размера файла из байтов
 		 * @param $size - INT килобайты
@@ -404,19 +399,19 @@
 			$size = intval( $size );
 			if( $size < 1024 ){
 				return $size . " bytes";
-			}else if( $size < ( 1024 * 1024 ) ){
+			} else if( $size < ( 1024 * 1024 ) ){
 				$size = round( $size / 1024, 1 );
 				return $size . " KB";
-			}else if( $size < ( 1024 * 1024 * 1024 ) ){
+			} else if( $size < ( 1024 * 1024 * 1024 ) ){
 				$size = round( $size / ( 1024 * 1024 ), 1 );
 				return $size . " MB";
-			}else{
+			} else {
 				$size = round( $size / ( 1024 * 1024 * 1024 ), 1 );
 				return $size . " GB";
 			}
 		}
-
-
+		
+		
 		/**
 		 * Возвращает содержимое папки в массиве
 		 * @param $path
@@ -438,7 +433,7 @@
 						///
 						if( is_dir( $nextpath ) && $returnDirs ){
 							$R[ $nextpath ] = pathinfo( $nextpath );
-						}elseif( is_file( $nextpath ) && $returnFiles ){
+						} elseif( is_file( $nextpath ) && $returnFiles ) {
 							$R[ $nextpath ] = pathinfo( $nextpath );
 						}
 						///
@@ -451,8 +446,8 @@
 			closedir( $handle );
 			return $R;
 		}
-
-
+		
+		
 		/**
 		 * Выполняет архивацию папки в ZIP архив
 		 * @param $pathInput
@@ -485,12 +480,12 @@
 				}
 				$zip->close(); // закрываем архив.
 				return $pathOut;
-			}else{
+			} else {
 				return false;
 			}
 		}
-
-
+		
+		
 		/**
 		 * Распаковывает ZIP архив
 		 * @param $archivePath
@@ -512,12 +507,12 @@
 				}
 				$zip->close();
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}
-
-
+		
+		
 		/**
 		 * Возвращает расширение файла, уть которого указан в аргументе $path
 		 * @param $path
@@ -527,8 +522,8 @@
 			$pathInfo = pathinfo( $path );
 			return isset( $pathInfo['extension'] ) ? $pathInfo['extension'] : '';
 		}
-
-
+		
+		
 		/**
 		 * Возвращает содержимое файла PHP, подключая его через INCLUDE
 		 * @param $path
@@ -541,15 +536,15 @@
 					ob_start();
 					include $path;
 					return ob_get_clean();
-				}else{
-					hiweb()->console()->error('Функции [ob_start] не установлено на сервере', true);
+				} else {
+					hiweb()->console()->error( 'Функции [ob_start] не установлено на сервере', true );
 					return false;
 				}
-			}else{
-				hiweb()->console()->error('Файла ['.$path.'] нет', true);
+			} else {
+				hiweb()->console()->error( 'Файла [' . $path . '] нет', true );
 				return false;
 			}
 		}
-
-
+		
+		
 	}
