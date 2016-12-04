@@ -68,8 +68,8 @@
 		 */
 		public function get( $size = 'thumbnail' ){
 			wp_enqueue_media();
-			hiweb()->js( HIWEB_URL_JS . '/input_image.js' );
-			hiweb()->css( HIWEB_URL_CSS . '/input_image.css' );
+			hiweb()->js( hiweb()->url_js . '/input_image.js' );
+			hiweb()->css( hiweb()->url_css . '/input_image.css' );
 
 			return '<div class="hw-input-image" id="' . $this->id . '" data-has-image="' . ( $this->have_image( $this->preview_size() ) ? '1' : '0' ) . '">
 <input type="hidden" ' . $this->get_tags( array( 'value', 'id', 'name', 'title' ) ) . '/>

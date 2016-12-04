@@ -105,7 +105,7 @@
 		 */
 		public function make( $id = null, $type = 'text', $parent_home = null ){
 			///Find Class path
-			$path = HIWEB_DIR_MODULES . '/input/' . $type . '.php';
+			$path = hiweb()->dir_modules . '/input/' . $type . '.php';
 			if( file_exists( $path ) && is_file( $path ) && is_readable( $path ) ){
 				include_once $path;
 			} else {

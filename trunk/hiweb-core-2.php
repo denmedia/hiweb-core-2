@@ -17,3 +17,8 @@
 		
 		add_action( 'admin_notices', 'hw_core_php_version_error' );
 	}
+	
+	
+	
+	///todo-
+hiweb()->post_type('post')->labels_set('menu_name','Новости')->add_field('test','text','Тестовое поле');

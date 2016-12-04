@@ -40,8 +40,8 @@
 		
 		
 		public function get( $arguments = null ){
-			hiweb()->css( HIWEB_URL_CSS . '/input_repeat.css' );
-			hiweb()->js( HIWEB_URL_JS . '/input_repeat.js', array( 'jquery-ui-sortable' ) );
+			hiweb()->css( hiweb()->url_css . '/input_repeat.css' );
+			hiweb()->js( hiweb()->url_js . '/input_repeat.js', array( 'jquery-ui-sortable' ) );
 			$R = '';
 			$R .= $this->get_adminRowNull() . '<tbody class="wrap">';
 			if( $this->have_rows() != false ){

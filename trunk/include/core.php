@@ -13,6 +13,19 @@
 		class hw_core{
 			
 			private $modules = array();
+			/** @var string Корневая папка плагина */
+			public $dir = '';
+			public $url = '';
+			/** @var string корневая папка яндра */
+			public $dir_include = 'include';
+			/** @var string Корневая папка модулей */
+			public $dir_modules = 'modules';
+			/** @var string Папка стилей */
+			public $dir_css = 'css';
+			public $url_css = 'css';
+			/** @var string Папка скриптов JS */
+			public $dir_js = 'js';
+			public $url_js = 'js';
 			
 			
 			public function __call( $name, $arguments ){
@@ -20,21 +33,17 @@
 			}
 			
 			
-			/**
-			 * Возвращает корневую папку плагина hiweb
-			 * @return string
-			 */
-			public function _dir(){
-				return dirname( dirname( __FILE__ ) );
-			}
-			
-			
-			/**
-			 * Возращает URL корневой папки плагина   hiweb
-			 * @return mixed
-			 */
-			public function _url(){
-				return $this->path()->path_to_url( $this->_dir() );
+			public function __construct(){
+				///
+				$this->dir = dirname( dirname( __FILE__ ) );
+				$this->url = $this->path()->path_to_url( $this->dir );
+				///
+				$this->url_css = $this->url_css . '/' . $this->dir_css;
+				$this->url_js = $this->url_js . '/' . $this->dir_js;
+				$this->dir_include = $this->dir . '/' . $this->dir_include;
+				$this->dir_modules = $this->dir_include . '/' . $this->dir_modules;
+				$this->dir_css = $this->dir . '/' . $this->dir_css;
+				$this->dir_js = $this->dir . '/' . $this->dir_js;
 			}
 			
 			
@@ -297,7 +306,7 @@
 					$className = 'hw_' . $name;
 					if( !class_exists( $className ) ){
 						$this->modules[ $name ][ $index ] = null;
-						include_once HIWEB_DIR_MODULES . '/' . $name . '.php';
+						include_once $this->dir_modules . '/' . $name . '.php';
 					}
 					$this->modules[ $name ][ $index ] = new $className( $data );
 				}

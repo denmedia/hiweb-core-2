@@ -43,8 +43,8 @@
 
 		public function get( $arguments = null ){
 			wp_enqueue_media();
-			hiweb()->js( HIWEB_URL_JS . '/input_images.js', array( 'jquery-ui-sortable' ) );
-			hiweb()->css( HIWEB_URL_CSS . '/input_images.css' );
+			hiweb()->js( hiweb()->url_js . '/input_images.js', array( 'jquery-ui-sortable' ) );
+			hiweb()->css( hiweb()->url_css . '/input_images.css' );
 			$R = '';
 			if( $this->have_rows() === false || $this->have_rows() === 0 ){
 			}else{

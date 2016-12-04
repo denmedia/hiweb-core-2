@@ -68,7 +68,7 @@
 		
 		
 		public function print_r( $mixed, $depth = 4, $showObjects = true ){
-			echo '<link rel="stylesheet" href="' . hiweb()->_url() . '/css/arrays.css"/>';
+			echo '<link rel="stylesheet" href="' . hiweb()->url_css . '/arrays.css"/>';
 			echo $this->getHtml_arrayPrint( $mixed, $depth, $showObjects );
 			return $this;
 		}

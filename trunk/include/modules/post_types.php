@@ -464,7 +464,9 @@
 				$props = (array)get_post_type_object( $this->_type );
 				foreach( $props as $key => $val ){
 					if( property_exists( $this, $key ) ){
-						$this->{$key} = $val;
+					    if($key != 'label' && $key != 'labels'){
+						    $this->{$key} = $val;
+					    }
 					}
 				}
 			}
@@ -507,16 +509,19 @@
 		private function add_action_init_create(){
 			if( post_type_exists( $this->_type ) ){
 				global $wp_post_types, $_wp_post_type_features;
+				
 				foreach( $wp_post_types[ $this->_type ] as $key => $val ){
 					if( property_exists( $this, $key ) ){
 						if( $key == 'label' ){
 							$wp_post_types[ $this->_type ]->{$key} = __( $this->{$key} );
-						}elseif( $key == 'labels' ){
+						} elseif( $key == 'labels' ) {
 							if( is_object( $val ) )
 								foreach( $val as $label => $name ){
-									$wp_post_types[ $this->_type ]->{$key}->{$label} = __( $this->labels->{$label} );
+									if( isset( $this->labels[ $label ] ) ){
+										$wp_post_types[ $this->_type ]->{$key}->{$label} = $this->labels[$label];
+									}
 								}
-						}else{
+						} else {
 							$wp_post_types[ $this->_type ]->{$key} = $this->{$key};
 						}
 					}
@@ -527,7 +532,7 @@
 						if( !array_key_exists( $support, array_flip( $this->supports ) ) )
 							unset( $_wp_post_type_features[ $this->_type ][ $support ] );
 					}
-			}else{
+			} else {
 				//Register PT
 				$this->_object = register_post_type( $this->_type, $this->props() );
 			}

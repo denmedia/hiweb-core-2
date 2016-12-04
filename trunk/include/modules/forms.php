@@ -45,7 +45,7 @@
 		public function __construct( $id = '' ){
 			$this->id = $id;
 			$this->settings_group = $id;
-			$this->inputs_home_make(array('forms',$id));
+			$this->inputs_home_make( array( 'forms', $id ) );
 		}
 		
 		
@@ -142,12 +142,12 @@
 					continue;
 				if( is_numeric( $key ) ){
 					$formTags[] = $val;
-				}else{
+				} else {
 					$formTags[] = $key . '="' . htmlentities( $val, ENT_QUOTES, 'utf-8' ) . '"';
 				}
 			}
 			///
-			return '<form ' . implode( ' ', $formTags ) . '>' . $this->get_noform() . ( $this->submit ? get_submit_button( is_string($this->submit) ? $this->submit : '' ) : '' ) . '</form>';
+			return '<form ' . implode( ' ', $formTags ) . '>' . $this->get_noform() . ( $this->submit ? get_submit_button( is_string( $this->submit ) ? $this->submit : '' ) : '' ) . '</form>';
 		}
 		
 		
@@ -156,11 +156,11 @@
 		 * @return string
 		 */
 		public function get_noform(){
-			hiweb()->css( HIWEB_URL_CSS . '/forms.css' );
+			hiweb()->css( hiweb()->url_css . '/forms.css' );
 			///
-			$templatePath = HIWEB_DIR_MODULES . '/forms/' . $this->template . '.php';
+			$templatePath = hiweb()->dir_modules . '/forms/' . $this->template . '.php';
 			if( !file_exists( $templatePath ) )
-				$templatePath = HIWEB_DIR_MODULES . '/forms/default.php';
+				$templatePath = hiweb()->dir_modules . '/forms/default.php';
 			ob_start();
 			include $templatePath;
 			$R = ob_get_clean();
