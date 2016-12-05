@@ -10,7 +10,7 @@
 	class hw_wp_user_meta_boxes extends hw_post_type_meta_boxes{
 
 
-		protected function _hooks(){
+		protected function my_hooks(){
 			add_action( 'show_user_profile', array( $this, 'add_action_user_profile' ) );
 			add_action( 'edit_user_profile', array( $this, 'add_action_user_profile' ) );
 			add_action( 'personal_options_update', array( $this, 'add_action_options_update' ) );

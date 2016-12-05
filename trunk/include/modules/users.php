@@ -4,6 +4,9 @@
 	class hw_users {
 		/** @var hw_user[] */
 		private $users = array();
+		
+		
+		use hw_inputs_home_functions;
 
 
 		/**
@@ -12,13 +15,14 @@
 		 * @return hw_user
 		 */
 		public function get( $idOrLoginOrEmail = null ){
+			///
 			if( is_null( $idOrLoginOrEmail ) ){
-				require_once ABSPATH . '/wp-includes/pluggable.php';
 				require_once ABSPATH . '/wp-includes/pluggable.php';
 				$current_user = wp_get_current_user();
 				if( $current_user instanceof WP_User )
 					$idOrLoginOrEmail = $current_user->ID;
 			}
+			///
 			if( !isset( $this->users[ $idOrLoginOrEmail ] ) ){
 				$user = new hw_user( $idOrLoginOrEmail );
 				$this->users[ $idOrLoginOrEmail ] = $user;

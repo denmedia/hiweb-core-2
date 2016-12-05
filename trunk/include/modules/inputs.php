@@ -815,6 +815,10 @@
 	}
 	
 	
+	/**
+	 * Трейт для добавления инпутов
+	 * Class hw_inputs_home_functions
+	 */
 	trait hw_inputs_home_functions{
 		
 		/** @var null|hw_inputs_home */
@@ -861,8 +865,8 @@
 			$input->name( $this->inputs_name_prepend . $input->name() );
 			return $input;
 		}
-		
-		
+
+
 		/**
 		 * @param $fields
 		 * @return array|hw_input[]
@@ -920,6 +924,10 @@
 	}
 	
 	
+	/**
+	 * Трейт для управления множества инпутов
+	 * Class hw_inputs_home_multi_functions
+	 */
 	trait hw_inputs_home_multi_functions{
 		
 		/** @var null|hw_inputs_home */

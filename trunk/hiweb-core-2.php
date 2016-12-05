@@ -18,5 +18,5 @@
 		add_action( 'admin_notices', 'hw_core_php_version_error' );
 	}
 	
-	
-	
+	//todo
+	hiweb()->post_type('post')->add_field( 'Test' );

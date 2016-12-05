@@ -274,11 +274,19 @@
 			
 			
 			/**
+			 * @return hw_users
+			 */
+			public function users(){
+				$this->inputs();
+				return $this->module('users');
+			}
+			
+			/**
 			 * @param $loginOrId - логин, мэил или ID пользователя
 			 * @return bool|hw_user
 			 */
 			public function user( $loginOrId = null ){
-				return $this->module( 'users' )->get( $loginOrId );
+				return $this->users()->get( $loginOrId );
 			}
 			
 			
