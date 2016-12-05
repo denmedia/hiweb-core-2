@@ -17,3 +17,6 @@
 		
 		add_action( 'admin_notices', 'hw_core_php_version_error' );
 	}
+	
+	
+	
