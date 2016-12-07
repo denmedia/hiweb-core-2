@@ -1,12 +1,29 @@
 <?php
 
 
-	class hw_users {
+	class hw_users{
+
+		use hw_inputs_home_functions;
+		use hw_hidden_methods_props;
+
 		/** @var hw_user[] */
 		private $users = array();
-		
-		
-		use hw_inputs_home_functions;
+
+
+		public function __construct(){
+			add_action('personal_options_update',array($this,'personal_options_update'));
+			add_action('edit_user_profile_update',array($this,'personal_options_update'));
+			add_action('user_edit_form_tag',array($this,'personal_options_update'));
+			add_action('personal_options',array($this,'personal_options_update'));
+			add_action('profile_personal_options',array($this,'personal_options_update'));
+			add_action('show_user_profile',array($this,'personal_options_update'));
+			add_action('edit_user_profile',array($this,'personal_options_update'));
+		}
+
+
+		protected function personal_options_update($args){
+			hiweb()->console(array(__METHOD__,$args)); //todo-
+		}
 
 
 		/**
@@ -37,6 +54,7 @@
 
 	}
 
+
 	class hw_user{
 
 		/** @var int */
@@ -54,7 +72,7 @@
 			require_once ABSPATH . '/wp-includes/pluggable.php';
 			foreach( $fields as $field ){
 				if( $idOrLoginOrMail instanceof WP_User )
-					$user = $idOrLoginOrMail;else $user = get_user_by( $field, $idOrLoginOrMail );
+					$user = $idOrLoginOrMail; else $user = get_user_by( $field, $idOrLoginOrMail );
 				if( !$user instanceof WP_User )
 					continue;
 				$this->{$field} = $idOrLoginOrMail;
@@ -166,7 +184,7 @@
 						$R[ $key ] = get_user_meta( $this->id, $key, true );
 					}
 				return $R;
-			}else{
+			} else {
 				if( array_key_exists( $metaKey, $meta ) )
 					return get_user_meta( $this->id, $metaKey, true );
 			}
@@ -176,7 +194,7 @@
 
 		/**
 		 * Обновит/удалить мета
-		 * @param $metaKey
+		 * @param      $metaKey
 		 * @param null $metaValue
 		 * @return bool|int
 		 */
