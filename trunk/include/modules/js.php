@@ -37,7 +37,7 @@
 			}
 			$url = hiweb()->path()->path_to_url( $file );
 			if ( $url != '' ) {
-				$this->files[ md5( $url ) ] = array( $url, $afterJS, $in_footer );
+				$this->files[ md5( $url ) ] = array( $url, $afterJS, $in_footer, $file );
 
 				return true;
 			} else {
@@ -50,7 +50,7 @@
 		function _my_wp_enqueue_scripts() {
 			foreach ( $this->files as $slug => $script ) {
 				unset( $this->files[ $slug ] );
-				wp_register_script( $slug, $script[0], $script[1], false, $script[2] );
+				wp_register_script( $slug, $script[0], $script[1], filemtime( $script[3] ), $script[2] );
 				wp_enqueue_script( $slug );
 			}
 		}

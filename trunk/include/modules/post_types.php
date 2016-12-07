@@ -116,6 +116,8 @@
 
 	class hw_post_type{
 
+		use hw_inputs_home_multi_functions;
+
 		private $_type;
 		/** @var WP_Error|WP_Post_Type */
 		private $_object;
@@ -155,8 +157,6 @@
 		private $fields = array();
 		/** @var hw_meta_box[] */
 		private $meta_boxes = array();
-
-		use hw_inputs_home_multi_functions;
 		/** @var  hw_taxonomy[] */
 		private $_taxonomies = array();
 		/** @var hw_meta_boxes[] */
@@ -626,18 +626,23 @@
 			////
 			if( !function_exists( 'get_current_screen' ) )
 				return;
-			if( get_current_screen()->base != 'post' || get_current_screen()->post_type != $this->_type )
+			if( get_current_screen()->base != 'post' )
 				return;
+			$fields = $this->get_fields( $position );
+			if( $position == 3 ){
+				$fields = array_merge( $fields, $this->get_fields() );
+			}
 			////
-			if( isset( $this->fields[ $position ] ) && is_array( $this->fields[ $position ] ) && count( $this->fields[ $position ] ) > 0 ){
+			if( is_array( $fields ) && count( $fields ) > 0 ){
 				$inputs = array();
-				foreach( $this->fields[ $position ] as $id => $input ){
+				foreach( $fields as $id => $input ){
 					if( $post instanceof WP_Post ){
 						$input->value( get_post_meta( $post->ID, $input->id(), true ) );
 					}
 					$inputs[ $id ] = $input;
 				}
-				$form = hiweb()->form()->fields( $inputs, false );
+				$form = hiweb()->form();
+				$form->add_fields( $inputs );
 				if( $position == 5 )
 					$form->template( 'compact' );
 				$form->the_noform();
