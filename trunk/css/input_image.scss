@@ -1,41 +1,41 @@
 .hw-input-image {
 
-  .image-select {
-    min-height: 85px;
-    min-width: 85px;
-    position: relative;
-    background: 50% 50% no-repeat #ccc;
-    background-size: cover;
-    text-align: center;
-    &:hover {
-      background: 50% 50% no-repeat  #ccc;
-      background-size: cover;
-      .dashicons {
-        font-size: 54px;
-        margin-top: -28px;
-        margin-left: -30px;
-      }
-    }
+	.image-select {
+		min-height: 85px;
+		min-width: 85px;
+		max-width: 100%;
+		position: relative;
+		background: 50% 50% no-repeat #ccc;
+		background-size: cover;
+		text-align: center;
+		&:hover {
+			background: 50% 50% no-repeat #ccc;
+			background-size: cover;
+			.dashicons {
+				font-size: 54px;
+				margin-top: -28px;
+				margin-left: -30px;
+			}
+		}
 
-    .dashicons {
-      font-size: 34px;
-      position: relative;
-      top: 50%;
-      margin-top: -18px;
-      margin-left: -10px;
-      text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7);
-    }
-    .dashicons[data-icon="deselect"] {
+		.dashicons {
+			font-size: 34px;
+			position: relative;
+			top: 50%;
+			margin-top: -18px;
+			margin-left: -10px;
+			text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7);
+		}
+		.dashicons[data-icon="deselect"] {
+		}
+	}
 
-    }
-  }
+	&[data-has-image="1"] .dashicons[data-icon="select"] {
+		display: none;
+	}
 
-  &[data-has-image="1"] .dashicons[data-icon="select"] {
-    display: none;
-  }
-
-  &[data-has-image="0"] .dashicons[data-icon="deselect"] {
-    display: none;
-  }
+	&[data-has-image="0"] .dashicons[data-icon="deselect"] {
+		display: none;
+	}
 
 }

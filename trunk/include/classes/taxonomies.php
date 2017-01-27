@@ -12,7 +12,7 @@
 		
 		public function __construct(){
 			$this->inputs_home_make('taxonomies');
-			add_action( 'init', array( $this, 'add_action_init' ) );
+			//add_action( 'init', array( $this, 'add_action_init' ) );
 		}
 		
 		

@@ -11,11 +11,26 @@
 
 
 		public function __construct(){
-			add_action( 'wp_enqueue_scripts', array( $this, '_my_wp_enqueue_scripts' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, '_my_wp_enqueue_scripts' ) );
-			add_action( 'login_enqueue_scripts', array( $this, '_my_wp_enqueue_scripts' ) );
-			add_action( 'wp_footer', array( $this, '_my_wp_enqueue_scripts' ) );
-			add_action( 'admin_footer', array( $this, '_my_wp_enqueue_scripts' ) );
+			add_action( 'wp_enqueue_scripts', array(
+				$this,
+				'_my_wp_enqueue_scripts'
+			) );
+			add_action( 'admin_enqueue_scripts', array(
+				$this,
+				'_my_wp_enqueue_scripts'
+			) );
+			add_action( 'login_enqueue_scripts', array(
+				$this,
+				'_my_wp_enqueue_scripts'
+			) );
+			add_action( 'wp_footer', array(
+				$this,
+				'_my_wp_enqueue_scripts'
+			) );
+			add_action( 'admin_footer', array(
+				$this,
+				'_my_wp_enqueue_scripts'
+			) );
 		}
 
 
@@ -34,12 +49,15 @@
 				}
 			}
 			$url = hiweb()->path()->path_to_url( $file );
-			if( $url != '' ){
-				$this->files[ md5( $url ) ] = array( $url, $file );
+			if( file_exists( $file ) && is_file( $file ) && is_readable( $file ) && $url != '' ){
+				$this->files[ md5( $url ) ] = array(
+					$url,
+					$file
+				);
 
 				return true;
 			} else {
-				hiweb()->console()->error( 'hiweb()→css(): файл [' . $file . '] не найден!', true );
+				hiweb()->console()->error( 'файл [' . $file . '] не найден!', 2 );
 
 				return false;
 			}

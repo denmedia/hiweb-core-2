@@ -6,9 +6,14 @@
 
 	class hw_admin{
 
+		use hw_hidden_methods_props;
+
 
 		/** @var hw_wp_admin_bar[] */
 		private $_admin_bar = array();
+
+
+
 
 
 		/**
@@ -36,3 +41,5 @@
 		}
 
 	}
+
+

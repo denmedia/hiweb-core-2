@@ -6,7 +6,12 @@
     td { text-align: center; }
 
     thead {
-      td, th { background: #aaa; font-size: 14px; padding: 6px 4px; }
+      td, th {
+        background: #aaa; font-size: 14px; padding: 6px 4px;
+        .description {
+          font-size: 12px; font-weight: 300;
+        }
+      }
     }
 
     tbody {
@@ -19,7 +24,7 @@
 
     .drag, .control {
       width: auto;
-      .spacer { display: block; width: 35px;}
+      .spacer { display: block; width: 35px; }
     }
     .drag-handle {
       cursor: move;
@@ -36,17 +41,17 @@
       &:hover { background-color: #e9e9e9; }
       &.ui-sortable-placeholder {
         background: #777;
-        -webkit-box-shadow: inset 0px 0px 15px 0px rgba(0,0,0,0.2);
-        -moz-box-shadow: inset 0px 0px 15px 0px rgba(0,0,0,0.2);
-        box-shadow: inset 0px 0px 15px 0px rgba(0,0,0,0.2);
+        -webkit-box-shadow: inset 0px 0px 15px 0px rgba(0, 0, 0, 0.2);
+        -moz-box-shadow: inset 0px 0px 15px 0px rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0px 0px 15px 0px rgba(0, 0, 0, 0.2);
       }
       &.ui-sortable-helper {
         -webkit-box-shadow: 4px 4px 25px 0px rgba(0, 0, 0, 0.4);
-        -moz-box-shadow:    4px 4px 25px 0px rgba(0, 0, 0, 0.4);
-        box-shadow:         4px 4px 25px 0px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 25px 0px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 25px 0px rgba(0, 0, 0, 0.4);
       }
 
-      &:nth-last-child(2){
+      &:nth-last-child(2) {
         border-bottom: none;
       }
     }

@@ -15,7 +15,10 @@
 				$this->info( $info );
 			}
 			if( !hiweb()->wp()->is_ajax() )
-				add_action( 'shutdown', array( $this, 'echo_footer' ), 10 );
+				add_action( 'shutdown', array(
+					$this,
+					'echo_footer'
+				), 10 );
 		}
 
 
@@ -30,7 +33,7 @@
 
 		/**
 		 * Вывести информацию в консоль
-		 * @param $info - информация
+		 * @param      $info     - информация
 		 * @param bool $debugMod - дополнительная информация
 		 */
 		public function info( $info, $debugMod = false ){
@@ -43,37 +46,51 @@
 			$this->_infos[] = $info;
 			$this->mess['info'][] = $info;
 			$this->_mess[] = array(
-				'data' => $info, 'type' => 'info', 'debug' => $debugMod, 'microtime' => microtime( 1 ), 'file' => hiweb()->backtrace()->file_locate( $callFromConstruct ? 3 : 2 ),
-				'function' => hiweb()->backtrace()->function_trace( $callFromConstruct ? 3 : 2 )
+				'data' => $info,
+				'type' => 'info',
+				'debug' => $debugMod,
+				'microtime' => microtime( 1 ),
+				'file' => hiweb()->backtrace()->file_locate( $callFromConstruct ? 2 + intval( $debugMod ) : 1 + intval( $debugMod ) ),
+				'function' => hiweb()->backtrace()->function_trace( $callFromConstruct ? 2 + intval( $debugMod ) : 1 + intval( $debugMod ) )
 			);
 		}
 
 
 		/**
 		 * Вывести предупреждение в консоль
-		 * @param $info - информация
+		 * @param      $info     - информация
 		 * @param bool $debugMod - дополнительная информация
 		 */
 		public function warn( $info, $debugMod = false ){
 			$this->_warns[] = $info;
 			$this->mess['warn'][] = $info;
 			$this->_mess[] = array(
-				'data' => $info, 'type' => 'warn', 'debug' => $debugMod, 'microtime' => microtime( 1 ), 'file' => hiweb()->backtrace()->file_locate( 2 ), 'function' => hiweb()->backtrace()->function_trace( 2 )
+				'data' => $info,
+				'type' => 'warn',
+				'debug' => $debugMod,
+				'microtime' => microtime( 1 ),
+				'file' => hiweb()->backtrace()->file_locate( 1 + intval( $debugMod ) ),
+				'function' => hiweb()->backtrace()->function_trace( 1 + intval( $debugMod ) )
 			);
 		}
 
 
 		/**
 		 * Вывести в консоль ошибку
-		 * @param $info - информация
-		 * @param bool $debugMod - дополнительная информация
+		 * @param          $info     - информация
+		 * @param bool|int $debugMod - дополнительная информация, можно указать цифрой, чтобы дебаггер показывал родительскую функцию выше уровнеем, чем задано по-умолчанию
 		 * @version 1.1
 		 */
 		public function error( $info, $debugMod = false ){
 			$this->_errors[] = $info;
 			$this->mess['error'][] = $info;
 			$this->_mess[] = array(
-				'data' => $info, 'type' => 'error', 'debug' => $debugMod, 'microtime' => microtime( 1 ), 'file' => hiweb()->backtrace()->file_locate( 2 ), 'function' => hiweb()->backtrace()->function_trace( 2 )
+				'data' => $info,
+				'type' => 'error',
+				'debug' => $debugMod,
+				'microtime' => microtime( 1 ),
+				'file' => hiweb()->backtrace()->file_locate( 1 + intval( $debugMod ) ),
+				'function' => hiweb()->backtrace()->function_trace( 1 + intval( $debugMod ) )
 			);
 		}
 
@@ -109,7 +126,8 @@
 			echo '<script>';
 			foreach( $this->_mess as $info ){
 				$this->{'echo_' . $info['type']}( $info['debug'] ? ( is_array( $info['data'] ) ? array_merge( array(
-					'► ' . $info['function'], '► ' . $info['file']
+					'► ' . $info['function'],
+					'► ' . $info['file']
 				), $info['data'] ) : $info['function'] . '() : ' . $info['data'] . chr( 13 ) . chr( 10 ) . '► ' . $info['file'] ) : $info['data'] );
 			}
 			echo '</script>';

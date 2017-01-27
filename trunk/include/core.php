@@ -12,19 +12,26 @@
 
 		class hw_core{
 
-			private $modules = array();
+			private $classes = array();
 			/** @var string Корневая папка плагина */
 			public $dir = '';
+			public $dir_base = '';
+			/** @var string URL корневой папка плагина */
 			public $url = '';
-			/** @var string корневая папка яндра */
+			public $url_base = '';
+			/** @var string Корневая папка яндра */
 			public $dir_include = 'include';
 			/** @var string Корневая папка модулей */
-			public $dir_modules = 'modules';
-			/** @var string Папка стилей */
+			public $dir_classes = 'classes';
+			/** @var string Корневая папка трейтов */
+			public $dir_traits = 'traits';
+			/** @var string Путь до папки стилей */
 			public $dir_css = 'css';
+			/** @var string URL папки стилей */
 			public $url_css = 'css';
 			/** @var string Папка скриптов JS */
 			public $dir_js = 'js';
+			/** @var string URL папки скриптов JS */
 			public $url_js = 'js';
 
 
@@ -36,14 +43,19 @@
 			public function __construct(){
 				///
 				$this->dir = dirname( dirname( __FILE__ ) );
+				$this->dir_base = $this->path()->base_dir();
 				$this->url = $this->path()->path_to_url( $this->dir );
+				$this->url_base = $this->path()->base_url();
 				///
-				$this->url_css = $this->url_css . '/' . $this->dir_css;
-				$this->url_js = $this->url_js . '/' . $this->dir_js;
+				$this->url_css = $this->url . '/' . $this->dir_css;
+				$this->url_js = $this->url . '/' . $this->dir_js;
 				$this->dir_include = $this->dir . '/' . $this->dir_include;
-				$this->dir_modules = $this->dir_include . '/' . $this->dir_modules;
+				$this->dir_classes = $this->dir_include . '/' . $this->dir_classes;
+				$this->dir_traits = $this->dir_include . '/' . $this->dir_traits;
 				$this->dir_css = $this->dir . '/' . $this->dir_css;
 				$this->dir_js = $this->dir . '/' . $this->dir_js;
+				///Load traits
+				$this->path()->include_dir( $this->dir_traits );
 			}
 
 
@@ -51,8 +63,7 @@
 			 * @return bool|hw_admin
 			 */
 			public function admin(){
-				$this->inputs();
-				return $this->module( 'admin' );
+				return $this->give_class( 'admin' );
 			}
 
 
@@ -60,7 +71,7 @@
 			 * @return bool|hw_arrays
 			 */
 			public function arrays(){
-				return $this->module( 'arrays' );
+				return $this->give_class( 'arrays' );
 			}
 
 
@@ -68,7 +79,7 @@
 			 * @return bool|hw_backtrace
 			 */
 			public function backtrace(){
-				return $this->module( 'backtrace' );
+				return $this->give_class( 'backtrace' );
 			}
 
 
@@ -78,7 +89,21 @@
 			 */
 			public function console( $data = null ){
 				if( !is_null( $data ) || trim( $data ) != '' )
-					return $this->module( 'console' )->info( $data ); else return $this->module( 'console', $data );
+					return $this->give_class( 'console' )->info( $data ); else return $this->give_class( 'console', $data );
+			}
+
+
+			/**
+			 * Возвращает данные контекста, текущего контекста
+			 * @param null|true|array|WP_Post|WP_Term|WP_Post_Type|WP_Taxonomy $context
+			 * @return hw_context|hw_context_current_prepare
+			 */
+			public function context( $context = null ){
+				if( is_null( $context ) ){
+					return $this->give_class( 'context' );
+				} else {
+					return $this->give_class( 'context' )->prepare( $context );
+				}
 			}
 
 
@@ -86,18 +111,18 @@
 			 * @return hw_fields
 			 */
 			public function fields(){
-				return $this->module( 'fields' );
+				return $this->give_class( 'fields' );
 			}
 
 
 			/**
-			 * @param      $fieldId
-			 * @param null $contextId
-			 * @param null $contextType
+			 * @param        $fieldId - индификатор поля
+			 * @param string $type - тип поля
+			 * @param null   $name - имя поля
 			 * @return hw_field
 			 */
-			public function field( $fieldId, $contextId = null, $contextType = null ){
-				return $this->fields()->give( $fieldId, $contextId, $contextType );
+			public function field( $fieldId, $type = 'text', $name = null ){
+				return $this->fields()->add_field( $fieldId, $type, $name );
 			}
 
 
@@ -106,8 +131,7 @@
 			 * @return bool|hw_forms
 			 */
 			public function forms(){
-				$this->inputs();
-				return $this->module( 'forms' );
+				return $this->give_class( 'forms' );
 			}
 
 
@@ -125,7 +149,7 @@
 			 * @return bool|hw_string
 			 */
 			public function string(){
-				return $this->module( 'string' );
+				return $this->give_class( 'string' );
 			}
 
 
@@ -134,27 +158,29 @@
 			 * @return mixed|hw_dump
 			 */
 			public function dump( $data = null ){
-				return $this->module( 'dump', $data );
+				return $this->give_class( 'dump', $data );
 			}
 
 
 			/**
+			 * Подключение файла CSS
 			 * @param $file
 			 * @return mixed
 			 */
 			public function css( $file ){
-				return $this->module( 'css' )->enqueue( $file );
+				return $this->give_class( 'css' )->enqueue( $file );
 			}
 
 
 			/**
+			 * Подключение JS файла
 			 * @param       $file
 			 * @param array $afterJS   - список предварительных JS файлов от WP
 			 * @param bool  $in_footer - показывать в фтуре
 			 * @return mixed
 			 */
 			public function js( $file, $afterJS = array(), $in_footer = false ){
-				return $this->module( 'js' )->enqueue( $file, $afterJS, $in_footer );
+				return $this->give_class( 'js' )->enqueue( $file, $afterJS, $in_footer );
 			}
 
 
@@ -162,18 +188,20 @@
 			 * @return hw_inputs
 			 */
 			public function inputs(){
-				return $this->module( 'inputs' );
+				return $this->give_class( 'inputs' );
 			}
 
 
 			/**
 			 * Корневой класс для работы с полями ввода
-			 * @param null   $id
-			 * @param string $type
-			 * @return hw_input|hw_input_text|hw_input_checkbox|hw_input_repeat
+			 * @param string            $type
+			 * @param bool|false|string $id
+			 * @param null              $value - значение
+			 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
 			 */
-			public function input( $id = null, $type = 'text' ){
-				return $this->inputs()->make( $id, $type );
+			public function input( $type = 'text', $id = false, $value = null ){
+				$input = $this->inputs()->create( $type, $id, $value );
+				return $input;
 			}
 
 
@@ -184,7 +212,7 @@
 			 * @return bool|hw_meta_field
 			 */
 			public function meta( $field_id = null, $screen_id = null ){
-				$meta = $this->module( 'meta' )->give( $field_id );
+				$meta = $this->give_class( 'meta' )->give( $field_id );
 				if( !is_null( $screen_id ) )
 					$meta->object_id = $screen_id;
 				return $meta;
@@ -196,7 +224,7 @@
 			 * @return bool|hw_meta_boxes
 			 */
 			public function meta_boxes(){
-				return $this->module( 'meta_boxes' );
+				return $this->give_class( 'meta_boxes' );
 			}
 
 
@@ -216,7 +244,7 @@
 			 */
 			public function post_types(){
 				$this->inputs();
-				return $this->module( 'post_types' );
+				return $this->give_class( 'post_types' );
 			}
 
 
@@ -234,7 +262,7 @@
 			 * @return bool|hw_path
 			 */
 			public function path(){
-				return $this->module( 'path' );
+				return $this->give_class( 'path' );
 			}
 
 
@@ -243,7 +271,7 @@
 			 * @return bool|hw_post
 			 */
 			public function post( $postOrId = null ){
-				return $this->module( 'posts' )->get( $postOrId );
+				return $this->give_class( 'posts' )->get( $postOrId );
 			}
 
 
@@ -251,8 +279,7 @@
 			 * @return hw_taxonomies
 			 */
 			public function taxonomies(){
-				$this->input();
-				return $this->module( 'taxonomies' );
+				return $this->give_class( 'taxonomies' );
 			}
 
 
@@ -261,7 +288,7 @@
 			 * @return hw_theme
 			 */
 			public function theme( $theme_name = null ){
-				return $this->module( 'theme', $theme_name );
+				return $this->give_class( 'theme', $theme_name );
 			}
 
 
@@ -269,7 +296,7 @@
 			 * @return bool|hw_wp
 			 */
 			public function wp(){
-				return $this->module( 'wp' );
+				return $this->give_class( 'wp' );
 			}
 
 
@@ -278,7 +305,7 @@
 			 */
 			public function users(){
 				$this->inputs();
-				return $this->module( 'users' );
+				return $this->give_class( 'users' );
 			}
 
 
@@ -295,48 +322,38 @@
 			 * @return bool|hw_date
 			 */
 			public function date(){
-				return $this->module( 'date' );
+				return $this->give_class( 'date' );
 			}
 
 
 			/**
-			 * Подключение модуля
+			 * Подключение класса
 			 * @param            $name
 			 * @param null|mixed $data
 			 * @param bool       $newInstance
 			 * @return mixed
-			 * @version 1.1
+			 * @version 1.2
 			 */
-			protected function module( $name, $data = null, $newInstance = false ){
-				if( !array_key_exists( $name, $this->modules ) )
-					$this->modules[ $name ] = array();
-				$index = count( $this->modules[ $name ] );
+			protected function give_class( $name, $data = null, $newInstance = false ){
+				if( !array_key_exists( $name, $this->classes ) )
+					$this->classes[ $name ] = array();
+				$index = count( $this->classes[ $name ] );
 				if( $index == 0 || $newInstance ){
 					$className = 'hw_' . $name;
 					if( !class_exists( $className ) ){
-						$this->modules[ $name ][ $index ] = null;
-						include_once $this->dir_modules . '/' . $name . '.php';
+						$this->classes[ $name ][ $index ] = null;
+						include_once $this->dir_classes . '/' . $name . '.php';
 					}
-					$this->modules[ $name ][ $index ] = new $className( $data );
+					$this->classes[ $name ][ $index ] = new $className( $data );
 				}
-				return end( $this->modules[ $name ] );
+				///EVENT CALL
+				if( method_exists( end( $this->classes[ $name ] ), '_init' ) ){
+					end( $this->classes[ $name ] )->_init( $data );
+				}
+				///
+				return end( $this->classes[ $name ] );
 			}
 
 
-		}
-	}
-
-
-	trait hw_hidden_methods_props{
-
-		public function __call( $name, $args ){
-			if( method_exists( $this, $name ) ){
-				$this->{$name}( $args );
-			}elseif(property_exists($this,$name)){
-				hiweb()->console()->warn( __CLASS__.' (trait hw_hidden_methods_props) : не работает установка свойства ['.$name.']!' );
-				//$this->{$name} = $args; //todo: првоерить
-			} else{
-				hiweb()->console()->warn(__CLASS__.' (trait hw_hidden_methods_props) : не найдены метод или свойство ['.$name.']!', true);
-			}
 		}
 	}

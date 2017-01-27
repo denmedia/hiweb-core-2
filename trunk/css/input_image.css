@@ -1,12 +1,13 @@
 .hw-input-image .image-select {
   min-height: 85px;
   min-width: 85px;
+  max-width: 100%;
   position: relative;
   background: 50% 50% no-repeat #ccc;
   background-size: cover;
   text-align: center; }
   .hw-input-image .image-select:hover {
-    background: 50% 50% no-repeat  #ccc;
+    background: 50% 50% no-repeat #ccc;
     background-size: cover; }
     .hw-input-image .image-select:hover .dashicons {
       font-size: 54px;

@@ -1,7 +1,7 @@
 <?php
 
 
-	include_once hiweb()->dir_modules.'/post_types.php';
+	include_once hiweb()->dir_classes . '/post_types.php';
 
 
 	

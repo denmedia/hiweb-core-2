@@ -12,7 +12,7 @@
 		}
 
 
-		public function get($arguments = null){
+		public function html($arguments = null){
 			return '<input '.$this->get_tags().' '.( $this->value() ? 'checked' : '' ).'/>';
 		}
 

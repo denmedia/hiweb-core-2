@@ -11,7 +11,7 @@
 
 		public function __construct(){
 			///Add metas...
-			add_action( 'edit_form_top', array( $this, 'add_action_edit_form_top' ) );
+			/*add_action( 'edit_form_top', array( $this, 'add_action_edit_form_top' ) );
 			add_action( 'edit_form_before_permalink', array( $this, 'add_action_edit_form_before_permalink' ) );
 			add_action( 'edit_form_after_title', array( $this, 'add_action_edit_form_after_title' ) );
 			add_action( 'edit_form_after_editor', array( $this, 'add_action_edit_form_after_editor' ) );
@@ -20,12 +20,12 @@
 			add_action( 'edit_page_form', array( $this, 'add_action_edit_form_advanced' ) );
 			add_action( 'edit_form_advanced', array( $this, 'add_action_edit_form_advanced' ) );
 			///Save Meta
-			add_action( 'save_post', array( $this, 'add_action_save_post' ), 99999, 2 );
+			add_action( 'save_post', array( $this, 'add_action_save_post' ), 99999, 2 );*/
 		}
 
 
 		public function __call( $name, $arguments ){
-			switch( $name ){
+			/*switch( $name ){
 				case 'add_action_init_create':
 					$this->add_action_init_create();
 					break;
@@ -50,7 +50,7 @@
 				case 'add_action_save_post':
 					$this->add_action_save_post( $arguments[1] );
 					break;
-			}
+			}*/
 		}
 
 

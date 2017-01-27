@@ -13,6 +13,9 @@
       background: #aaa;
       font-size: 14px;
       padding: 6px 4px; }
+      .hw-input-repeat table thead td .description, .hw-input-repeat table thead th .description {
+        font-size: 12px;
+        font-weight: 300; }
     .hw-input-repeat table tbody {
       border: none; }
     .hw-input-repeat table .source {

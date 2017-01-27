@@ -1,15 +1,15 @@
 <?php
-	
-	
+
+
 	/**
 	 * Class hw_forms
 	 */
 	class hw_forms{
-		
+
 		/** @var hw_form[] */
 		private $forms = array();
-		
-		
+
+
 		/**
 		 * @param $id
 		 * @return hw_form
@@ -21,34 +21,34 @@
 			}
 			return $this->forms[ $id ];
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Class hw_form
 	 */
 	class hw_form{
-		
+
 		protected $id = '';
 		protected $action = '';
 		protected $method = 'post';
 		protected $template = 'default';
-		
+
 		private $submit = false;
 		private $settings_group;
-		
-		
+
+
 		use hw_inputs_home_functions;
-		
-		
+
+
 		public function __construct( $id = '' ){
 			$this->id = $id;
 			$this->settings_group = $id;
 			$this->inputs_home_make( array( 'forms', $id ) );
 		}
-		
-		
+
+
 		/**
 		 * @param null $set
 		 * @return $this
@@ -60,8 +60,8 @@
 			}
 			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
 		 * @param null $set
 		 * @return $this
@@ -73,8 +73,8 @@
 			}
 			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
 		 * @param null $set
 		 * @return $this
@@ -86,8 +86,8 @@
 			}
 			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
 		 * @param null $set
 		 * @return $this
@@ -99,8 +99,8 @@
 			}
 			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
 		 * @param null $set
 		 * @return $this
@@ -112,8 +112,8 @@
 			}
 			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
 		 * @param null $set
 		 * @return $this
@@ -125,8 +125,8 @@
 			}
 			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
 		 * Возвращает HTML формы
 		 * @return string
@@ -149,8 +149,8 @@
 			///
 			return '<form ' . implode( ' ', $formTags ) . '>' . $this->get_noform() . ( $this->submit ? get_submit_button( is_string( $this->submit ) ? $this->submit : '' ) : '' ) . '</form>';
 		}
-		
-		
+
+
 		/**
 		 * Возвращает HTML полей без формы
 		 * @return string
@@ -158,17 +158,17 @@
 		public function get_noform(){
 			hiweb()->css( hiweb()->url_css . '/forms.css' );
 			///
-			$templatePath = hiweb()->dir_modules . '/forms/' . $this->template . '.php';
+			$templatePath = hiweb()->dir_classes . '/forms/' . $this->template . '.php';
 			if( !file_exists( $templatePath ) )
-				$templatePath = hiweb()->dir_modules . '/forms/default.php';
+				$templatePath = hiweb()->dir_classes . '/forms/default.php';
 			ob_start();
 			include $templatePath;
 			$R = ob_get_clean();
 			///
 			return $R;
 		}
-		
-		
+
+
 		/**
 		 * @return string
 		 */
@@ -177,8 +177,8 @@
 			echo $content;
 			return $content;
 		}
-		
-		
+
+
 		/**
 		 * @return string
 		 */
@@ -187,7 +187,7 @@
 			echo $content;
 			return $content;
 		}
-		
+
 	}
 	
 	

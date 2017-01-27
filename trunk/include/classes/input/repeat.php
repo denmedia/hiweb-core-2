@@ -39,7 +39,7 @@
 		}
 		
 		
-		public function get( $arguments = null ){
+		public function html( $arguments = null ){
 			hiweb()->css( hiweb()->url_css . '/input_repeat.css' );
 			hiweb()->js( hiweb()->url_js . '/input_repeat.js', array( 'jquery-ui-sortable' ) );
 			$R = '';

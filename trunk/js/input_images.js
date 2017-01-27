@@ -18,16 +18,16 @@ var hw_input_images = {
     make_sortable: function () {
         jQuery('.hw-input-gallery [data-wrap]').sortable({
             distance: 5,
-            revert  : true
+            revert: true
         });
     },
 
     event_click_add: function (current, add_right) {
         var gallery_window = wp.media({
-            title   : 'Выбор изображения',
-            library : {type: 'image'},
+            title: 'Выбор изображения',
+            library: {type: 'image'},
             multiple: true,
-            button  : {text: 'Insert to Gallery'}
+            button: {text: 'Insert to Gallery'}
         });
         gallery_window.on('select', function () {
             gallery_window.state().get('selection').map(function (attachment) {
@@ -44,7 +44,7 @@ var hw_input_images = {
 
     select_image: function (current, add_right, selection) {
         var wrap = current.find('[data-wrap]');
-        switch('object'){
+        switch ('object') {
             case typeof selection.sizes.medium:
                 var url = selection.sizes.medium.url;
                 break;
