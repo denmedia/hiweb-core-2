@@ -1,5 +1,5 @@
 <?php
-	
+
 	if( !function_exists( 'hiweb' ) ){
 		/**
 		 * Запрос к корневому классу hiweb
@@ -12,10 +12,23 @@
 			return $class;
 		}
 	}
-	
+
+	if( !function_exists( 'add_field' ) ){
+		/**
+		 * Add field
+		 * @param        $id
+		 * @param string $type
+		 * @param null   $name
+		 * @return hw_field
+		 */
+		function add_field( $id, $type = 'text', $name = null ){
+			return hiweb()->fields()->add_field( $id, $type, $name );
+		}
+	}
+
 	if( !function_exists( 'get_field' ) ){
 		/**
-		 * @param $fieldId
+		 * @param      $fieldId
 		 * @param null $contextId
 		 * @param null $contextType
 		 * @return mixed
@@ -24,10 +37,10 @@
 			return hiweb()->field( $fieldId, $contextId, $contextType )->get();
 		}
 	}
-	
+
 	if( !function_exists( 'the_field' ) ){
 		/**
-		 * @param $fieldId
+		 * @param      $fieldId
 		 * @param null $contextId
 		 * @param null $contextType
 		 * @return mixed
@@ -36,10 +49,10 @@
 			return hiweb()->field( $fieldId, $contextId, $contextType )->the();
 		}
 	}
-	
+
 	if( !function_exists( 'have_rows' ) ){
 		/**
-		 * @param $fieldId
+		 * @param      $fieldId
 		 * @param null $contextId
 		 * @param null $contextType
 		 * @return bool
@@ -48,7 +61,7 @@
 			return hiweb()->fields()->have_rows( $fieldId, $contextId, $contextType );
 		}
 	}
-	
+
 	if( !function_exists( 'the_row' ) ){
 		/**
 		 * @return bool|mixed
@@ -57,7 +70,7 @@
 			return hiweb()->fields()->the_row();
 		}
 	}
-	
+
 	if( !function_exists( 'get_sub_field' ) ){
 		/**
 		 * @param $subFieldId
@@ -67,7 +80,7 @@
 			return hiweb()->fields()->get_sub_field( $subFieldId );
 		}
 	}
-	
+
 	if( !function_exists( 'the_sub_field' ) ){
 		/**
 		 * @param $subFieldId

@@ -75,26 +75,65 @@
 		private function do_hooks(){
 			///POST TYPE
 			///Add metas...
-			add_action( 'edit_form_top', array( $this, 'edit_form_top' ) );
-			add_action( 'edit_form_before_permalink', array( $this, 'edit_form_before_permalink' ) );
-			add_action( 'edit_form_after_title', array( $this, 'edit_form_after_title' ) );
-			add_action( 'edit_form_after_editor', array( $this, 'edit_form_after_editor' ) );
-			add_action( 'submitpage_box', array( $this, 'submitpage_box' ) );
-			add_action( 'submitpost_box', array( $this, 'submitpost_box' ) );
-			add_action( 'edit_page_form', array( $this, 'edit_page_form' ) );
-			add_action( 'edit_form_advanced', array( $this, 'edit_form_advanced' ) );
+			add_action( 'edit_form_top', array(
+				$this,
+				'edit_form_top'
+			) );
+			add_action( 'edit_form_before_permalink', array(
+				$this,
+				'edit_form_before_permalink'
+			) );
+			add_action( 'edit_form_after_title', array(
+				$this,
+				'edit_form_after_title'
+			) );
+			add_action( 'edit_form_after_editor', array(
+				$this,
+				'edit_form_after_editor'
+			) );
+			add_action( 'submitpage_box', array(
+				$this,
+				'submitpage_box'
+			) );
+			add_action( 'submitpost_box', array(
+				$this,
+				'submitpost_box'
+			) );
+			add_action( 'edit_page_form', array(
+				$this,
+				'edit_page_form'
+			) );
+			add_action( 'edit_form_advanced', array(
+				$this,
+				'edit_form_advanced'
+			) );
 			///Save Meta
-			add_action( 'save_post', array( $this, 'save_post' ), 99999, 2 );
+			add_action( 'save_post', array(
+				$this,
+				'save_post'
+			), 99999, 2 );
 			///
 			///TAXONOMY
 			add_action( 'init', function(){
 				if( function_exists( 'get_taxonomies' ) ){
 					foreach( get_taxonomies() as $taxonomy ){
-						add_action( $taxonomy . '_add_form_fields', array( $this, '_add_form_fields' ) );
-						add_action( $taxonomy . '_edit_form', array( $this, '_edit_form' ) );
+						add_action( $taxonomy . '_add_form_fields', array(
+							$this,
+							'_add_form_fields'
+						) );
+						add_action( $taxonomy . '_edit_form', array(
+							$this,
+							'_edit_form'
+						) );
 						//Save Term
-						add_action( 'create_term', array( $this, 'create_term' ), 99, 2 );
-						add_action( 'edited_' . $taxonomy, array( $this, 'edited_taxonomy' ), 99, 2 );
+						add_action( 'create_term', array(
+							$this,
+							'save_taxonomy'
+						), 99 );
+						add_action( 'edited_' . $taxonomy, array(
+							$this,
+							'save_taxonomy'
+						), 99 );
 					}
 				}
 			} );
@@ -111,6 +150,10 @@
 					$field_value = null;
 					if( $arg_1 instanceof WP_Post ){
 						$field_value = get_post_meta( $arg_1->ID, $field->get_id(), true );
+					} elseif( $arg_1 instanceof WP_Term ) {
+						$field_value = get_term_meta( $arg_1->term_id, $field->get_id(), true );
+					} else {
+						hiweb()->console( $arg_1 ); //todo-
 					}
 					$field->value( $field_value );
 					$fields[] = $field;
@@ -118,7 +161,15 @@
 			}
 			////Template Select
 			$hook_tamplate = array(
-				'edit_form_top' => '', 'edit_form_before_permalink' => 'postbox', 'edit_form_after_title' => 'postbox', 'edit_form_after_editor' => 'postbox', 'submitpage_box' => 'postbox', 'submitpost_box' => 'postbox', 'edit_page_form' => 'postbox', 'edit_form_advanced' => 'postbox', '_edit_form' => 'term'
+				'edit_form_top' => '',
+				'edit_form_before_permalink' => 'postbox',
+				'edit_form_after_title' => 'postbox',
+				'edit_form_after_editor' => 'postbox',
+				'submitpage_box' => 'postbox',
+				'submitpost_box' => 'postbox',
+				'edit_page_form' => 'postbox',
+				'edit_form_advanced' => 'postbox',
+				'_edit_form' => 'term'
 			);
 			$template = '';
 			if( array_key_exists( $hook_name, $hook_tamplate ) ){
@@ -142,7 +193,10 @@
 				$fields = $this->fields;
 			hiweb()->css( hiweb()->dir_css . '/fields.css' );
 			$template_path = $this->dir . '/html' . ( (string)$template == '' ? '' : '-' . $template ) . '.php';
-			return hiweb()->path()->get_content( $template_path, compact( [ 'fields', 'hook_name' ] ) );
+			return hiweb()->path()->get_content( $template_path, compact( [
+				'fields',
+				'hook_name'
+			] ) );
 		}
 
 
@@ -176,6 +230,27 @@
 				if( array_key_exists( $input_name, $update_data ) ){
 					//todo: сделать фильтр, если данного поля на самом деле не должно быть
 					update_post_meta( $post_id, $hook->get_field()->get_id(), $update_data[ $input_name ] );
+				}
+			}
+		}
+
+
+		/**
+		 * @param integer $term_id
+		 */
+		private function save_taxonomy( $term_id ){
+			$update_data = array();
+			foreach( $_POST as $key => $value ){
+				if( strpos( $key, hiweb()->fields()->input_prefix ) === 0 ){
+					$update_data[ $key ] = $value;
+				}
+			}
+			/** @var hw_fields_hook $hook */
+			foreach( $this->get_hooks() as $hook ){
+				$input_name = $hook->get_field()->input()->name;
+				if( array_key_exists( $input_name, $update_data ) ){
+					//todo: сделать фильтр, если данного поля на самом деле не должно быть
+					update_term_meta( $term_id, $hook->get_field()->get_id(), $update_data[ $input_name ] );
 				}
 			}
 		}
@@ -419,7 +494,14 @@
 							}
 							///
 							$position_numbers = array(
-								'edit_form_top' => 0, 'edit_form_before_permalink' => 1, 'edit_form_after_title' => 2, 'edit_form_after_editor' => 3, 'submitpage_box' => 4, 'submitpost_box' => 4, 'edit_page_form' => 5, 'edit_form_advanced' => 5
+								'edit_form_top' => 0,
+								'edit_form_before_permalink' => 1,
+								'edit_form_after_title' => 2,
+								'edit_form_after_editor' => 3,
+								'submitpage_box' => 4,
+								'submitpost_box' => 4,
+								'edit_page_form' => 5,
+								'edit_form_advanced' => 5
 							);
 							///
 							if( !array_key_exists( $hook_name, $position_numbers ) ){
@@ -440,7 +522,11 @@
 						break;
 					//////////////////////TAXONOMY
 					case 'taxonomy':
-						if( !array_key_exists( get_current_screen()->base, array_flip( [ 'edit-tags', 'term' ] ) ) ){
+						if( !array_key_exists( get_current_screen()->base, array_flip( [
+							'edit-tags',
+							'term'
+						] ) )
+						){
 							continue 2;
 						}
 						foreach( $rules as $rule_data ){
@@ -479,7 +565,11 @@
 		protected function do_hook( $arguments = array() ){
 			$hook_name = $arguments[0];
 			if( $this->get_compare( $hook_name ) ){
-				$save_hooks = [ 'save_post', 'create_term', 'edited_taxonomy' ];
+				$save_hooks = [
+					'save_post',
+					'create_term',
+					'edited_taxonomy'
+				];
 				if( array_key_exists( $hook_name, array_flip( $save_hooks ) ) ){
 					///SAVE VALUE
 				} else {
@@ -497,7 +587,10 @@
 		 * @return $this
 		 */
 		public function post_type( $post_type = 'post', $position = 3, $equal = true ){
-			$this->rules['post_type'][] = [ $post_type, $position ];
+			$this->rules['post_type'][] = [
+				$post_type,
+				$position
+			];
 			return $this;
 		}
 
