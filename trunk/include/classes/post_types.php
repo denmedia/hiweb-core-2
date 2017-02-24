@@ -6,53 +6,6 @@
 		/** @var hw_post_type[] */
 		private $types = array();
 
-		use hw_inputs_home_multi_functions;
-
-
-		public function __construct(){
-			///Add metas...
-			/*add_action( 'edit_form_top', array( $this, 'add_action_edit_form_top' ) );
-			add_action( 'edit_form_before_permalink', array( $this, 'add_action_edit_form_before_permalink' ) );
-			add_action( 'edit_form_after_title', array( $this, 'add_action_edit_form_after_title' ) );
-			add_action( 'edit_form_after_editor', array( $this, 'add_action_edit_form_after_editor' ) );
-			add_action( 'submitpage_box', array( $this, 'add_action_submitpage_box' ) );
-			add_action( 'submitpost_box', array( $this, 'add_action_submitpage_box' ) );
-			add_action( 'edit_page_form', array( $this, 'add_action_edit_form_advanced' ) );
-			add_action( 'edit_form_advanced', array( $this, 'add_action_edit_form_advanced' ) );
-			///Save Meta
-			add_action( 'save_post', array( $this, 'add_action_save_post' ), 99999, 2 );*/
-		}
-
-
-		public function __call( $name, $arguments ){
-			/*switch( $name ){
-				case 'add_action_init_create':
-					$this->add_action_init_create();
-					break;
-				case 'add_action_edit_form_top':
-					$this->add_action_simple_fields( $arguments[0], 0 );
-					break;
-				case 'add_action_edit_form_before_permalink':
-					$this->add_action_simple_fields( $arguments[0], 1 );
-					break;
-				case 'add_action_edit_form_after_title':
-					$this->add_action_simple_fields( $arguments[0], 2 );
-					break;
-				case 'add_action_edit_form_after_editor':
-					$this->add_action_simple_fields( $arguments[0], 3 );
-					break;
-				case 'add_action_submitpage_box':
-					$this->add_action_simple_fields( $arguments[0], 5 );
-					break;
-				case 'add_action_edit_form_advanced':
-					$this->add_action_simple_fields( $arguments[0], 4 );
-					break;
-				case 'add_action_save_post':
-					$this->add_action_save_post( $arguments[1] );
-					break;
-			}*/
-		}
-
 
 		/**
 		 * Возвращает корневой CPT класс для работы с кастомным типом поста
@@ -66,57 +19,10 @@
 			}
 			return $this->types[ $post_type_sanit ];
 		}
-
-
-		/**
-		 * @param null $post
-		 * @param int  $position
-		 * @internal param $args
-		 */
-		protected function add_action_simple_fields( $post = null, $position = 3 ){
-			////
-			if( !function_exists( 'get_current_screen' ) )
-				return;
-			if( get_current_screen()->base != 'post' )
-				return;
-			$fields = $this->get_fields( $position );
-			if( $position == 3 ){
-				$fields = array_merge( $fields, $this->get_fields() );
-			}
-			////
-			if( is_array( $fields ) && count( $fields ) > 0 ){
-				$inputs = array();
-				foreach( $fields as $id => $input ){
-					if( $post instanceof WP_Post ){
-						$input->value( get_post_meta( $post->ID, $input->id(), true ) );
-					}
-					$inputs[ $id ] = $input;
-				}
-				$form = hiweb()->form();
-				$form->add_fields( $inputs );
-				if( $position == 5 )
-					$form->template( 'compact' );
-				$form->the_noform();
-			}
-		}
-
-
-		/**
-		 * @param $post
-		 */
-		protected function add_action_save_post( $post ){
-			foreach( $this->get_fields() as $id => $input ){
-				if( array_key_exists( $id, $_POST ) ){
-					update_post_meta( $post->ID, $id, $_POST[ $id ] );
-				}
-			}
-		}
 	}
 
 
 	class hw_post_type{
-
-		use hw_inputs_home_multi_functions;
 
 		private $_type;
 		/** @var WP_Error|WP_Post_Type */
@@ -590,7 +496,6 @@
 			if( !isset( $this->_meta_boxes[ $id ] ) ){
 				if( $hiweb_meta_boxes[ $id ] instanceof hw_post_type_meta_boxes )
 					$this->_meta_boxes = $hiweb_meta_boxes; else $this->_meta_boxes[ $id ] = new hw_post_type_meta_boxes( $id );
-				$this->_meta_boxes[ $id ]->screen( $this->_type );
 			}
 			return $this->_meta_boxes[ $id ];
 		}
@@ -617,79 +522,6 @@
 		}
 
 
-		/**
-		 * @param null $post
-		 * @param int  $position
-		 * @internal param $args
-		 */
-		protected function add_action_simple_fields( $post = null, $position = 3 ){
-			////
-			if( !function_exists( 'get_current_screen' ) )
-				return;
-			if( get_current_screen()->base != 'post' )
-				return;
-			$fields = $this->get_fields( $position );
-			if( $position == 3 ){
-				$fields = array_merge( $fields, $this->get_fields() );
-			}
-			////
-			if( is_array( $fields ) && count( $fields ) > 0 ){
-				$inputs = array();
-				foreach( $fields as $id => $input ){
-					if( $post instanceof WP_Post ){
-						$input->value( get_post_meta( $post->ID, $input->id(), true ) );
-					}
-					$inputs[ $id ] = $input;
-				}
-				$form = hiweb()->form();
-				$form->add_fields( $inputs );
-				if( $position == 5 )
-					$form->template( 'compact' );
-				$form->the_noform();
-			}
-		}
-
-
-		/**
-		 * @param        $id
-		 * @param string $type
-		 * @param null   $title    - титл поля
-		 * @param int    $position - позиция блока полей: 0 - над титлом, 1 - под титлом, 2 - над редатором WYSIWYG, 3 - под редактором WYSIWYG (позиция normal), 4 - внизу (позиция advanced), 5 - позиция вверху сайдбара
-		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
-		 */
-		/*public function add_field( $id, $type = 'text', $title = null, $position = 3 ){
-			$input = hiweb()->input( $id, $type );
-			$input->title( $title );
-			$this->fields[ $position ][ $id ] = $input;
-			return $input;
-		}*/
-
-		/**
-		 * Добавить поле / поля
-		 * @param array $fields   - либо hw_input, либо array(hw_input, hw_input)
-		 * @param int   $position - позиция блока полей: 0 - над титлом, 1 - под титлом, 2 - над редатором WYSIWYG, 3 - под редактором WYSIWYG (позиция normal), 4 - внизу (позиция advanced), 5 - позиция вверху сайдбара
-		 * @return array|bool|hw_input[]
-		 */
-		/*public function add_fields( $fields = array(), $position = 3 ){
-			if( $fields instanceof hw_input ){
-				$fields = array( $fields );
-			}
-			if( !is_array( $fields ) )
-				return false;
-			foreach( $fields as $id => $field ){
-				$this->fields[ $position ][ $id ] = $field;
-			}
-			return $this->get_fields();
-		}*/
-
-		protected function add_action_save_post( $post ){
-			foreach( $this->get_fields() as $id => $input ){
-				if( array_key_exists( $id, $_POST ) ){
-					update_post_meta( $post->ID, $id, $_POST[ $id ] );
-				}
-			}
-		}
-
 
 		private function set_props(){
 			if( post_type_exists( $this->_type ) ){
@@ -703,25 +535,6 @@
 				}
 			}
 		}
-
-
-		/**
-		 * Возвращает все поля для данного типа файлов
-		 * @return array|hw_input[]
-		 */
-		/*public function get_fields(){
-			$R = array();
-			if( is_array( $this->fields ) )
-				foreach( $this->fields as $position => $fields ){
-					if( is_array( $fields ) )
-						foreach( $fields as $id => $field ){
-							if( $field instanceof hw_input ){
-								$R[ $field->id() ] = $field;
-							}
-						}
-				}
-			return $R;
-		}*/
 
 		/**
 		 * Процедура регистрации типа поста
@@ -892,12 +705,6 @@
 					$this->generate_meta_box( $arguments[0], $arguments[1] );
 					break;
 			}
-		}
-
-
-		public function add_field( $id ){
-			$this->fields[ $id ] = hiweb()->input()->make( $id );
-			return $this->fields[ $id ];
 		}
 
 

@@ -49,6 +49,7 @@
 				}
 			}
 			$url = hiweb()->path()->path_to_url( $file );
+			$file = hiweb()->path()->url_to_path( $file );
 			if( file_exists( $file ) && is_file( $file ) && is_readable( $file ) && $url != '' ){
 				$this->files[ md5( $url ) ] = array(
 					$url,
@@ -57,7 +58,7 @@
 
 				return true;
 			} else {
-				hiweb()->console()->error( 'файл [' . $file . '] не найден!', 2 );
+				hiweb()->console()->error( sprintf( __( 'File [%s] not found or not readable' ), $file ), 2 );
 
 				return false;
 			}

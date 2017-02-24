@@ -40,7 +40,8 @@
 		 */
 		public function is_login_page(){
 			return array_key_exists( $GLOBALS['pagenow'], array_flip( [
-				'wp-login.php', 'wp-register.php'
+				'wp-login.php',
+				'wp-register.php'
 			] ) );
 		}
 
@@ -108,12 +109,13 @@
 						$this->id = $context->term_id;
 						break;
 					default:
-						hiweb()->console()->warn( 'Не предусмотренный тип объекта [' . get_class( $context ) . ']', true );
+						hiweb()->console()->warn( sprintf( __( 'Not provided for the type of object [%s]' ), get_class( $context ) ), true );
 						break;
 				}
 			} else {
 				hiweb()->console()->warn( [
-					'Не удалось определить тип контекста [' . gettype( $this->source_context ) . ']', $this->source_context
+					'Не удалось определить тип контекста [' . gettype( $this->source_context ) . ']',
+					$this->source_context
 				], true );
 				return false;
 			}

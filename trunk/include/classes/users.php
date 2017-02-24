@@ -3,7 +3,6 @@
 
 	class hw_users{
 
-		use hw_inputs_home_functions;
 		use hw_hidden_methods_props;
 
 		/** @var hw_user[] */

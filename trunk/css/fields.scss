@@ -1,8 +1,8 @@
+@import "mixins";
+
 .hw-fields-block {
 	margin-bottom: 25px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
+	@include hw_border_radius();
 
 	.hw-field {
 

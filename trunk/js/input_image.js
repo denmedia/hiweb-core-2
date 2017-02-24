@@ -5,11 +5,11 @@
 var hw_input_image = {
 
     init: function () {
-        jQuery('body').on('click', '.hw-input-image [data-click="select"]', function (e) {
+        jQuery('body').on('click', '.hw-input-image[data-has-image="0"]', function (e) {
             var current = jQuery(e.currentTarget).closest('.hw-input-image');
             hw_input_image.event_click_select(current);
         });
-        jQuery('body').on('click', '.hw-input-image [data-click="deselect"]', function (e) {
+        jQuery('body').on('click', '.hw-input-image[data-has-image="1"]', function (e) {
             e.preventDefault();
             var current = jQuery(e.currentTarget).closest('.hw-input-image');
             hw_input_image.deselect_image(current);
@@ -34,7 +34,7 @@ var hw_input_image = {
 
     select_image: function (current, selection) {
         var input = current.find('input');
-        var image_preview = current.find('.image-select');
+        var image_preview = current.find('.image');
         switch('object'){
             case typeof selection.sizes.medium:
                 var url = selection.sizes.medium.url;
@@ -53,14 +53,14 @@ var hw_input_image = {
         }
         var media_id = selection.id;
         input.val(media_id);
-        image_preview.css('background-image', 'url(' + url + ')').attr('data-click','deselect');
+        image_preview.css('background-image', 'url(' + url + ')');
         current.attr('data-has-image', '1');
     },
 
     deselect_image: function (current) {
         var input = current.find('input').val('');
-        var image_preview = current.find('.image-select');
-        image_preview.css('background-image', 'none').attr('data-click','select');
+        var image_preview = current.find('.image');
+        image_preview.css('background-image', 'none');
         current.attr('data-has-image', '0');
     }
 

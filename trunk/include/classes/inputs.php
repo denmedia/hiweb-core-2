@@ -62,7 +62,7 @@
 					return $class;
 				}
 			}
-			hiweb()->console()->warn( 'Тип инпута [' . $type . '] не найден', true );
+			hiweb()->console()->warn( sprintf(__('Type of input [%s] not found','hw-core-2'), $type), true );
 			///Make default input
 			$class = new hw_input( $id );
 			if( !is_null( $value ) )

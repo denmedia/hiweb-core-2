@@ -1,13 +1,22 @@
+@import "mixins";
+
 .hw-input-image {
 
+	display: inline-block;
+
 	.image-select {
+		border: 1px solid #919b9c;
+		@include hw_border_radius();
+		display: block;
 		min-height: 85px;
 		min-width: 85px;
 		max-width: 100%;
 		position: relative;
-		background: 50% 50% no-repeat #ccc;
-		background-size: cover;
+		@include hw_background_image();
 		text-align: center;
+		text-decoration: none;
+		color: black;
+		overflow: hidden;
 		&:hover {
 			background: 50% 50% no-repeat #ccc;
 			background-size: cover;
@@ -16,9 +25,32 @@
 				margin-top: -28px;
 				margin-left: -30px;
 			}
+
+			.image {
+				@include hw_filter(blur(6px) brightness(2));
+				@include hw_transition(all, 0.2s);
+				@include hw_position_stretch(-20px, -20px, -20px, -20px);
+			}
+			.overlay {
+				@include hw_opacity(0.75);
+			}
+		}
+
+		.image {
+			@include hw_background_image();
+			@include hw_position_stretch();
+			@include hw_transition();
+		}
+
+		.overlay {
+			@include hw_transition(all, 0.2s);
+			@include hw_position_stretch();
+			@include hw_opacity(0);
+			background: white;
 		}
 
 		.dashicons {
+			@include hw_transition(all, 0.2s);
 			font-size: 34px;
 			position: relative;
 			top: 50%;

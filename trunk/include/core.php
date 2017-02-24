@@ -21,6 +21,8 @@
 			public $url_base = '';
 			/** @var string Корневая папка яндра */
 			public $dir_include = 'include';
+			/** @var string Корневая папка видов */
+			public $dir_views = 'views';
 			/** @var string Корневая папка модулей */
 			public $dir_classes = 'classes';
 			/** @var string Корневая папка трейтов */
@@ -50,6 +52,7 @@
 				$this->url_css = $this->url . '/' . $this->dir_css;
 				$this->url_js = $this->url . '/' . $this->dir_js;
 				$this->dir_include = $this->dir . '/' . $this->dir_include;
+				$this->dir_views = $this->dir . '/' . $this->dir_views;
 				$this->dir_classes = $this->dir_include . '/' . $this->dir_classes;
 				$this->dir_traits = $this->dir_include . '/' . $this->dir_traits;
 				$this->dir_css = $this->dir . '/' . $this->dir_css;
@@ -158,7 +161,7 @@
 			 * @return mixed|hw_dump
 			 */
 			public function dump( $data = null ){
-				return $this->give_class( 'dump', $data );
+				return $this->give_class( 'dump', $data, true);
 			}
 
 

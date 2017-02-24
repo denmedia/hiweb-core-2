@@ -38,14 +38,65 @@
 		private $submit = false;
 		private $settings_group;
 
+		/** @var hw_field[] */
+		private $fields = array();
 
-		use hw_inputs_home_functions;
+
+		/**
+		 * Add field or fields to the form
+		 * @param hw_field[] $field_or_fields
+		 * @return hw_form
+		 */
+		public function add_fields( $field_or_fields = array() ){
+			if( !is_array( $field_or_fields ) )
+				$field_or_fields = array( $field_or_fields );
+			foreach( $field_or_fields as $field ){
+				if( $field instanceof hw_field ){
+					$this->fields[ $field->get_id() ] = $field;
+				}
+			}
+			return $this;
+		}
+
+
+		/**
+		 * Add field to the form
+		 * @param hw_field $field
+		 * @return hw_form
+		 */
+		public function add_field( $field ){
+			$this->add_fields( $field );
+			return $this;
+		}
+
+
+		/**
+		 * Get form fields
+		 * @return hw_field[]
+		 */
+		public function get_fields(){
+			$R = array();
+			if( is_array( $this->fields ) ){
+				foreach( $this->fields as $field ){
+					$R[] = $field;
+				}
+			}
+			return $R;
+		}
+
+
+		/**
+		 * Return TRUE, if form has fields
+		 * @return bool
+		 */
+		public function have_fields(){
+			return count( $this->get_fields() ) > 0;
+		}
 
 
 		public function __construct( $id = '' ){
 			$this->id = $id;
 			$this->settings_group = $id;
-			$this->inputs_home_make( array( 'forms', $id ) );
 		}
 
 
@@ -134,7 +185,10 @@
 		public function get(){
 			///Form Tags
 			$formTagsPairs = array(
-				'class' => 'hw-form', 'action' => $this->action, 'method' => $this->method, 'id' => $this->id
+				'class' => 'hw-form',
+				'action' => $this->action,
+				'method' => $this->method,
+				'id' => $this->id
 			);
 			$formTags = array();
 			foreach( $formTagsPairs as $key => $val ){
@@ -158,14 +212,51 @@
 		public function get_noform(){
 			hiweb()->css( hiweb()->url_css . '/forms.css' );
 			///
-			$templatePath = hiweb()->dir_classes . '/forms/' . $this->template . '.php';
-			if( !file_exists( $templatePath ) )
-				$templatePath = hiweb()->dir_classes . '/forms/default.php';
-			ob_start();
-			include $templatePath;
-			$R = ob_get_clean();
-			///
-			return $R;
+			if( !$this->have_fields() ){
+				hiweb()->console()->warn( sprintf( __( 'For form id:[%s] fields not found' ), $this->id ), true );
+				return '';
+			} else {
+				$fields_group_by_template = array();
+				$current_template = null;
+				///
+				$current_number = 0;
+				$fields_old = $this->fields;
+				foreach( $this->fields as $field ){
+					$field_template = $field->form_template();
+					if( is_null( $current_template ) ){
+						$current_template = $field_template;
+					} elseif( $current_template != $field_template ) {
+						$current_number ++;
+						$current_template = $field_template;
+					}
+					$fields_group_by_template[ $field_template . ':' . $current_number ][] = $field;
+				}
+				ob_start();
+				///
+				foreach( $fields_group_by_template as $template_code => $fields ){
+					$template = preg_replace('/:[\d]*$/','',$template_code);
+					$templatePath = $this->get_template_path( $template );
+					$this->fields = $fields;
+					hiweb()->console( $templatePath );
+					include $templatePath;
+				}
+				$R = ob_get_clean();
+				$this->fields = $fields_old;
+				///
+				return $R;
+			}
+		}
+
+
+		private function get_template_path( $template_name = 'default' ){
+			if( !is_string( $template_name ) )
+				$template_name = $this->template;
+			$templatePath = hiweb()->dir_views . '/form-template-' . $template_name . '.php';
+			if( !file_exists( $templatePath ) ){
+				hiweb()->console()->warn( sprintf( __( 'Template [%s] for form not found' ), $templatePath ), true );
+				$templatePath = hiweb()->dir_views . '/form-template-default.php';
+			}
+			return $templatePath;
 		}
 
 

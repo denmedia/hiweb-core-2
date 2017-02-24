@@ -1,28 +1,91 @@
-.hw-input-image .image-select {
-  min-height: 85px;
-  min-width: 85px;
-  max-width: 100%;
-  position: relative;
-  background: 50% 50% no-repeat #ccc;
-  background-size: cover;
-  text-align: center; }
-  .hw-input-image .image-select:hover {
-    background: 50% 50% no-repeat #ccc;
-    background-size: cover; }
-    .hw-input-image .image-select:hover .dashicons {
-      font-size: 54px;
-      margin-top: -28px;
-      margin-left: -30px; }
-  .hw-input-image .image-select .dashicons {
-    font-size: 34px;
+.hw-input-image {
+  display: inline-block; }
+  .hw-input-image .image-select {
+    border: 1px solid #919b9c;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    display: block;
+    min-height: 85px;
+    min-width: 85px;
+    max-width: 100%;
     position: relative;
-    top: 50%;
-    margin-top: -18px;
-    margin-left: -10px;
-    text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7); }
-.hw-input-image[data-has-image="1"] .dashicons[data-icon="select"] {
-  display: none; }
-.hw-input-image[data-has-image="0"] .dashicons[data-icon="deselect"] {
-  display: none; }
+    background: 50% 50% no-repeat #ccc;
+    background-size: cover;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    overflow: hidden; }
+    .hw-input-image .image-select:hover {
+      background: 50% 50% no-repeat #ccc;
+      background-size: cover; }
+      .hw-input-image .image-select:hover .dashicons {
+        font-size: 54px;
+        margin-top: -28px;
+        margin-left: -30px; }
+      .hw-input-image .image-select:hover .image {
+        -webkit-filter: blur(6px) brightness(2);
+        -moz-filter: blur(6px) brightness(2);
+        -o-filter: blur(6px) brightness(2);
+        -ms-filter: blur(6px) brightness(2);
+        filter: blur(6px) brightness(2);
+        -webkit-transition: all 0.2s ease-in-out 0ms;
+        -moz-transition: all 0.2s ease-in-out 0ms;
+        -o-transition: all 0.2s ease-in-out 0ms;
+        transition: all 0.2s ease-in-out 0ms;
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        bottom: -20px;
+        left: -20px; }
+      .hw-input-image .image-select:hover .overlay {
+        -webkit-opacity: 0.75;
+        -moz-opacity: 0.75;
+        -ms-opacity: 0.75;
+        -o-opacity: 0.75;
+        opacity: 0.75; }
+    .hw-input-image .image-select .image {
+      background: 50% 50% no-repeat #ccc;
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      -webkit-transition: all 500ms ease-in-out 0ms;
+      -moz-transition: all 500ms ease-in-out 0ms;
+      -o-transition: all 500ms ease-in-out 0ms;
+      transition: all 500ms ease-in-out 0ms; }
+    .hw-input-image .image-select .overlay {
+      -webkit-transition: all 0.2s ease-in-out 0ms;
+      -moz-transition: all 0.2s ease-in-out 0ms;
+      -o-transition: all 0.2s ease-in-out 0ms;
+      transition: all 0.2s ease-in-out 0ms;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      -webkit-opacity: 0;
+      -moz-opacity: 0;
+      -ms-opacity: 0;
+      -o-opacity: 0;
+      opacity: 0;
+      background: white; }
+    .hw-input-image .image-select .dashicons {
+      -webkit-transition: all 0.2s ease-in-out 0ms;
+      -moz-transition: all 0.2s ease-in-out 0ms;
+      -o-transition: all 0.2s ease-in-out 0ms;
+      transition: all 0.2s ease-in-out 0ms;
+      font-size: 34px;
+      position: relative;
+      top: 50%;
+      margin-top: -18px;
+      margin-left: -10px;
+      text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7); }
+  .hw-input-image[data-has-image="1"] .dashicons[data-icon="select"] {
+    display: none; }
+  .hw-input-image[data-has-image="0"] .dashicons[data-icon="deselect"] {
+    display: none; }
 
 /*# sourceMappingURL=input_image.css.map */

@@ -5,63 +5,10 @@
 		
 		/** @var hw_taxonomy[] */
 		private $taxonomies = array();
-		
-		
-		use hw_inputs_home_functions;
-		
+
 		
 		public function __construct(){
-			$this->inputs_home_make('taxonomies');
 			//add_action( 'init', array( $this, 'add_action_init' ) );
-		}
-		
-		
-		public function __call( $name, $arguments ){
-			switch( $name ){
-				case 'add_action_init':
-					if( function_exists( 'get_taxonomies' ) ){
-						foreach( get_taxonomies() as $taxonomy ){
-							add_action( $taxonomy . '_add_form_fields', array( $this, 'add_action_add_form_fields' ) );
-							add_action( $taxonomy . '_edit_form', array( $this, 'add_action_add_form_fields' ) );
-							add_action( 'create_term', array( $this, 'add_action_edited_terms' ), 99, 2 );
-							add_action( 'edited_' . $taxonomy, array( $this, 'add_action_edited_terms' ), 99, 2 );
-						}
-					}
-					break;
-				case 'add_action_add_form_fields':
-					$this->add_action_add_form_fields( $arguments[0] );
-				case 'add_action_edited_terms':
-					$this->add_action_edited_terms( isset( $arguments[0] ) ? $arguments[0] : null, isset( $arguments[1] ) ? $arguments[1] : null );
-			}
-		}
-		
-		
-		/**
-		 * @param null|WP_Term $term
-		 */
-		protected function add_action_add_form_fields( $term = null ){
-			if( $term instanceof WP_Term ){
-				foreach( $this->get_fields() as $fieldId => $input ){
-					$input->value( get_term_meta( $term->term_id, $fieldId, true ) );
-				}
-			}
-			$form =hiweb()->form( 'hw_taxonomies' );
-			$form->add_fields( $this->get_fields() );
-			$form->the_noform();
-		}
-		
-		
-		/**
-		 * Сохранение термина
-		 * @param $term_id
-		 * @param $taxonomy_id
-		 */
-		protected function add_action_edited_terms( $term_id, $taxonomy_id = null ){
-			foreach( $this->get_fields() as $input ){
-				if( array_key_exists( $input->name(), $_POST ) ){
-					update_term_meta( $term_id, $input->name(), $_POST[ $input->name() ] );
-				}
-			}
 		}
 		
 		
@@ -152,13 +99,9 @@
 		/** @var hw_input[] */
 		
 		
-		use hw_inputs_home_functions;
-		
-		
 		public function __construct( $name ){
 			$this->name = sanitize_file_name( strtolower( $name ) );
 			$this->labels = $name;
-			$this->inputs_home_make(array('taxonomies',$this->name));
 			$this->set_properties();
 			if( trim( $this->name ) != '' ){
 				add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
@@ -536,35 +479,6 @@
 		 */
 		public function copy( $new_name ){
 			return hiweb()->taxonomies()->copy( $this->name, $new_name );
-		}
-		
-		
-		/**
-		 * Вывод формы полей
-		 */
-		protected function add_action_add_form_fields( $term = null ){
-			if( $term instanceof WP_Term ){
-				foreach( $this->get_fields() as $input ){
-					$input->value( get_term_meta( $term->term_id, $input->name(), true ) );
-				}
-			}
-			$form =hiweb()->form('hw_taxonomies');
-			$form->add_fields( $this->get_fields() );
-			$form->the_noform();
-		}
-		
-		
-		/**
-		 * Сохранение термина
-		 * @param $term_id
-		 * @param $taxonomy_id
-		 */
-		protected function add_action_edited_terms( $term_id, $taxonomy_id ){
-			foreach( $this->get_fields() as $input ){
-				if( array_key_exists( $input->name(), $_POST ) ){
-					$B = update_term_meta( $term_id, $input->name(), $_POST[ $input->name() ] );
-				}
-			}
 		}
 		
 		

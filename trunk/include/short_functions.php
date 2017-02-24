@@ -92,3 +92,25 @@
 			return $content;
 		}
 	}
+
+	if(!function_exists('add_admin_menu_page')){
+		/**
+		 * Добавить в админ-панель страницу опций
+		 * @param      $title
+		 * @param      $slug
+		 * @param null $parent_slug
+		 * @return hw_admin_menu_page|hw_admin_submenu_page
+		 */
+		function add_admin_menu_page($title, $slug, $parent_slug = null){
+			if(is_string($parent_slug)){
+				$R = hiweb()->admin()->menu()->give_subpage($slug, $parent_slug);
+				$R->menu_title($title);
+				$R->page_title($title);
+			} else {
+				$R = hiweb()->admin()->menu()->give_page($slug);
+				$R->menu_title($title);
+				$R->page_title($title);
+			}
+			return $R;
+		}
+	}

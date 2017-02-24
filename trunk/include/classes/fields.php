@@ -9,7 +9,7 @@
 
 		private $dir = 'fields';
 
-		public $input_prefix = 'hw-field-';
+		public $input_prefix = '';
 
 		/** @var hw_fields_hook[] */
 		private $hooks = array();
@@ -17,10 +17,86 @@
 		/** @var hw_field[] */
 		private $fields = array();
 
+		/**  */
+		public $hook_fields = array();
+
+		private $hook_template = array(
+			'edit_form_top' => 'default',
+			'edit_form_before_permalink' => 'postbox',
+			'edit_form_after_title' => 'postbox',
+			'edit_form_after_editor' => 'postbox',
+			'submitpage_box' => 'postbox',
+			'submitpost_box' => 'postbox',
+			'edit_page_form' => 'postbox',
+			'edit_form_advanced' => 'postbox',
+			'_add_form_fields' => 'add-term',
+			'_edit_form' => 'term',
+			'options' => 'default'
+		);
+
 
 		public function __construct(){
 			$this->dir = hiweb()->dir_classes . '/' . $this->dir;
-			$this->do_hooks();
+			///
+			add_action( 'current_screen', array(
+				$this,
+				'do_distribute'
+			), 999999999999 );
+			///
+			add_action( 'save_post', array(
+				$this,
+				'save_post'
+			) );
+			///
+			add_action( 'personal_options_update', array(
+				$this,
+				'user_options_update'
+			) );
+			add_action( 'edit_user_profile_update', array(
+				$this,
+				'user_options_update'
+			) );
+			///
+			add_action( 'init', function(){
+				if( function_exists( 'get_taxonomies' ) ){
+					foreach( get_taxonomies() as $taxonomy ){
+						//Save Term
+						add_action( 'create_term', array(
+							$this,
+							'save_taxonomy'
+						), 99 );
+						add_action( 'edited_' . $taxonomy, array(
+							$this,
+							'save_taxonomy'
+						), 99 );
+					}
+				}
+			} );
+		}
+
+
+		/**
+		 * @param string $hook
+		 * @return mixed|string
+		 */
+		public function get_form_template_from_hook( $hook = '' ){
+			$R = 'default';
+			static $success = array();
+			if( isset( $success[ $hook ] ) ){
+				$R = $success[ $hook ];
+			} elseif( isset( $this->hook_template[ $hook ] ) ) {
+				$success[ $hook ] = $this->hook_template[ $hook ];
+				$R = $success[ $hook ];
+			} else {
+				foreach( $this->hook_template as $hook_name => $template ){
+					if( strpos( $hook, $hook_name ) !== false ){
+						$success[ $hook ] = $template;
+						$R = $template;
+						break;
+					}
+				}
+			}
+			return $R;
 		}
 
 
@@ -72,113 +148,8 @@
 
 		///////////////////////
 
-		private function do_hooks(){
-			///POST TYPE
-			///Add metas...
-			add_action( 'edit_form_top', array(
-				$this,
-				'edit_form_top'
-			) );
-			add_action( 'edit_form_before_permalink', array(
-				$this,
-				'edit_form_before_permalink'
-			) );
-			add_action( 'edit_form_after_title', array(
-				$this,
-				'edit_form_after_title'
-			) );
-			add_action( 'edit_form_after_editor', array(
-				$this,
-				'edit_form_after_editor'
-			) );
-			add_action( 'submitpage_box', array(
-				$this,
-				'submitpage_box'
-			) );
-			add_action( 'submitpost_box', array(
-				$this,
-				'submitpost_box'
-			) );
-			add_action( 'edit_page_form', array(
-				$this,
-				'edit_page_form'
-			) );
-			add_action( 'edit_form_advanced', array(
-				$this,
-				'edit_form_advanced'
-			) );
-			///Save Meta
-			add_action( 'save_post', array(
-				$this,
-				'save_post'
-			), 99999, 2 );
-			///
-			///TAXONOMY
-			add_action( 'init', function(){
-				if( function_exists( 'get_taxonomies' ) ){
-					foreach( get_taxonomies() as $taxonomy ){
-						add_action( $taxonomy . '_add_form_fields', array(
-							$this,
-							'_add_form_fields'
-						) );
-						add_action( $taxonomy . '_edit_form', array(
-							$this,
-							'_edit_form'
-						) );
-						//Save Term
-						add_action( 'create_term', array(
-							$this,
-							'save_taxonomy'
-						), 99 );
-						add_action( 'edited_' . $taxonomy, array(
-							$this,
-							'save_taxonomy'
-						), 99 );
-					}
-				}
-			} );
-		}
-
-
-		private function _call( $hook_name, $arguments = array() ){
-			$fields = array();
-			$arg_1 = isset( $arguments[0] ) ? $arguments[0] : null;
-			foreach( $this->get_hooks() as $hook ){
-				if( $hook->get_compare( $hook_name ) ){
-					/** @var hw_field $field */
-					$field = $hook->get_field();
-					$field_value = null;
-					if( $arg_1 instanceof WP_Post ){
-						$field_value = get_post_meta( $arg_1->ID, $field->get_id(), true );
-					} elseif( $arg_1 instanceof WP_Term ) {
-						$field_value = get_term_meta( $arg_1->term_id, $field->get_id(), true );
-					} else {
-						hiweb()->console( $arg_1 ); //todo-
-					}
-					$field->value( $field_value );
-					$fields[] = $field;
-				}
-			}
-			////Template Select
-			$hook_tamplate = array(
-				'edit_form_top' => '',
-				'edit_form_before_permalink' => 'postbox',
-				'edit_form_after_title' => 'postbox',
-				'edit_form_after_editor' => 'postbox',
-				'submitpage_box' => 'postbox',
-				'submitpost_box' => 'postbox',
-				'edit_page_form' => 'postbox',
-				'edit_form_advanced' => 'postbox',
-				'_edit_form' => 'term'
-			);
-			$template = '';
-			if( array_key_exists( $hook_name, $hook_tamplate ) ){
-				$template = $hook_tamplate[ $hook_name ];
-			}
-			////
-			if( count( $fields ) > 0 )
-				$this->the( $fields, $template, $hook_name );
-			////
+		protected function do_distribute(){
+			include 'fields/do_distribute.php';
 		}
 
 
@@ -218,18 +189,18 @@
 		 * @param null $post
 		 */
 		private function save_post( $post_id = null, $post = null ){
-			$update_data = array();
+			/*$update_data = array();
 			foreach( $_POST as $key => $value ){
 				if( strpos( $key, hiweb()->fields()->input_prefix ) === 0 ){
 					$update_data[ $key ] = $value;
 				}
-			}
+			}*/
 			/** @var hw_fields_hook $hook */
 			foreach( $this->get_hooks() as $hook ){
 				$input_name = $hook->get_field()->input()->name;
-				if( array_key_exists( $input_name, $update_data ) ){
+				if( array_key_exists( $input_name, $_POST ) ){
 					//todo: сделать фильтр, если данного поля на самом деле не должно быть
-					update_post_meta( $post_id, $hook->get_field()->get_id(), $update_data[ $input_name ] );
+					update_post_meta( $post_id, $hook->get_field()->input()->name, $_POST[ $input_name ] );
 				}
 			}
 		}
@@ -239,18 +210,29 @@
 		 * @param integer $term_id
 		 */
 		private function save_taxonomy( $term_id ){
-			$update_data = array();
+			/*$update_data = array();
 			foreach( $_POST as $key => $value ){
 				if( strpos( $key, hiweb()->fields()->input_prefix ) === 0 ){
 					$update_data[ $key ] = $value;
 				}
-			}
+			}*/
 			/** @var hw_fields_hook $hook */
 			foreach( $this->get_hooks() as $hook ){
 				$input_name = $hook->get_field()->input()->name;
-				if( array_key_exists( $input_name, $update_data ) ){
+				if( array_key_exists( $input_name, $_POST ) ){
 					//todo: сделать фильтр, если данного поля на самом деле не должно быть
-					update_term_meta( $term_id, $hook->get_field()->get_id(), $update_data[ $input_name ] );
+					update_term_meta( $term_id, $hook->get_field()->input()->name, $_POST[ $input_name ] );
+				}
+			}
+		}
+
+
+		private function user_options_update( $user_id ){
+			if( !isset( $_POST['user_id'] ) )
+				return;
+			foreach( $this->get_hooks() as $hook ){
+				if( count( $hook->get_rules_by_group( 'users' ) ) > 0 && isset( $_POST[ $hook->get_field()->input()->name ] ) ){
+					update_user_meta( $_POST['user_id'], $hook->get_field()->input()->name, $_POST[ $hook->get_field()->input()->name ] );
 				}
 			}
 		}
@@ -276,6 +258,8 @@
 		///
 		/** @var mixed Значение по-умолчанию */
 		private $default;
+
+		private $form_template = '';
 
 
 		/**
@@ -308,6 +292,20 @@
 
 
 		/**
+		 * @param null $set
+		 * @return hw_field|string
+		 */
+		public function form_template( $set = null ){
+			if( is_string( $set ) && trim( $set ) != '' ){
+				$this->form_template = $set;
+				return $this;
+			} else {
+				return $this->form_template;
+			}
+		}
+
+
+		/**
 		 * @return mixed
 		 */
 		public function get_type(){
@@ -321,6 +319,20 @@
 		 */
 		public function have_input(){
 			return ( $this->input instanceof hw_input );
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return hw_field|string
+		 */
+		public function placeholder( $set = null ){
+			if( is_null( $set ) ){
+				return $this->input()->placeholder;
+			} else {
+				$this->input()->placeholder = $set;
+				return $this;
+			}
 		}
 
 
@@ -355,7 +367,7 @@
 				}
 				return $R;
 			}
-			hiweb()->console()->error( 'Для поля [' . $this->id . '] не задан инпут', true );
+			hiweb()->console()->error( sprintf( __( 'For field [%s] input not be set' ), $this->id ), true );
 			return null;
 		}
 
@@ -367,6 +379,14 @@
 			$hook = hiweb()->fields()->hook( $this );
 			$this->hooks[] = $hook;
 			return $hook;
+		}
+
+
+		/**
+		 * @return hw_fields_hook[]
+		 */
+		public function get_locations(){
+			return $this->hooks;
 		}
 
 
@@ -455,18 +475,19 @@
 		 * Возвращает TRUE, если hook_name соответствует текущему хуку админки
 		 * @param $hook_name
 		 * @return bool
+		 * @deprecated
 		 */
-		protected function get_compare( $hook_name ){
+		/*protected function get_compare( $hook_name ){
 			if( is_array( $hook_name ) )
 				$hook_name = reset( $hook_name );
 			if( !is_string( $hook_name ) && !is_integer( $hook_name ) )
 				return false;
 			if( !function_exists( 'get_current_screen' ) || !get_current_screen() instanceof WP_Screen ){
-				hiweb()->console()->warn( 'Объекта WP_Screen не найдено!', true );
+				hiweb()->console()->warn( __( 'Object [WP_Screen] not found' ), true );
 				return false;
 			}
 			if( !is_array( $this->rules ) ){
-				hiweb()->console()->warn( 'Правила не являются массивом', true );
+				hiweb()->console()->warn( __( 'The rules are not an array' ), true );
 				return false;
 			}
 			///
@@ -482,7 +503,7 @@
 						}
 						///
 						if( !is_array( $rules ) ){
-							hiweb()->console()->warn( 'В правилах попался не массив', true );
+							hiweb()->console()->warn( __( 'The rules do not accidentally found an array' ), true );
 							continue;
 						}
 						foreach( $rules as $rule_data ){
@@ -505,12 +526,12 @@
 							);
 							///
 							if( !array_key_exists( $hook_name, $position_numbers ) ){
-								hiweb()->console()->warn( 'Данного хука [' . $hook_name . '] не найдено', true );
+								hiweb()->console()->warn( sprintf( __( 'Hook [%s] not found' ), $hook_name ), true );
 								continue 3;
 							}
 							///
 							if( !array_key_exists( $position, array_flip( $position_numbers ) ) ){
-								hiweb()->console()->warn( 'Данной позиции [' . $position . '] не найдено', true );
+								hiweb()->console()->warn( sprintf( __( 'Position [%s] in hook [$s] not found' ), $position_numbers, $hook_name ), true );
 								continue 3;
 							}
 							///
@@ -544,10 +565,20 @@
 					//////////////////////OPTIONS
 					case 'options':
 						///TODO!!!
+
+						continue 2;
+						break;
+					//////////////////////ADMIN MENU
+					case 'admin_menu':
+						foreach( $rules as $rule_data ){
+							if( $rule_data == get_current_screen()->parent_file ){
+								$R ++;
+							}
+						}
 						continue 2;
 						break;
 					default:
-						hiweb()->console()->warn( 'Данной группы [' . $rule_group . '] не существует', true );
+						hiweb()->console()->warn( sprintf( __( 'Group [%s] not exists' ), $rule_group ), 3 );
 						continue 2;
 						break;
 				}
@@ -555,8 +586,7 @@
 				$R ++;
 			}
 			return count( $this->rules ) == $R;
-		}
-
+		}*/
 
 		/**
 		 * Проверка хука на соответствие
@@ -580,17 +610,25 @@
 
 
 		/**
-		 * Установить поле на странице типа записей
+		 * Add field to all post types edit page
+		 * @param int $position
+		 * @return $this
+		 */
+		public function post_types( $position = 3 ){
+			$this->rules['post_types'][] = $position;
+			return $this;
+		}
+
+
+		/**
+		 * Add field to the edit page of post type
 		 * @param string $post_type
-		 * @param int    $position - позиция: 1 - после титла, 2 - перед редактором текста, 3 - после редактора текста, 4 - сайдбар в самом начале, 5 - в конце сайдбара
+		 * @param int    $position - позиция: 1 - after title, 2 - before editor, 3 - after editor, 4 - over sidebar, 5 - bottom on edit page
 		 * @param bool   $equal
 		 * @return $this
 		 */
 		public function post_type( $post_type = 'post', $position = 3, $equal = true ){
-			$this->rules['post_type'][] = [
-				$post_type,
-				$position
-			];
+			$this->rules['post_type'][ $post_type ] = $position;
 			return $this;
 		}
 
@@ -603,9 +641,9 @@
 		 */
 		public function taxonomy( $value = false, $equal = true ){
 			if( is_array( $value ) ){
-				$this->rules[ __FUNCTION__ ] = !isset( $this->rules[ __FUNCTION__ ] ) ? $value : array_merge( $this->rules[ __FUNCTION__ ], [ $value ] );
+				$this->rules[ __FUNCTION__ ] = !isset( $this->rules[ __FUNCTION__ ] ) ? $value : array_merge( $this->rules[ __FUNCTION__ ], $value );
 			} else {
-				$this->rules[ __FUNCTION__ ][] = [ $value ];
+				$this->rules[ __FUNCTION__ ][] = $value;
 			}
 
 			return $this;
@@ -616,8 +654,8 @@
 		 * Установить поле в панель установок пользователя
 		 * @return $this
 		 */
-		public function users(){
-			$this->rules['users'][] = '';
+		public function users( $position = 0 ){
+			$this->rules['users'][] = $position;
 			return $this;
 		}
 
@@ -639,18 +677,30 @@
 		}*/
 
 		/**
-		 * Установить поле на странице опций
-		 * @param string $value
-		 * @param bool   $equal
+		 * Set the field location in options
+		 * @param string $options_page_slug
+		 * @param int    $position
 		 * @return $this
 		 */
-		public function options( $value = 'options-general.php', $equal = true ){
-			if( is_array( $value ) ){
-				$this->rules[ __FUNCTION__ ] = !isset( $this->rules[ __FUNCTION__ ] ) ? $value : array_merge( $this->rules[ __FUNCTION__ ], $value );
-			} else {
-				$this->rules[ __FUNCTION__ ][] = $value;
-			}
+		public function options( $options_page_slug = 'options-general.php', $position = 0 ){
+			$this->rules[ __FUNCTION__ ][ $options_page_slug ] = $position;
+			///
+			return $this;
+		}
 
+
+		/**
+		 * Set the field location in Admin Menu
+		 * @param string $admin_menu_slug
+		 * @return hw_fields_hook
+		 */
+		public function admin_menu( $admin_menu_slug = 'theme' ){
+			if( is_array( $admin_menu_slug ) ){
+				$this->rules[ __FUNCTION__ ] = !isset( $this->rules[ __FUNCTION__ ] ) ? $admin_menu_slug : array_merge( $this->rules[ __FUNCTION__ ], $admin_menu_slug );
+			} else {
+				$this->rules[ __FUNCTION__ ][] = $admin_menu_slug;
+			}
+			///
 			return $this;
 		}
 
@@ -660,7 +710,7 @@
 		 * @param string $rules_group
 		 * @return array
 		 */
-		public function get_rules( $rules_group = 'post_type' ){
+		public function get_rules_by_group( $rules_group = 'post_type' ){
 			if( array_key_exists( $rules_group, $this->rules ) && is_array( $this->rules[ $rules_group ] ) ){
 				return $this->rules[ $rules_group ];
 			}

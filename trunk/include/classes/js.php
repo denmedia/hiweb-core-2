@@ -53,6 +53,7 @@
 				}
 			}
 			$url = hiweb()->path()->path_to_url( $file );
+			$file = hiweb()->path()->url_to_path( $file );
 			if( file_exists( $file ) && is_file( $file ) && is_readable( $file ) && $url != '' ){
 				$this->files[ md5( $url ) ] = array(
 					$url,

@@ -1,9 +1,29 @@
+.hw-form-template-postbox {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  -o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  min-width: 255px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  padding: 8px 12px;
+  margin-top: 25px;
+  vertical-align: top; }
+
 .hw-form-field {
-  margin-bottom: 15px; }
+  margin-bottom: 15px;
+  clear: both; }
   .hw-form-field p {
     margin: 7px 0 3px 0; }
   .hw-form-field input[type="text"] {
     width: 100%; }
+
+span.hw-form-field {
+  vertical-align: top;
+  display: inline-block; }
 
 .hw-form-field-compact p {
   margin: 0 0 5px 0; }

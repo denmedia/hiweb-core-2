@@ -1,0 +1,48 @@
+@mixin hw_border_radius($radius: 5px) {
+	-webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
+	border-radius: $radius;
+}
+
+@mixin hw_background_image($size: cover) {
+	background: 50% 50% no-repeat #ccc;
+	background-size: $size;
+}
+
+@mixin hw_transition($key: all, $duration: 500ms, $easing: ease-in-out, $delay: 0ms) {
+	-webkit-transition: $key $duration $easing $delay;
+	-moz-transition: $key $duration $easing $delay;
+	-o-transition: $key $duration $easing $delay;
+	transition: $key $duration $easing $delay;
+}
+
+@mixin hw_filter($filter: blur(5px)) {
+	-webkit-filter: $filter;
+	-moz-filter: $filter;
+	-o-filter: $filter;
+	-ms-filter: $filter;
+	filter: $filter;
+}
+
+@mixin hw_position_stretch($top: 0, $right: 0, $bottom: 0, $left: 0) {
+	position: absolute;
+	top: $top;
+	right: $right;
+	bottom: $bottom;
+	left: $left;
+}
+
+@mixin hw_opacity($opacity) {
+	-webkit-opacity: $opacity;
+	-moz-opacity: $opacity;
+	-ms-opacity: $opacity;
+	-o-opacity: $opacity;
+	opacity: $opacity;
+}
+
+@mixin hw_box_shadow($size: 1px) {
+	-webkit-box-shadow: 0 1px $size rgba(0, 0, 0, .04);
+	-moz-box-shadow: 0 1px $size rgba(0, 0, 0, .04);
+	-o-box-shadow: 0 1px $size rgba(0, 0, 0, .04);
+	box-shadow: 0 1px $size rgba(0, 0, 0, .04);
+}

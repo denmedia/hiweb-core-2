@@ -1,14 +1,33 @@
+@import "mixins";
+
+.hw-form-template-postbox {
+	@include hw_border_radius();
+	@include hw_box_shadow();
+	min-width: 255px;
+	border: 1px solid #e5e5e5;
+	background: #fff;
+	padding: 8px 12px;
+	margin-top: 25px;
+	vertical-align: top;
+}
+
 .hw-form-field {
-  p { margin: 7px 0 3px 0; }
-  input[type="text"] { width: 100%; }
-  margin-bottom: 15px;
+	p { margin: 7px 0 3px 0; }
+	input[type="text"] { width: 100%; }
+	margin-bottom: 15px;
+	clear: both;
+}
+
+span.hw-form-field {
+	vertical-align: top;
+	display: inline-block;
 }
 
 .hw-form-field-compact {
-  p { margin: 0 0 5px 0; }
-  .description {
-    font-style: italic;
-    font-size: 11px;
-    color: #919b9c;;
-  }
+	p { margin: 0 0 5px 0; }
+	.description {
+		font-style: italic;
+		font-size: 11px;
+		color: #919b9c;;
+	}
 }

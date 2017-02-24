@@ -53,7 +53,7 @@
 		 */
 		public function html(){
 			if( !hiweb()->context()->is_backend_page() ){
-				hiweb()->console()->error( 'Невозможно показать инпут IMAGE, он работает только в бэк-энде' );
+				hiweb()->console()->error( __('Can not display INPUT [IMAGE], it works only in the back-End') );
 				return '';
 			}
 			wp_enqueue_media();
@@ -61,10 +61,12 @@
 			hiweb()->css( hiweb()->dir_css . '/input_image.css' );
 
 			return '<div class="hw-input-image" id="' . $this->id . '" data-has-image="' . ( $this->have_image( [ $this->options( 'width' ), $this->options( 'height' ) ] ) ? '1' : '0' ) . '">
-<input type="hidden" ' . $this->get_tags() . '/>
-	<a href="#" class="button image-select" title="Select/Deselect image..." data-click="' . ( $this->have_image( [ $this->options( 'width' ), $this->options( 'height' ) ] ) ? 'deselect' : 'select' ) . '" style="width: ' . $this->options( 'width' ) . 'px; height: ' . $this->options( 'height' ) . 'px; ' . ( $this->have_image() ? 'background-image:url(' . $this->get_src( [ $this->options( 'width' ), $this->options( 'height' ) ] ) . ')' : '' ) . '">
-	<i class="dashicons dashicons-format-image" data-icon="select"></i>
-	<i class="dashicons dashicons-no-alt" data-icon="deselect"></i>
+<input type="hidden" ' . $this->get_tags() . ' value="'.( $this->has_image ? $this->value() : '' ).'"/>
+	<a href="#" class="image-select" title="'.__('Select/Deselect image...').'" data-click="' . ( $this->have_image( [ $this->options( 'width' ), $this->options( 'height' ) ] ) ? 'deselect' : 'select' ) . '" style="width: ' . $this->options( 'width' ) . 'px; height: ' . $this->options( 'height' ) . 'px;">
+		<div class="image" style="' . ( $this->have_image() ? 'background-image:url(' . $this->get_src( [ $this->options( 'width' ), $this->options( 'height' ) ] ) . ')' : '' ) . '"></div>
+		<div class="overlay"></div>
+		<i class="dashicons dashicons-format-image" data-icon="select"></i>
+		<i class="dashicons dashicons-no-alt" data-icon="deselect"></i>
 	</a>
 </div>';
 		}
