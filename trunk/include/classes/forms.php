@@ -234,10 +234,9 @@
 				ob_start();
 				///
 				foreach( $fields_group_by_template as $template_code => $fields ){
-					$template = preg_replace('/:[\d]*$/','',$template_code);
+					$template = preg_replace( '/:[\d]*$/', '', $template_code );
 					$templatePath = $this->get_template_path( $template );
 					$this->fields = $fields;
-					hiweb()->console( $templatePath );
 					include $templatePath;
 				}
 				$R = ob_get_clean();
@@ -253,7 +252,8 @@
 				$template_name = $this->template;
 			$templatePath = hiweb()->dir_views . '/form-template-' . $template_name . '.php';
 			if( !file_exists( $templatePath ) ){
-				hiweb()->console()->warn( sprintf( __( 'Template [%s] for form not found' ), $templatePath ), true );
+				if( trim( $template_name ) != '' )
+					hiweb()->console()->warn( sprintf( __( 'Template [%s] for form not found' ), $templatePath ), true );
 				$templatePath = hiweb()->dir_views . '/form-template-default.php';
 			}
 			return $templatePath;
@@ -280,6 +280,5 @@
 		}
 
 	}
-	
 	
 	

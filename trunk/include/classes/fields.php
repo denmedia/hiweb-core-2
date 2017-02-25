@@ -146,6 +146,7 @@
 		}
 
 
+
 		///////////////////////
 
 		protected function do_distribute(){
@@ -227,6 +228,10 @@
 		}
 
 
+		/**
+		 * User Options Update
+		 * @param $user_id
+		 */
 		private function user_options_update( $user_id ){
 			if( !isset( $_POST['user_id'] ) )
 				return;
@@ -289,6 +294,25 @@
 			$this->type = $type;
 			$this->input = hiweb()->inputs()->create( $type, $this->id );
 		}
+		///////////////////////
+
+		/**
+		 * @param        $idOrName
+		 * @param string $type
+		 * @return hw_input
+		 */
+		public function add_col( $idOrName, $type = 'text' ){
+			return $this->input()->add_col($idOrName, $type);
+		}
+
+
+		/**
+		 * @return bool
+		 */
+		public function have_rows(){
+			return $this->input()->have_rows();
+		}
+		///////////////////////
 
 
 		/**

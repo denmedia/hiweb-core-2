@@ -9,22 +9,6 @@
 		private $users = array();
 
 
-		public function __construct(){
-			add_action('personal_options_update',array($this,'personal_options_update'));
-			add_action('edit_user_profile_update',array($this,'personal_options_update'));
-			add_action('user_edit_form_tag',array($this,'personal_options_update'));
-			add_action('personal_options',array($this,'personal_options_update'));
-			add_action('profile_personal_options',array($this,'personal_options_update'));
-			add_action('show_user_profile',array($this,'personal_options_update'));
-			add_action('edit_user_profile',array($this,'personal_options_update'));
-		}
-
-
-		protected function personal_options_update($args){
-			hiweb()->console(array(__METHOD__,$args)); //todo-
-		}
-
-
 		/**
 		 * Возвращает корневой класс для работы с данными пользователя
 		 * @param $idOrLoginOrEmail - если не указывать, то будет взят текущий авторизированный пользователь

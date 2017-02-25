@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: hiWeb Core 2\n"
-"POT-Creation-Date: 2017-02-24 10:42+0300\n"
-"PO-Revision-Date: 2017-02-24 10:42+0300\n"
+"POT-Creation-Date: 2017-02-25 16:36+0300\n"
+"PO-Revision-Date: 2017-02-25 16:37+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -36,7 +36,7 @@ msgstr "Не работает с типом объекта [%s]"
 msgid "File [%s] not found or not readable"
 msgstr "Файл [%s] не найден или нет прав на чтение"
 
-#: include/classes/fields.php:334
+#: include/classes/fields.php:411
 #, php-format
 msgid "For field [%s] input not be set"
 msgstr "Для поля [%s] не задан инпут"
@@ -57,12 +57,12 @@ msgstr "Имя окна не установлено"
 msgid "Rule data is not array"
 msgstr "Правила не являются массивом"
 
-#: include/classes/fields/do_distribute.php:99
+#: include/classes/fields/do_distribute.php:172
 #, php-format
 msgid "Screen name [%s] not found"
-msgstr ""
+msgstr "Имя экрана [%s] не найдено"
 
-#: include/classes/fields/do_distribute.php:111
+#: include/classes/fields/do_distribute.php:184
 #, php-format
 msgid "Hook [%s] does not found in hiweb()→hook_fields[]"
 msgstr "Хук [%s] не найден в hiweb()→hook_fields[]"
@@ -72,7 +72,7 @@ msgstr "Хук [%s] не найден в hiweb()→hook_fields[]"
 msgid "For form id:[%s] fields not found"
 msgstr "Для формы id:[%s] поля не найдены"
 
-#: include/classes/forms.php:222
+#: include/classes/forms.php:256
 #, php-format
 msgid "Template [%s] for form not found"
 msgstr "Шаблона для формы [%s] не найден"
@@ -85,10 +85,52 @@ msgstr "Невозможно показать инпут [IMAGE], он рабо�
 msgid "Select/Deselect image..."
 msgstr "Установить/Отменить изображение..."
 
+#: include/classes/input/repeat.php:51
+#, php-format
+msgid ""
+"For repeat input [%s] not add col fields. For that do this: <code>$field-"
+">add_col('my-col')</code>"
+msgstr ""
+"Для инпута repeat [%s] нет добавлены поля. Для этого сделайте следующее: "
+"<code>$field->add_col('my-col')</code>"
+
+#: include/classes/input/repeat.php:60
+msgid "For add first row, press PLUS button..."
+msgstr "Чтобы добавить строку, кликните на кнопке \"ПЛЮС\""
+
+#: include/classes/inputs.php:56
+#, php-format
+msgid ""
+"Class [%s] dosen't extends hw_input! For this class Assign heir:\\n<?php "
+"class %s  extends hw_input{ ... }"
+msgstr ""
+"Класс [%s] не является расширением hw_input! Для этого укажите следующее:"
+"\\n<?php class %s  extends hw_input{ ... }"
+
 #: include/classes/inputs.php:65
 #, php-format
 msgid "Type of input [%s] not found"
 msgstr "Тип инпута [%s] не найден"
+
+#: include/traits/hw_input_value.php:91
+#, php-format
+msgid "Dimension [%s] set to [1], for set cols source"
+msgstr ""
+
+#: include/traits/hw_input_value.php:132
+#, php-format
+msgid "Dimension [%s] set to [2], for set cols source"
+msgstr ""
+
+#: include/traits/hw_input_value.php:155
+#, php-format
+msgid "Demension [%s] is not a number (range 0 - 2)"
+msgstr ""
+
+#: include/traits/hw_input_value.php:160
+#, php-format
+msgid "Dimension [%s] not included in the range 0-2"
+msgstr ""
 
 #: views/core-error-php-version.php:1
 msgid "hiWeb Core 2 error! Request PHP version great that 5.4.0!"

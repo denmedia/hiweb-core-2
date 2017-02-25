@@ -32,10 +32,17 @@
 	}
 
 	///TODO-
-	$page = add_admin_menu_page('Настройки темы','theme')->icon_url('dashicons-image-filter');
-	$f = add_field('test-22','image','Тестовое поле 1 ')->description('Описание дополлнительного текста и прочая вторичная, но не менее важная ифнормация');
-	$f->location()->users();
-	$f = add_field('test-22432','textarea','Тестовое поле 2');
-	$f->location()->users();
-	$f = add_field('test-22432324','textarea','Тестовое поле 3');
-	$f->location()->users();
+	add_admin_menu_page( 'Опции темы', 'theme' );
+	$field = add_field( 'test12423', 'repeat' );
+	$field->location()->admin_menu( 'theme' );
+	$field->add_col( 'test-1','image' );
+	$field->add_col( 'test-2' );
+	$field->add_col( 'test-3' );
+
+
+	hiweb()->console( get_field('test12423','theme') );
+	/*while(have){
+		$row = $input->the_row();
+		hiweb()->console( $row );
+	}*/
+

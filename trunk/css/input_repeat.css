@@ -3,6 +3,9 @@
   background: #ddd;
   border-bottom: 2px solid #aaa;
   border-top: 2px solid #777; }
+  .hw-input-repeat .empty-message {
+    font-size: 20px;
+    text-align: center; }
   .hw-input-repeat table {
     width: 100%;
     border-collapse: collapse;
@@ -25,7 +28,8 @@
       padding: 12px 16px;
       font-size: 16px; }
     .hw-input-repeat table .drag, .hw-input-repeat table .control {
-      width: auto; }
+      width: auto;
+      text-align: right; }
       .hw-input-repeat table .drag .spacer, .hw-input-repeat table .control .spacer {
         display: block;
         width: 35px; }

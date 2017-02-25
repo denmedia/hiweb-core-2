@@ -22,7 +22,7 @@
 
 
 		private function _init(){
-			hiweb()->path()->include_dir( $this->dir_inputs );
+			$R = hiweb()->path()->include_dir( $this->dir_inputs );
 		}
 
 
@@ -53,7 +53,7 @@
 					///Make input
 					$class = new $className( $id );
 					if( !$class instanceof hw_input ){
-						hiweb()->console()->warn( 'Класс [' . $className . '] не является экземпляром интерфейса hw_input! Для этого назначте класс наследником:\n<?php class ' . $className . '  extends hw_input{ ... }' );
+						hiweb()->console()->warn( sprintf( __( 'Class [%s] dosen\'t extends hw_input! For this class Assign heir:\n<?php class %s  extends hw_input{ ... }' ), $className ) );
 						continue;
 					}
 					if( !is_null( $value ) )
@@ -62,7 +62,7 @@
 					return $class;
 				}
 			}
-			hiweb()->console()->warn( sprintf(__('Type of input [%s] not found','hw-core-2'), $type), true );
+			hiweb()->console()->warn( sprintf( __( 'Type of input [%s] not found', 'hw-core-2' ), $type ), 0 );
 			///Make default input
 			$class = new hw_input( $id );
 			if( !is_null( $value ) )
@@ -96,15 +96,18 @@
 	class hw_input{
 
 		use hw_hidden_methods_props;
-		use hw_input_rows;
-		use hw_input_cols;
+		use hw_input_value;
+
+
+		//use hw_input_rows;
+		//use hw_input_cols;
 
 		/** @var string */
 		public $id;
 		/** @var string */
 		public $name;
 		/** @var string|array|bool */
-		public $value;
+		//public $value;
 		/** @var string */
 		public $placeholder;
 		/** @var string */
@@ -115,8 +118,11 @@
 		protected $options = array();
 
 
+		///
+
 		public function __construct( $id = false ){
 			$this->set_id( $id );
+			$this->_init();
 		}
 
 
@@ -126,6 +132,10 @@
 			} else $this->id = sanitize_file_name( strtolower( $id ) );
 			if( is_null( $this->name ) )
 				$this->name = $this->id;
+		}
+
+
+		protected function _init(){
 		}
 
 
@@ -157,7 +167,10 @@
 			$R = array();
 			$tags = $this->tags;
 			$add_tag_keys = array(
-				'id', 'name', 'placeholder', 'type'
+				'id',
+				'name',
+				'placeholder',
+				'type'
 			);
 			foreach( $add_tag_keys as $add_tag_key ){
 				if( !isset( $tags[ $add_tag_key ] ) )
@@ -170,7 +183,12 @@
 			foreach( $tags as $key => $val ){
 				if( is_null( $val ) )
 					continue;
-				if( is_string( $index ) && $this->have_rows() && array_key_exists( $key, array_flip( [ 'value', 'name', 'id' ] ) ) ){
+				if( is_string( $index ) && $this->have_rows() && array_key_exists( $key, array_flip( [
+						'value',
+						'name',
+						'id'
+					] ) )
+				){
 					if( array_key_exists( $index, $this->value() ) ){
 						switch( $key ){
 							case 'name':
@@ -185,7 +203,8 @@
 						}
 					}
 				} elseif( !is_array( $val ) && !is_object( $val ) ) {
-					$R[] = $key . '="' . htmlentities( $val, ENT_QUOTES, 'utf-8' ) . '"';
+					if( $val != false )
+						$R[] = $key . '="' . htmlentities( $val, ENT_QUOTES, 'utf-8' ) . '"';
 				} else {
 					$complexTag = array();
 					foreach( $val as $subKey => $subVal ){
@@ -208,11 +227,10 @@
 		 * @return mixed
 		 */
 		public function value( $set = null ){
-			if( is_null( $set ) ){
-				return $this->value;
+			if( !is_null( $set ) ){
+				$this->set_value( $set );
 			}
-			$this->value = $set;
-			return $this->value();
+			return $this->get_value();
 		}
 
 
@@ -232,16 +250,19 @@
 					}
 					$R = '';
 				} else {
-					foreach( $this->value() as $row_key => $row_val ){
+					foreach( $this->value[0] as $row_key => $row_val ){
 						if( is_array( $row_val ) || is_object( $row_val ) ){
-							hiweb()->console()->warn( [ 'В строке вывода инпута попался массив или объект', $row_val ], true );
+							hiweb()->console()->warn( [
+								'В строке вывода инпута попался массив или объект',
+								$row_val
+							], true );
 						} else {
 							$R .= '<p><input ' . $this->get_tags( $row_key ) . ' value="' . htmlentities( $row_val, ENT_QUOTES, 'utf-8' ) . '"/></p>';
 						}
 					}
 				}
 			} else {
-				$R = '<input ' . $this->get_tags() . ' value="' .$this->value().'"/>';
+				$R = '<input ' . $this->get_tags() . ' value="' . $this->value() . '"/>';
 			}
 			return $R;
 		}
@@ -269,15 +290,6 @@
 			$new_input->name = $new_id;
 			hiweb()->inputs()->put( $new_input );
 			return $new_input;
-		}
-
-
-		/**
-		 * Возвращает TRUE, если имеются поля
-		 * @return bool|int
-		 */
-		public function have_rows(){
-			return ( is_array( $this->value ) ? count( $this->value ) : false );
 		}
 
 

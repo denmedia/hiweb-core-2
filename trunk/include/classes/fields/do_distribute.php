@@ -125,9 +125,9 @@
 				case 'admin_menu':
 					foreach( $rule_data as $key => $val ){
 						if( $current_screen['base'] == 'toplevel_page_' . $val ){
-							$input_name = $val . '-' . $field->get_id();
-							$field->input()->name = $input_name;
-							$field->value( get_option( $input_name, '' ) );
+							$options_value = get_option( $field->input()->name );
+							if( !hiweb()->string()->is_empty( $options_value ) || !hiweb()->arrays()->is_empty( $options_value ) )
+								$field->value( $options_value );
 							$this->hook_fields[ 'hw_admin_menu_page_' . $val ][] = $field;
 							hiweb()->admin()->menu()->get( $val )->add_field( $field );
 						}
@@ -140,8 +140,7 @@
 						$page_name = preg_replace( '/^options-/', '', $filename );
 						register_setting( $page_name, $field->input()->name );
 						if( strpos( $current_screen['base'], 'options-' ) === 0 && $current_screen['base'] == $filename ){
-							$field->value( get_option( $field->input()->name, true ) );
-							hiweb()->console( ( $field->input()->name ) ); //todo-
+							$field->value( get_option( $field->input()->name ) );
 							$sections_position = array(
 								'general' => [ 'default' ],
 								'writing' => [ 'default' ],
@@ -180,8 +179,8 @@
 			$hook = hiweb()->backtrace()->get_args( 4, 0 );
 			if( array_key_exists( $hook, hiweb()->fields()->hook_fields ) ){
 				hiweb()->form()->template( hiweb()->fields()->get_form_template_from_hook( $hook ) )->add_fields( hiweb()->fields()->hook_fields[ $hook ] )->the_noform();
-			} else {
-				hiweb()->console()->warn( sprintf( __( 'Hook [%s] does not found in hiweb()→hook_fields[]' ), $hook ) );
+			} elseif( trim( $hook ) != '' ) {
+				hiweb()->console()->warn( sprintf( __( 'Hook [%s] does not found in hiweb()→hook_fields[]' ), $hook ), true );
 			}
 		} );
 	}

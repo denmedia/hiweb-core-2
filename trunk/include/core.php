@@ -120,8 +120,8 @@
 
 			/**
 			 * @param        $fieldId - индификатор поля
-			 * @param string $type - тип поля
-			 * @param null   $name - имя поля
+			 * @param string $type    - тип поля
+			 * @param null   $name    - имя поля
 			 * @return hw_field
 			 */
 			public function field( $fieldId, $type = 'text', $name = null ){
@@ -161,7 +161,7 @@
 			 * @return mixed|hw_dump
 			 */
 			public function dump( $data = null ){
-				return $this->give_class( 'dump', $data, true);
+				return $this->give_class( 'dump', $data, true );
 			}
 
 
@@ -200,7 +200,7 @@
 			 * @param string            $type
 			 * @param bool|false|string $id
 			 * @param null              $value - значение
-			 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text
+			 * @return hw_input
 			 */
 			public function input( $type = 'text', $id = false, $value = null ){
 				$input = $this->inputs()->create( $type, $id, $value );
@@ -219,26 +219,6 @@
 				if( !is_null( $screen_id ) )
 					$meta->object_id = $screen_id;
 				return $meta;
-			}
-
-
-			/**
-			 * Получить контроллер-класс мета боксов
-			 * @return bool|hw_meta_boxes
-			 */
-			public function meta_boxes(){
-				return $this->give_class( 'meta_boxes' );
-			}
-
-
-			/**
-			 * Получить мета бокс
-			 * @param null $id
-			 * @param null $title
-			 * @return bool|hw_meta_box
-			 */
-			public function meta_box( $id = null, $title = null ){
-				return $this->meta_boxes()->give( $id, $title );
 			}
 
 
@@ -348,10 +328,14 @@
 						include_once $this->dir_classes . '/' . $name . '.php';
 					}
 					$this->classes[ $name ][ $index ] = new $className( $data );
+					///EVENT INIT
+					if( method_exists( end( $this->classes[ $name ] ), '_init' ) ){
+						end( $this->classes[ $name ] )->_init( $data );
+					}
 				}
 				///EVENT CALL
-				if( method_exists( end( $this->classes[ $name ] ), '_init' ) ){
-					end( $this->classes[ $name ] )->_init( $data );
+				if( method_exists( end( $this->classes[ $name ] ), '_call' ) ){
+					end( $this->classes[ $name ] )->_call( $data );
 				}
 				///
 				return end( $this->classes[ $name ] );
