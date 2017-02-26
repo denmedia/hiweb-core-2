@@ -17,21 +17,14 @@
 		/** @var hw_field[] */
 		private $fields = array();
 
+		private $fieldId_globalId = array();
+		private $globalId_fieldId = array();
+
 		/**  */
 		public $hook_fields = array();
 
 		private $hook_template = array(
-			'edit_form_top' => 'default',
-			'edit_form_before_permalink' => 'postbox',
-			'edit_form_after_title' => 'postbox',
-			'edit_form_after_editor' => 'postbox',
-			'submitpage_box' => 'postbox',
-			'submitpost_box' => 'postbox',
-			'edit_page_form' => 'postbox',
-			'edit_form_advanced' => 'postbox',
-			'_add_form_fields' => 'add-term',
-			'_edit_form' => 'term',
-			'options' => 'default'
+			'edit_form_top' => 'default', 'edit_form_before_permalink' => 'postbox', 'edit_form_after_title' => 'postbox', 'edit_form_after_editor' => 'postbox', 'submitpage_box' => 'postbox', 'submitpost_box' => 'postbox', 'edit_page_form' => 'postbox', 'edit_form_advanced' => 'postbox', '_add_form_fields' => 'add-term', '_edit_form' => 'term', 'options' => 'default'
 		);
 
 
@@ -39,22 +32,18 @@
 			$this->dir = hiweb()->dir_classes . '/' . $this->dir;
 			///
 			add_action( 'current_screen', array(
-				$this,
-				'do_distribute'
+				$this, 'do_distribute'
 			), 999999999999 );
 			///
 			add_action( 'save_post', array(
-				$this,
-				'save_post'
+				$this, 'save_post'
 			) );
 			///
 			add_action( 'personal_options_update', array(
-				$this,
-				'user_options_update'
+				$this, 'user_options_update'
 			) );
 			add_action( 'edit_user_profile_update', array(
-				$this,
-				'user_options_update'
+				$this, 'user_options_update'
 			) );
 			///
 			add_action( 'init', function(){
@@ -62,12 +51,10 @@
 					foreach( get_taxonomies() as $taxonomy ){
 						//Save Term
 						add_action( 'create_term', array(
-							$this,
-							'save_taxonomy'
+							$this, 'save_taxonomy'
 						), 99 );
 						add_action( 'edited_' . $taxonomy, array(
-							$this,
-							'save_taxonomy'
+							$this, 'save_taxonomy'
 						), 99 );
 					}
 				}
@@ -115,8 +102,23 @@
 			$global_id = hiweb()->string()->rand();
 			$field = new hw_field( $fieldId, $global_id, $type );
 			$field->name( $name );
-			$this->fields[ hiweb()->string()->rand() ] = $field;
+			$this->fields[ $global_id ] = $field;
+			$this->fieldId_globalId[ $fieldId ][] = $field;
+			$this->globalId_fieldId[ $global_id ][] = $field;
 			return $field;
+		}
+
+
+		/**
+		 * @param $field_id
+		 * @return hw_field
+		 */
+		public function get_field( $field_id ){
+			if( !isset( $this->fieldId_globalId[ $field_id ] ) ){
+				hiweb()->console()->warn( sprintf( __( 'Field id:[%s] not found to display value by context', 'hw-core-2' ), $field_id ) );
+				return $this->add_field( $field_id );
+			}
+			return end( $this->fieldId_globalId[ $field_id ] );
 		}
 
 
@@ -146,7 +148,6 @@
 		}
 
 
-
 		///////////////////////
 
 		protected function do_distribute(){
@@ -166,8 +167,7 @@
 			hiweb()->css( hiweb()->dir_css . '/fields.css' );
 			$template_path = $this->dir . '/html' . ( (string)$template == '' ? '' : '-' . $template ) . '.php';
 			return hiweb()->path()->get_content( $template_path, compact( [
-				'fields',
-				'hook_name'
+				'fields', 'hook_name'
 			] ) );
 		}
 
@@ -302,7 +302,7 @@
 		 * @return hw_input
 		 */
 		public function add_col( $idOrName, $type = 'text' ){
-			return $this->input()->add_col($idOrName, $type);
+			return $this->input()->add_col( $idOrName, $type );
 		}
 
 
@@ -313,7 +313,6 @@
 			return $this->input()->have_rows();
 		}
 		///////////////////////
-
 
 		/**
 		 * @param null $set
@@ -393,6 +392,17 @@
 			}
 			hiweb()->console()->error( sprintf( __( 'For field [%s] input not be set' ), $this->id ), true );
 			return null;
+		}
+
+
+		/**
+		 * @param null $contextId
+		 * @param null $contextType
+		 * @return mixin
+		 */
+		public function value_by_context( $contextId = null, $contextType = null ){ //TODO!!!
+			$R = include 'fields/context.php';
+			return $R;
 		}
 
 
@@ -620,9 +630,7 @@
 			$hook_name = $arguments[0];
 			if( $this->get_compare( $hook_name ) ){
 				$save_hooks = [
-					'save_post',
-					'create_term',
-					'edited_taxonomy'
+					'save_post', 'create_term', 'edited_taxonomy'
 				];
 				if( array_key_exists( $hook_name, array_flip( $save_hooks ) ) ){
 					///SAVE VALUE

@@ -32,17 +32,5 @@
 	}
 
 	///TODO-
-	add_admin_menu_page( 'Опции темы', 'theme' );
-	$field = add_field( 'test12423', 'repeat' );
-	$field->location()->admin_menu( 'theme' );
-	$field->add_col( 'test-1','image' );
-	$field->add_col( 'test-2' );
-	$field->add_col( 'test-3' );
-
-
-	hiweb()->console( get_field('test12423','theme') );
-	/*while(have){
-		$row = $input->the_row();
-		hiweb()->console( $row );
-	}*/
-
+	add_admin_menu_page('Тестовая страница','theme');
+	add_field( 'test', 'text', 'Првоерка поля и контекста' )->location()->admin_menu('theme');
