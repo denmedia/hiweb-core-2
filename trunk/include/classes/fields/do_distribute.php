@@ -178,7 +178,7 @@
 		add_action( $hook, function( $attr = null ){
 			$hook = hiweb()->backtrace()->get_args( 4, 0 );
 			if( array_key_exists( $hook, hiweb()->fields()->hook_fields ) ){
-				hiweb()->form()->template( hiweb()->fields()->get_form_template_from_hook( $hook ) )->add_fields( hiweb()->fields()->hook_fields[ $hook ] )->the_noform();
+				hiweb()->form()->template( hw_fields_static::get_form_template_from_hook( $hook ) )->add_fields( hiweb()->fields()->hook_fields[ $hook ] )->the_noform();
 			} elseif( trim( $hook ) != '' ) {
 				hiweb()->console()->warn( sprintf( __( 'Hook [%s] does not found in hiweb()→hook_fields[]' ), $hook ), true );
 			}

@@ -125,7 +125,7 @@
 			 * @return hw_field
 			 */
 			public function field( $fieldId, $type = 'text', $name = null ){
-				return $this->fields()->add_field( $fieldId, $type, $name );
+				return $this->fields()->make( $fieldId, $type, $name );
 			}
 
 

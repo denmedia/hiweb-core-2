@@ -32,5 +32,6 @@
 	}
 
 	///TODO-
-	add_admin_menu_page('Тестовая страница','theme');
-	add_field( 'test', 'text', 'Првоерка поля и контекста' )->location()->admin_menu('theme');
+	$field = add_field( 'test', 'repeat', 'Првоерка поля и контекста' )->location()->post_type('page')->get_field();
+	$field->add_col('img', 'image');
+	$field->add_col('text');

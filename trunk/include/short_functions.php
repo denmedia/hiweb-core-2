@@ -22,7 +22,7 @@
 		 * @return hw_field
 		 */
 		function add_field( $id, $type = 'text', $name = null ){
-			return hiweb()->fields()->add_field( $id, $type, $name );
+			return hiweb()->fields()->make( $id, $type, $name );
 		}
 	}
 
@@ -30,11 +30,10 @@
 		/**
 		 * @param      $fieldId
 		 * @param null $contextId
-		 * @param null $contextType
 		 * @return mixed
 		 */
-		function get_field( $fieldId, $contextId = null, $contextType = null ){
-			return hiweb()->fields()->get_field( $fieldId )->value_by_context( $contextId, $contextType );
+		function get_field( $fieldId, $contextId = null ){
+			return hiweb()->fields()->get_byContext( $fieldId, $contextId )->value();
 		}
 	}
 
@@ -42,11 +41,10 @@
 		/**
 		 * @param      $fieldId
 		 * @param null $contextId
-		 * @param null $contextType
 		 * @return mixed
 		 */
-		function the_field( $fieldId, $contextId = null, $contextType = null ){
-			echo hiweb()->fields()->get_field( $fieldId )->value_by_context( $contextId, $contextType );
+		function the_field( $fieldId, $contextId = null ){
+			echo hiweb()->fields()->get_byContext( $fieldId, $contextId )->value();
 		}
 	}
 
@@ -54,11 +52,10 @@
 		/**
 		 * @param      $fieldId
 		 * @param null $contextId
-		 * @param null $contextType
 		 * @return bool
 		 */
-		function have_rows( $fieldId, $contextId = null, $contextType = null ){
-			return hiweb()->fields()->have_rows( $fieldId, $contextId, $contextType );
+		function have_rows( $fieldId, $contextId = null ){
+			return hiweb()->fields()->get_byContext( $fieldId, $contextId )->have_rows();
 		}
 	}
 
@@ -87,9 +84,7 @@
 		 * @return mixed|null
 		 */
 		function the_sub_field( $subFieldId ){
-			$content = hiweb()->fields()->get_sub_field( $subFieldId );
-			echo $content;
-			return $content;
+			echo hiweb()->fields()->get_sub_field( $subFieldId );
 		}
 	}
 
