@@ -57,11 +57,13 @@
 									$this->hook_fields['edit_form_after_title'][] = $field;
 									break;
 								case 4:
-									$this->hook_fields[ $current_screen['post_type'] == 'post' ? 'submitpost_box' : 'submitpage_box' ][] = $field;
+									$this->hook_fields[ $current_screen['post_type'] != 'page' ? 'submitpost_box' : 'submitpage_box' ][] = $field;
 									break;
 								case 5:
-									$this->hook_fields['edit_page_form'][] = $field;
-									$this->hook_fields['edit_form_advanced'][] = $field;
+									$this->hook_fields[ $current_screen['post_type'] != 'page' ? 'edit_form_advanced' : 'edit_page_form' ][] = $field;
+									break;
+								case 6:
+									$this->hook_fields['dbx_post_sidebar'][] = $field;
 									break;
 								default:
 									$this->hook_fields['edit_form_after_editor'][] = $field;

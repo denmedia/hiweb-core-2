@@ -21,7 +21,7 @@
 				}
 				foreach( $this->get_cols() as $field ){
 					$width = round( 100 / $widthFull * 100 );
-					$R .= '<th class="field">' . $field->name() . (trim($field->description()) != '' ? '<p class="description">'.$field->description().'</p>' : ''). '</th>';
+					$R .= '<th class="field">' . $field->name() . ( trim( $field->description() ) != '' ? '<p class="description">' . $field->description() . '</p>' : '' ) . '</th>';
 				}
 			} else
 				$R .= '<th><span class="spacer"></span></th>';

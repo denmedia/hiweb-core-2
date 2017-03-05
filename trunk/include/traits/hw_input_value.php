@@ -23,9 +23,13 @@
 
 
 		protected function set_value( $value ){
+			$this->value = [ [] ];
 			switch( $this->dimension ){
 				case 0:
-					$this->value[0][0] = is_array( $value ) ? ( is_array( reset( $value ) ) ? reset( reset( $value ) ) : reset( $value ) ) : $value;
+					$this->value[0][0] = is_array( $value ) ?
+						( is_array( reset( $value ) ) ?
+							current( current( $value ) ) :
+							reset( $value ) ) : $value;
 					break;
 				case 1:
 					$this->value[0] = is_array( $value ) ? $value : [ $value ];
@@ -170,9 +174,9 @@
 		 */
 		public function get_rows(){
 			$R = [];
-			if($this->have_rows()){
-				if($this->dimension == 1) {
-					return is_array($this->value) ? reset($this->value) : array();
+			if( $this->have_rows() ){
+				if( $this->dimension == 1 ){
+					return is_array( $this->value ) ? reset( $this->value ) : array();
 				} else {
 					return $this->value();
 				}

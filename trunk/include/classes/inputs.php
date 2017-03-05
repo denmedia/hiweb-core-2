@@ -13,11 +13,11 @@
 		public $types = array();
 
 
-		public $dir_inputs = 'input';
+		public $dir_inputs = 'inputs';
 
 
 		public function __construct(){
-			$this->dir_inputs = hiweb()->dir_classes . '/' . $this->dir_inputs;
+			$this->dir_inputs = hiweb()->dir_include . '/' . $this->dir_inputs;
 		}
 
 
@@ -141,7 +141,7 @@
 
 		/**
 		 * Установить / Получить значение опции, при установке свойства, возвращаеться объект
-		 * @param null|string|array $option_key - ключ опции, либо массив [ключ => значение]. Если передать не массив и не строку, то ф-я вернет весь массив опций.
+		 * @param null|string|array $option_key   - ключ опции, либо массив [ключ => значение]. Если передать не массив и не строку, то ф-я вернет весь массив опций.
 		 * @param null|mixed|true   $option_value - значение опции, если option_key был ключем, если он был массивом, то значени true перепишет все опции. Если значение не передать (null), то ф-я вернут значение данного ключа
 		 * @return array|mixed|hw_input
 		 */

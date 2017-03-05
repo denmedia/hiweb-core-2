@@ -89,6 +89,17 @@
 
 
 		/**
+		 * Установить / Получить значение опции, при установке свойства, возвращаеться объект
+		 * @param null|string|array $option_key   - ключ опции, либо массив [ключ => значение]. Если передать не массив и не строку, то ф-я вернет весь массив опций.
+		 * @param null|mixed|true   $option_value - значение опции, если option_key был ключем, если он был массивом, то значени true перепишет все опции. Если значение не передать (null), то ф-я вернут значение данного ключа
+		 * @return array|mixed|hw_input
+		 */
+		public function options( $option_key = null, $option_value = null ){
+			return $this->input()->options( $option_key, $option_value );
+		}
+
+
+		/**
 		 * @return mixed
 		 */
 		public function get_type(){

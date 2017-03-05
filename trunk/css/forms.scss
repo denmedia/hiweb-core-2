@@ -30,9 +30,13 @@ span.hw-form-field {
 	display: inline-block;
 }
 
-span.hw-field-select {
+span.hw-field-select, span.hw-field-textarea {
 	width: 100%;
 	max-width: 400px;
+}
+
+span.hw-field-editor {
+	display: block;
 }
 
 .hw-form-field-compact {
