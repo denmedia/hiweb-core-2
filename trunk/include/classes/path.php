@@ -35,34 +35,40 @@
 
 		/**
 		 * Возвращает корневой URL
+		 * @param null|string $url
 		 * @return string
 		 * @version 1.3
 		 */
-		public function base_url(){
-			//if(hiweb()->cacheExists()) return hiweb()->cache();
-			$root = ltrim( $this->base_dir(), '/' );
-			$query = ltrim( str_replace( '\\', '/', dirname( $_SERVER['PHP_SELF'] ) ), '/' );
-			$rootArr = array();
-			$queryArr = array();
-			foreach( array_reverse( explode( '/', $root ) ) as $dir ){
-				$rootArr[] = rtrim( $dir . '/' . end( $rootArr ), '/' );
-			}
-			foreach( explode( '/', $query ) as $dir ){
-				$queryArr[] = ltrim( end( $queryArr ) . '/' . $dir, '/' );
-			}
-			$rootArr = array_reverse( $rootArr );
-			$queryArr = array_reverse( $queryArr );
-			$r = '';
-			foreach( $queryArr as $dir ){
-				foreach( $rootArr as $rootDir ){
-					if( $dir == $rootDir ){
-						$r = $dir;
-						break 2;
+		public function base_url($url = null){
+			if(is_string($url)) {
+				$url = $this->prepare_url($url, null, true);
+				return $url['base'];
+			} else {
+				//if(hiweb()->cacheExists()) return hiweb()->cache();
+				$root = ltrim( $this->base_dir(), '/' );
+				$query = ltrim( str_replace( '\\', '/', dirname( $_SERVER['PHP_SELF'] ) ), '/' );
+				$rootArr = array();
+				$queryArr = array();
+				foreach( array_reverse( explode( '/', $root ) ) as $dir ){
+					$rootArr[] = rtrim( $dir . '/' . end( $rootArr ), '/' );
+				}
+				foreach( explode( '/', $query ) as $dir ){
+					$queryArr[] = ltrim( end( $queryArr ) . '/' . $dir, '/' );
+				}
+				$rootArr = array_reverse( $rootArr );
+				$queryArr = array_reverse( $queryArr );
+				$r = '';
+				foreach( $queryArr as $dir ){
+					foreach( $rootArr as $rootDir ){
+						if( $dir == $rootDir ){
+							$r = $dir;
+							break 2;
+						}
 					}
 				}
+				$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
+				return rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . $r, '/' );
 			}
-			$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
-			return rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . $r, '/' );
 		}
 
 

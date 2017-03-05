@@ -207,9 +207,10 @@
 
 		/**
 		 * Возвращает HTML полей без формы
+		 * @param string $addition_class - Дополнительный класс к форме
 		 * @return string
 		 */
-		public function get_noform(){
+		public function get_noform($addition_class = ''){
 			hiweb()->css( hiweb()->url_css . '/forms.css' );
 			///
 			if( !$this->have_fields() ){
@@ -271,10 +272,11 @@
 
 
 		/**
-		 * @return string
+		 * @param string $addition_class
+		 * @return string - Дополнительный класс к форме
 		 */
-		public function the_noform(){
-			$content = $this->get_noform();
+		public function the_noform($addition_class = ''){
+			$content = $this->get_noform($addition_class);
 			echo $content;
 			return $content;
 		}

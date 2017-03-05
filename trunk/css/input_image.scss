@@ -30,6 +30,7 @@
 				@include hw_filter(blur(6px) brightness(2));
 				@include hw_transition(all, 0.2s);
 				@include hw_position_stretch(-20px, -20px, -20px, -20px);
+				background-color: black;
 			}
 			.overlay {
 				@include hw_opacity(0.75);

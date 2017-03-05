@@ -10,9 +10,8 @@
 
 	///Localization
 	function hw_core_load_theme_textdomain(){
-		global $l10n;
 		$mo_file_path = __DIR__ . '/languages/hw-core-2-' . get_locale() . '.mo';
-		$B = load_textdomain( 'hw-core-2', $mo_file_path );
+		load_textdomain( 'hw-core-2', $mo_file_path );
 	}
 
 	add_action( 'after_setup_theme', 'hw_core_load_theme_textdomain' );
@@ -32,6 +31,12 @@
 	}
 
 	///TODO-
-	$field = add_field( 'test', 'repeat', 'Првоерка поля и контекста' )->location()->post_type('page')->get_field();
-	$field->add_col('img', 'image');
-	$field->add_col('text');
+	$field = add_field( 'test', 'select', 'Проверка поля' );
+	$field->location()->post_type( 'page', 4 );
+	$field->input()->options( [ '1' => 'Test', '2' => 'Test 2' ] );
+	$field = add_field( 'test2', 'select', 'Проверка поля 2' );
+	$field->location()->post_type( 'page', 4 );
+	$field->input()->options( [ '1' => 'Test 333', '2' => 'Test 2454' ] );
+	//$field = add_field( 'test', 'repeat', 'Првоерка поля и контекста' )->location()->post_type('page')->get_field();
+	//$field->add_col('img', 'image');
+	//$field->add_col('text');

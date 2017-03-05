@@ -6,7 +6,7 @@
 	class hw_input_image extends hw_input{
 
 		protected $options = array(
-			'width' => 278, 'height' => 120
+			'width' => 250, 'height' => 120
 		);
 
 		private $has_image = array();

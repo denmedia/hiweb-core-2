@@ -10,8 +10,11 @@
   border: 1px solid #e5e5e5;
   background: #fff;
   padding: 8px 12px;
-  margin-top: 25px;
   vertical-align: top; }
+  .hw-form-template-postbox.edit_form_after_editor {
+    margin-top: 25px; }
+  .hw-form-template-postbox.submitpage_box {
+    margin-bottom: 25px; }
 
 .hw-form-field {
   margin-bottom: 15px;
@@ -24,6 +27,10 @@
 span.hw-form-field {
   vertical-align: top;
   display: inline-block; }
+
+span.hw-field-select {
+  width: 100%;
+  max-width: 400px; }
 
 .hw-form-field-compact p {
   margin: 0 0 5px 0; }

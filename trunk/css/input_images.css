@@ -1,20 +1,14 @@
 .hw-input-gallery {
   background: #fff;
-  border: 1px dotted #eee;
-  padding: 5px;
-  -webkit-box-shadow: inset 2px 2px 15px 0px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: inset 2px 2px 15px 0px rgba(0, 0, 0, 0.1);
-  box-shadow: inset 2px 2px 15px 0px rgba(0, 0, 0, 0.1);
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  text-align: center; }
+  text-align: center;
+  display: block;
+  width: 100%; }
   .hw-input-gallery a.button {
     float: left;
     display: inline-block;
-    margin: 0 4px 3px 0;
-    width: 85px;
-    min-height: 85px;
+    margin: 0 1px 1px 0;
+    width: 84px;
+    min-height: 84px;
     text-align: center;
     background: #ccc 50% 50% no-repeat;
     background-size: cover;

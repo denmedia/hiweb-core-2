@@ -5,6 +5,9 @@
 
 	class hw_input_images extends hw_input{
 
+
+		protected $dimension = 1;
+
 		protected $options = array(
 			'width' => 150, 'height' => 80
 		);
@@ -28,7 +31,7 @@
 
 		public function html(){
 			if( !hiweb()->context()->is_backend_page() ){
-				hiweb()->console()->error( 'Невозможно показать инпут IMAGES, он работает только в бэк-энде' );
+				hiweb()->console()->error( __( 'Input [IMAGES] can not be displayed, it only works in the back end' ) );
 				return '';
 			}
 			wp_enqueue_media();
@@ -37,8 +40,9 @@
 			$R = '';
 			if( $this->have_rows() === false || $this->have_rows() === 0 ){
 			} else {
-				foreach( $this->value as $img_id ){
-					$R .= $this->html_row( $img_id );
+				foreach( $this->get_rows() as $img_id ){
+					if( is_numeric( $img_id ) )
+						$R .= $this->html_row( $img_id );
 				}
 			}
 			return '<div class="hw-input-gallery" data-id="' . $this->id . '">' . $this->html_rowAdd( 0 ) . $this->html_row() . '<div data-wrap>' . $R . '</div>' . $this->html_rowAdd( 1 ) . '<div class="clear"></div></div>';

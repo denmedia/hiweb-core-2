@@ -14,24 +14,19 @@
 
 		public function __construct(){
 			add_action( 'wp_enqueue_scripts', array(
-				$this,
-				'_my_wp_enqueue_scripts'
+				$this, '_my_wp_enqueue_scripts'
 			) );
 			add_action( 'admin_enqueue_scripts', array(
-				$this,
-				'_my_wp_enqueue_scripts'
+				$this, '_my_wp_enqueue_scripts'
 			) );
 			add_action( 'login_enqueue_scripts', array(
-				$this,
-				'_my_wp_enqueue_scripts'
+				$this, '_my_wp_enqueue_scripts'
 			) );
 			add_action( 'wp_footer', array(
-				$this,
-				'_my_wp_enqueue_scripts'
+				$this, '_my_wp_enqueue_scripts'
 			) );
 			add_action( 'admin_footer', array(
-				$this,
-				'_my_wp_enqueue_scripts'
+				$this, '_my_wp_enqueue_scripts'
 			) );
 		}
 
@@ -54,12 +49,9 @@
 			}
 			$url = hiweb()->path()->path_to_url( $file );
 			$file = hiweb()->path()->url_to_path( $file );
-			if( file_exists( $file ) && is_file( $file ) && is_readable( $file ) && $url != '' ){
+			if( ( $url == $file ) || ( file_exists( $file ) && is_file( $file ) && is_readable( $file ) && $url != '' ) ){
 				$this->files[ md5( $url ) ] = array(
-					$url,
-					$afterJS,
-					$in_footer,
-					$file
+					$url, $afterJS, $in_footer, $file
 				);
 				return true;
 			} else {
@@ -72,7 +64,7 @@
 		function _my_wp_enqueue_scripts(){
 			foreach( $this->files as $slug => $script ){
 				unset( $this->files[ $slug ] );
-				wp_register_script( $slug, $script[0], $script[1], filemtime( $script[3] ), $script[2] );
+				wp_register_script( $slug, $script[0], $script[1], $script[0] == $script[3] ? 0 : filemtime( $script[3] ), $script[2] );
 				wp_enqueue_script( $slug );
 			}
 		}

@@ -137,7 +137,7 @@
 
 
 		public function reset_row(){
-			$this->loop = $this->value;
+			$this->loop = $this->value();
 			return $this->loop;
 		}
 
@@ -166,6 +166,22 @@
 
 
 		/**
+		 * @return array|mixed
+		 */
+		public function get_rows(){
+			$R = [];
+			if($this->have_rows()){
+				if($this->dimension == 1) {
+					return is_array($this->value) ? reset($this->value) : array();
+				} else {
+					return $this->value();
+				}
+			}
+			return $R;
+		}
+
+
+		/**
 		 * @return mixed
 		 */
 		public function current_row(){
@@ -176,7 +192,7 @@
 		/**
 		 * @param        $idOrName
 		 * @param string $type
-		 * @internal param hw_field $field
+		 * @return hw_field
 		 */
 		public function add_col( $idOrName, $type = 'text' ){
 			$field = hiweb()->field( $idOrName, $type );

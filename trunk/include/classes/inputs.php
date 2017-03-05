@@ -141,19 +141,21 @@
 
 		/**
 		 * Установить / Получить значение опции, при установке свойства, возвращаеться объект
-		 * @param null $option_key
-		 * @param null $option_value
-		 * @return array|mixed
+		 * @param null|string|array $option_key - ключ опции, либо массив [ключ => значение]. Если передать не массив и не строку, то ф-я вернет весь массив опций.
+		 * @param null|mixed|true   $option_value - значение опции, если option_key был ключем, если он был массивом, то значени true перепишет все опции. Если значение не передать (null), то ф-я вернут значение данного ключа
+		 * @return array|mixed|hw_input
 		 */
 		public function options( $option_key = null, $option_value = null ){
-			if( is_string( $option_key ) ){
-				if( !is_null( $option_value ) ){
-					$this->options[ $option_key ] = $option_value;
-				}
-				return $this->options[ $option_key ];
-			} else {
+			if( is_array( $option_key ) ){
+				$this->options = $option_value === true ? $option_key : hiweb()->arrays()->merge( $this->options, $option_key );
+				return $this;
+			} elseif( !is_string( $option_key ) ) {
 				return $this->options;
+			} elseif( !is_null( $option_value ) ) {
+				$this->options[ $option_key ] = $option_value;
+				return $this;
 			}
+			return $this->options[ $option_key ];
 		}
 
 
@@ -167,10 +169,7 @@
 			$R = array();
 			$tags = $this->tags;
 			$add_tag_keys = array(
-				'id',
-				'name',
-				'placeholder',
-				'type'
+				'id', 'name', 'placeholder', 'type'
 			);
 			foreach( $add_tag_keys as $add_tag_key ){
 				if( !isset( $tags[ $add_tag_key ] ) )
@@ -184,9 +183,7 @@
 				if( is_null( $val ) )
 					continue;
 				if( is_string( $index ) && $this->have_rows() && array_key_exists( $key, array_flip( [
-						'value',
-						'name',
-						'id'
+						'value', 'name', 'id'
 					] ) )
 				){
 					if( array_key_exists( $index, $this->value() ) ){
@@ -253,8 +250,7 @@
 					foreach( $this->value[0] as $row_key => $row_val ){
 						if( is_array( $row_val ) || is_object( $row_val ) ){
 							hiweb()->console()->warn( [
-								'В строке вывода инпута попался массив или объект',
-								$row_val
+								'В строке вывода инпута попался массив или объект', $row_val
 							], true );
 						} else {
 							$R .= '<p><input ' . $this->get_tags( $row_key ) . ' value="' . htmlentities( $row_val, ENT_QUOTES, 'utf-8' ) . '"/></p>';
@@ -262,7 +258,7 @@
 					}
 				}
 			} else {
-				$R = '<input ' . $this->get_tags() . ' value="' . $this->value() . '"/>';
+				$R = '<input ' . $this->get_tags() . ' value="' . htmlentities( $this->value(), ENT_QUOTES, 'UTF-8' ) . '"/>';
 			}
 			return $R;
 		}

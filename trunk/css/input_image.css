@@ -37,7 +37,8 @@
         top: -20px;
         right: -20px;
         bottom: -20px;
-        left: -20px; }
+        left: -20px;
+        background-color: black; }
       .hw-input-image .image-select:hover .overlay {
         -webkit-opacity: 0.75;
         -moz-opacity: 0.75;

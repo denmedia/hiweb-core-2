@@ -22,6 +22,9 @@
 
 		private $form_template = '';
 
+		private $prepend = '';
+		private $append = '';
+
 
 		/**
 		 * hw_field constructor.
@@ -32,6 +35,7 @@
 		public function __construct( $fieldId, $globalId, $fieldType = 'text' ){
 			$this->id = sanitize_file_name( mb_strtolower( $fieldId ) );
 			$this->global_id = $globalId;
+			$this->type = $fieldType;
 			////
 			$this->input = hiweb()->inputs()->create( $fieldType, $this->id );
 			$this->name = $fieldId;
@@ -55,7 +59,7 @@
 		/**
 		 * @param        $idOrName
 		 * @param string $type
-		 * @return hw_input
+		 * @return hw_field
 		 */
 		public function add_col( $idOrName, $type = 'text' ){
 			return $this->input()->add_col( $idOrName, $type );
@@ -201,6 +205,32 @@
 				return $this->name;
 			}
 			$this->name = $set;
+			return $this;
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function prepend( $set = null ){
+			if( is_null( $set ) ){
+				return $this->prepend;
+			}
+			$this->prepend = $set;
+			return $this;
+		}
+
+
+		/**
+		 * @param null $set
+		 * @return $this
+		 */
+		public function append( $set = null ){
+			if( is_null( $set ) ){
+				return $this->append;
+			}
+			$this->append = $set;
 			return $this;
 		}
 

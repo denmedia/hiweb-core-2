@@ -433,27 +433,6 @@
 				case 'add_action_init_create':
 					$this->add_action_init_create();
 					break;
-				case 'add_action_edit_form_top':
-					$this->add_action_simple_fields( $arguments[0], 0 );
-					break;
-				case 'add_action_edit_form_before_permalink':
-					$this->add_action_simple_fields( $arguments[0], 1 );
-					break;
-				case 'add_action_edit_form_after_title':
-					$this->add_action_simple_fields( $arguments[0], 2 );
-					break;
-				case 'add_action_edit_form_after_editor':
-					$this->add_action_simple_fields( $arguments[0], 3 );
-					break;
-				case 'add_action_submitpage_box':
-					$this->add_action_simple_fields( $arguments[0], 5 );
-					break;
-				case 'add_action_edit_form_advanced':
-					$this->add_action_simple_fields( $arguments[0], 4 );
-					break;
-				case 'add_action_save_post':
-					$this->add_action_save_post( $arguments[1] );
-					break;
 			}
 		}
 
