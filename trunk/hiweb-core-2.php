@@ -29,3 +29,11 @@
 
 		add_action( 'admin_notices', 'hw_core_php_version_error' );
 	}
+
+	//TODO-
+	add_admin_menu_page( 'Группы альбомов', 'group-access', 'edit.php?post_type=page' );
+
+	$repeat = add_field( 'group-access', 'repeat', 'Группы доступа к альбомам' );
+	$repeat->add_col( 'group-name' )->name( 'Название группы' );
+	$repeat->add_col( 'group-access' )->name( 'Доступ пользователям' );
+	$repeat->location()->admin_menu( 'group-access' );

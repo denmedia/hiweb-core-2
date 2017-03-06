@@ -126,7 +126,7 @@
 					break;
 				case 'admin_menu':
 					foreach( $rule_data as $key => $val ){
-						if( $current_screen['base'] == 'toplevel_page_' . $val ){
+						if( $current_screen['base'] == 'toplevel_page_' . $val || preg_match( '/.*_page_' . $val . '$/', $current_screen['base'] ) > 0 ){
 							$options_value = get_option( $field->input()->name );
 							if( !hiweb()->string()->is_empty( $options_value ) || !hiweb()->arrays()->is_empty( $options_value ) )
 								$field->value( $options_value );
@@ -144,27 +144,18 @@
 						if( strpos( $current_screen['base'], 'options-' ) === 0 && $current_screen['base'] == $filename ){
 							$field->value( get_option( $field->input()->name ) );
 							$sections_position = array(
-								'general' => [ 'default' ],
-								'writing' => [ 'default' ],
-								'reading' => [ 'default' ],
-								'discussion' => [
-									'default',
-									'avatars'
-								],
-								'media' => [
-									'default',
-									'embeds',
-									'uploads'
-								],
-								'permalink' => [ 'optional' ]
+								'general' => [ 'default' ], 'writing' => [ 'default' ], 'reading' => [ 'default' ], 'discussion' => [
+									'default', 'avatars'
+								], 'media' => [
+									'default', 'embeds', 'uploads'
+								], 'permalink' => [ 'optional' ]
 							);
 							$section_id = 'default';
 							if( isset( $sections_position[ $page_name ][ $val ] ) ){
 								$section_id = $sections_position[ $page_name ][ $val ];
 							}
 							add_settings_field( 'hw-section-' . $field->input()->name, '<label for="extra_blog_desc_id">' . $field->name() . '</label>', array(
-								$field,
-								'the'
+								$field, 'the'
 							), $page_name, $section_id );
 						}
 					}
@@ -180,7 +171,7 @@
 		add_action( $hook, function( $attr = null ){
 			$hook = hiweb()->backtrace()->get_args( 4, 0 );
 			if( array_key_exists( $hook, hiweb()->fields()->hook_fields ) ){
-				hiweb()->form( $hook )->template( hw_fields_static::get_form_template_from_hook( $hook ) )->add_fields( hiweb()->fields()->hook_fields[ $hook ] )->the_noform($hook);
+				hiweb()->form( $hook )->template( hw_fields_static::get_form_template_from_hook( $hook ) )->add_fields( hiweb()->fields()->hook_fields[ $hook ] )->the_noform( $hook );
 			} elseif( trim( $hook ) != '' ) {
 				hiweb()->console()->warn( sprintf( __( 'Hook [%s] does not found in hiweb()→hook_fields[]' ), $hook ), true );
 			}
