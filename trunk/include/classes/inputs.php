@@ -129,7 +129,7 @@
 		protected function set_id( $id ){
 			if( !is_string( $id ) && !is_int( $id ) ){
 				$this->id = hiweb()->string()->rand( 8, true, true, false );
-			} else $this->id = sanitize_file_name( strtolower( $id ) );
+			} else $this->id = strtolower( $id );
 			if( is_null( $this->name ) )
 				$this->name = $this->id;
 		}

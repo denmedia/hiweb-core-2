@@ -100,16 +100,16 @@
 		
 		
 		public function __construct( $name ){
-			$this->name = sanitize_file_name( strtolower( $name ) );
+			$this->name = strtolower( $name );
 			$this->labels = $name;
 			$this->set_properties();
-			if( trim( $this->name ) != '' ){
+			/*if( trim( $this->name ) != '' ){
 				add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
 				add_action( $this->name . '_add_form_fields', array( $this, 'add_action_add_form_fields' ) );
 				add_action( $this->name . '_edit_form', array( $this, 'add_action_add_form_fields' ) );
 				add_action( 'create_term', array( $this, 'add_action_edited_terms' ), 999, 2 );
 				add_action( 'edited_' . $this->name, array( $this, 'add_action_edited_terms' ), 999, 2 );
-			}
+			}*/
 		}
 		
 		

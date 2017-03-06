@@ -28,7 +28,7 @@
 			if( array_key_exists( $key, $_GET ) )
 				$R = $_GET[ $key ];
 			if( array_key_exists( $key, $_POST ) )
-				$R = $_POST[ $key ];
+				$R = stripslashes($_POST[ $key ]);
 			return $R;
 		}
 

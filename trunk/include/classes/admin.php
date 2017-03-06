@@ -2,6 +2,7 @@
 
 	include_once 'admin/bar.php';
 	include_once 'admin/menu.php';
+	include_once 'admin/notice.php';
 
 
 	class hw_admin{
@@ -38,6 +39,14 @@
 				$this->_admin_bar[ $id ] = new hw_wp_admin_bar( $id );
 			}
 			return $this->_admin_bar[ $id ];
+		}
+
+
+		public function notice($notice = null){
+			static $class;
+			if(!$class instanceof hw_admin_notices) $class = new hw_admin_notices();
+			if(!is_null($notice)) $class->info($notice);
+			return $class;
 		}
 
 	}

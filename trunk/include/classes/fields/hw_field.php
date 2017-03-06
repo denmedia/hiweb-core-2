@@ -33,7 +33,7 @@
 		 * @param string $fieldType
 		 */
 		public function __construct( $fieldId, $globalId, $fieldType = 'text' ){
-			$this->id = sanitize_file_name( mb_strtolower( $fieldId ) );
+			$this->id = mb_strtolower( $fieldId );
 			$this->global_id = $globalId;
 			$this->type = $fieldType;
 			////

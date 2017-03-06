@@ -13,7 +13,7 @@
   vertical-align: top; }
   .hw-form-template-postbox.edit_form_after_editor {
     margin-top: 25px; }
-  .hw-form-template-postbox.submitpage_box {
+  .hw-form-template-postbox.submitpage_box, .hw-form-template-postbox.submitpost_box {
     margin-bottom: 25px; }
 
 .hw-form-field {
