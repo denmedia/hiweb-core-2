@@ -58,11 +58,9 @@
 			} else {
 				$R = '';
 				$R .= $this->get_adminRowNull() . '<tbody class="wrap">';
-				if( $this->have_rows() != false ){
 					foreach( $this->value() as $row ){
 						$R .= $this->get_adminRow( $row );
 					}
-				}
 				$R .= '<tr class="message" style="' . ( $this->have_rows() ? 'display: none;' : '' ) . '"><td colspan="' . ( count( $this->get_cols() ) + 2 ) . '">' . __( 'For add first row, press PLUS button...', 'hw-core-2' ) . '</td></tr>';
 				$R .= '</tbody>';
 				return '<div class="hw-input-repeat" id="' . $this->id . '"><table>' . $R . '</table></div>';

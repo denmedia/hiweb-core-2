@@ -55,6 +55,13 @@
 
 
 		/**
+		 * @return mixed
+		 */
+		public function reset_row(){
+			return $this->field->input()->reset_row();
+		}
+
+		/**
 		 * @return bool
 		 */
 		public function have_rows(){

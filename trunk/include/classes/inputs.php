@@ -276,17 +276,4 @@
 		}
 
 
-		/**
-		 * @param $new_id
-		 * @return $this
-		 */
-		public function copy( $new_id ){
-			$new_input = clone $this;
-			$new_input->id = $new_id;
-			$new_input->name = $new_id;
-			hiweb()->inputs()->put( $new_input );
-			return $new_input;
-		}
-
-
 	}

@@ -6,6 +6,7 @@
 		<th><?php echo $field->name() ?></th>
 		<td>
 			<?php $field->the(); ?>
+			<?php echo $field->description() != '' ? '<p class="description">' . $field->description() . '</p>' : ''; ?>
 		</td>
 	</tr>
 	<?php } ?>
