@@ -81,10 +81,18 @@
 	if( !function_exists( 'the_sub_field' ) ){
 		/**
 		 * @param $subFieldId
-		 * @return mixed|null
 		 */
 		function the_sub_field( $subFieldId ){
 			echo hiweb()->fields()->get_sub_field( $subFieldId );
+		}
+	}
+
+	if( !function_exists( 'reset_rows' ) ){
+		/**
+		 * @return mixed
+		 */
+		function reset_rows(){
+			return hiweb()->fields()->reset_rows();
 		}
 	}
 

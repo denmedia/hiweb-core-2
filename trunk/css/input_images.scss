@@ -1,47 +1,47 @@
 .hw-input-gallery {
-  background: #fff;
-  text-align: center;
+	background: #fff;
+	text-align: center;
 	display: block;
 	width: 100%;
 
-  a.button {
-    float: left;
-    display: inline-block;
-    margin: 0 1px 1px 0;
-    width: 84px;
-    min-height: 84px;
-    text-align: center;
-    background: #ccc 50% 50% no-repeat;
-    background-size: cover;
-    -webkit-box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
+	a.button {
+		float: left;
+		display: inline-block;
+		margin: 0 1px 1px 0;
+		width: 84px;
+		min-height: 84px;
+		text-align: center;
+		background: #ccc 50% 50% no-repeat;
+		background-size: cover;
+		-webkit-box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
+		-moz-box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
+		box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
 
-    &[href="#source"] {
-      display: none;
-    }
+		&[href="#source"] {
+			display: none;
+		}
 
-    .dashicons {
-      font-size: 34px;
-      position: relative;
-      top: 50%;
-      margin-top: -18px;
-      margin-left: -14px;
-      text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7);
-    }
+		.dashicons {
+			font-size: 34px;
+			position: relative;
+			top: 50%;
+			margin-top: -18px;
+			margin-left: -14px;
+			text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7);
+		}
 
-    &:hover {
-      background: 50% 50% no-repeat #ccc;
-      background-size: cover;
-      .dashicons {
-        font-size: 54px;
-        margin-top: -28px;
-        margin-left: -34px;
-      }
-    }
+		&:hover {
+			background: 50% 50% no-repeat #ccc;
+			background-size: cover;
+			.dashicons {
+				font-size: 54px;
+				margin-top: -28px;
+				margin-left: -34px;
+			}
+		}
 
-  }
+	}
 
-  .clear { clear: both; }
+	.clear { clear: both; }
 
 }

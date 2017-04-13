@@ -9,7 +9,8 @@
 		protected $dimension = 1;
 
 		protected $options = array(
-			'width' => 150, 'height' => 80
+			'width' => 150,
+			'height' => 80
 		);
 
 

@@ -1,6 +1,7 @@
 <?php
 
-	hiweb()->inputs()->register_type('text','hw_input_text');
+	hiweb()->inputs()->register_type( 'text', 'hw_input_text' );
+
 
 	class hw_input_text extends hw_input{
 

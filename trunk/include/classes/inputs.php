@@ -169,7 +169,10 @@
 			$R = array();
 			$tags = $this->tags;
 			$add_tag_keys = array(
-				'id', 'name', 'placeholder', 'type'
+				'id',
+				'name',
+				'placeholder',
+				'type'
 			);
 			foreach( $add_tag_keys as $add_tag_key ){
 				if( !isset( $tags[ $add_tag_key ] ) )
@@ -183,7 +186,9 @@
 				if( is_null( $val ) )
 					continue;
 				if( is_string( $index ) && $this->have_rows() && array_key_exists( $key, array_flip( [
-						'value', 'name', 'id'
+						'value',
+						'name',
+						'id'
 					] ) )
 				){
 					if( array_key_exists( $index, $this->value() ) ){
@@ -250,7 +255,8 @@
 					foreach( $this->value[0] as $row_key => $row_val ){
 						if( is_array( $row_val ) || is_object( $row_val ) ){
 							hiweb()->console()->warn( [
-								'В строке вывода инпута попался массив или объект', $row_val
+								'В строке вывода инпута попался массив или объект',
+								$row_val
 							], true );
 						} else {
 							$R .= '<p><input ' . $this->get_tags( $row_key ) . ' value="' . htmlentities( $row_val, ENT_QUOTES, 'utf-8' ) . '"/></p>';

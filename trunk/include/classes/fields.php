@@ -28,6 +28,7 @@
 		/**  */
 		public $hook_fields = array();
 
+		/** @var hw_field */
 		public $loop_rows_field;
 		private $current_row = array();
 
@@ -36,18 +37,22 @@
 			$this->dir = hiweb()->dir_classes . '/' . $this->dir;
 			///
 			add_action( 'current_screen', array(
-				$this, 'do_distribute'
+				$this,
+				'do_distribute'
 			), 999999999999 );
 			///
 			add_action( 'save_post', array(
-				$this, 'save_post'
+				$this,
+				'save_post'
 			) );
 			///
 			add_action( 'personal_options_update', array(
-				$this, 'user_options_update'
+				$this,
+				'user_options_update'
 			) );
 			add_action( 'edit_user_profile_update', array(
-				$this, 'user_options_update'
+				$this,
+				'user_options_update'
 			) );
 			///
 			add_action( 'init', function(){
@@ -55,10 +60,12 @@
 					foreach( get_taxonomies() as $taxonomy ){
 						//Save Term
 						add_action( 'create_term', array(
-							$this, 'save_taxonomy'
+							$this,
+							'save_taxonomy'
 						), 99 );
 						add_action( 'edited_' . $taxonomy, array(
-							$this, 'save_taxonomy'
+							$this,
+							'save_taxonomy'
 						), 99 );
 					}
 				}
@@ -234,6 +241,14 @@
 		public function get_sub_field( $sub_field_id ){
 			if( is_array( $this->current_row ) && array_key_exists( $sub_field_id, $this->current_row ) )
 				return $this->current_row[ $sub_field_id ]; else return null;
+		}
+
+
+		/**
+		 * @return mixed
+		 */
+		public function reset_rows(){
+			return $this->loop_rows_field->input()->reset_row();
 		}
 
 	}

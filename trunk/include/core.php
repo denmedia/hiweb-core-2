@@ -167,11 +167,12 @@
 
 			/**
 			 * Подключение файла CSS
-			 * @param $file
+			 * @param      $file
+			 * @param bool $in_footer
 			 * @return mixed
 			 */
-			public function css( $file ){
-				return $this->give_class( 'css' )->enqueue( $file );
+			public function css( $file, $in_footer = false ){
+				return $this->give_class( 'css' )->enqueue( $file, $in_footer );
 			}
 
 
@@ -272,14 +273,6 @@
 			 */
 			public function theme( $theme_name = null ){
 				return $this->give_class( 'theme', $theme_name );
-			}
-
-
-			/**
-			 * @return bool|hw_wp
-			 */
-			public function wp(){
-				return $this->give_class( 'wp' );
 			}
 
 

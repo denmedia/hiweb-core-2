@@ -14,9 +14,6 @@
 		private $_admin_bar = array();
 
 
-
-
-
 		/**
 		 * @return hw_admin_menu
 		 */
@@ -42,10 +39,12 @@
 		}
 
 
-		public function notice($notice = null){
+		public function notice( $notice = null ){
 			static $class;
-			if(!$class instanceof hw_admin_notices) $class = new hw_admin_notices();
-			if(!is_null($notice)) $class->info($notice);
+			if( !$class instanceof hw_admin_notices )
+				$class = new hw_admin_notices();
+			if( !is_null( $notice ) )
+				$class->info( $notice );
 			return $class;
 		}
 

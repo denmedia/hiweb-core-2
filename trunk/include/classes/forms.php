@@ -210,7 +210,7 @@
 		 * @param string $addition_class - Дополнительный класс к форме
 		 * @return string
 		 */
-		public function get_noform($addition_class = ''){
+		public function get_noform( $addition_class = '' ){
 			hiweb()->css( hiweb()->url_css . '/forms.css' );
 			///
 			if( !$this->have_fields() ){
@@ -275,8 +275,8 @@
 		 * @param string $addition_class
 		 * @return string - Дополнительный класс к форме
 		 */
-		public function the_noform($addition_class = ''){
-			$content = $this->get_noform($addition_class);
+		public function the_noform( $addition_class = '' ){
+			$content = $this->get_noform( $addition_class );
 			echo $content;
 			return $content;
 		}

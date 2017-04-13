@@ -8,15 +8,12 @@
 	Author URI: http://hiweb.moscow
 	*/
 
-	///Localization
-	function hw_core_load_theme_textdomain(){
-		$mo_file_path = __DIR__ . '/languages/hw-core-2-' . get_locale() . '.mo';
-		load_textdomain( 'hw-core-2', $mo_file_path );
-	}
-
-	add_action( 'after_setup_theme', 'hw_core_load_theme_textdomain' );
-
 	if( version_compare( PHP_VERSION, '5.4.0' ) >= 0 ){
+		///
+		add_action( 'plugins_loaded', function(){
+			$mo_file_path = __DIR__ . '/languages/hw-core-2-' . get_locale() . '.mo';
+			load_textdomain( 'hw-core-2', $mo_file_path );
+		} );
 		///
 		require_once 'include/core.php';
 		require_once 'include/short_functions.php';

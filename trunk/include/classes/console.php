@@ -14,7 +14,7 @@
 			if( !is_null( $info ) ){
 				$this->info( $info );
 			}
-			if( !hiweb()->wp()->is_ajax() )
+			if( !hiweb()->context()->is_ajax() && !hiweb()->context()->is_rest_api() )
 				add_action( 'shutdown', array(
 					$this,
 					'echo_footer'

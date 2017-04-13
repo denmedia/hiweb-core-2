@@ -1,18 +1,15 @@
 .hw-meta-box-section {
-    margin: 5px 0; }
-
-.hw-meta-box-section[data-block="0"] {
+  margin: 5px 0; }
+  .hw-meta-box-section[data-block="0"] {
     float: left;
     vertical-align: top;
     padding-right: 15px; }
-
-.hw-meta-box-section[data-block="1"] {
+  .hw-meta-box-section[data-block="1"] {
     border-bottom: 1px solid #eee; }
-
-.hw-meta-box-section p {
+  .hw-meta-box-section p {
     margin-top: 0; }
 
 .hw-meta-box-section-clear {
-    clear: both; }
+  clear: both; }
 
 /*# sourceMappingURL=meta-boxes.css.map */

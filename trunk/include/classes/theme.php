@@ -11,7 +11,7 @@
 
 
 		public function __construct( $theme ){
-			$this->theme = trim($theme) == '' ? get_option('stylesheet') : $theme;
+			$this->theme = trim( $theme ) == '' ? get_option( 'stylesheet' ) : $theme;
 		}
 
 
@@ -66,6 +66,22 @@
 			}
 
 			return $R;
+		}
+
+
+		/**
+		 * @return string
+		 */
+		public function dir(){
+			return dirname( get_template_directory() ) . '/' . $this->theme;
+		}
+
+
+		/**
+		 * @return string
+		 */
+		public function url(){
+			return dirname( get_template_directory_uri() ) . '/' . $this->theme;
 		}
 
 	}

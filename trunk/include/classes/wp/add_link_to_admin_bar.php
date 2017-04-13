@@ -21,7 +21,7 @@
 		public function __call( $name, $arguments ){
 			switch( $name ){
 				case 'add_link_to_admin_bar':
-					$this->add_link_to_admin_bar( reset($arguments) );
+					$this->add_link_to_admin_bar( reset( $arguments ) );
 					break;
 			}
 		}
@@ -33,7 +33,11 @@
 		private function add_link_to_admin_bar( WP_Admin_Bar $wp_admin_bar ){
 			// adds a child node to site name parent node
 			$wp_admin_bar->add_node( array(
-				'parent' => $this->parent, 'id' => $this->id, 'title' => $this->title, 'href' => esc_url( admin_url( 'upload.php' ) ), 'meta' => false
+				'parent' => $this->parent,
+				'id' => $this->id,
+				'title' => $this->title,
+				'href' => esc_url( admin_url( 'upload.php' ) ),
+				'meta' => false
 			) );
 		}
 

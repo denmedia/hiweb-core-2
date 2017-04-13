@@ -15,7 +15,7 @@
 		public function get( $postOrId ){
 			if( $postOrId instanceof WP_Post ){
 				$id = $postOrId->ID;
-			}else{
+			} else {
 				$id = $postOrId;
 			}
 			///
@@ -96,8 +96,8 @@
 
 		/**
 		 * Возвращает класс для работы с мета записи
-		 * @param null|string $key - вернуть значение ключа мета, либо regex-паттерн (обязатиельно указать INT $use_regex_index), либо объект класса для работы с мета даннойзаписи
-		 * @param null $use_regex_index - если $key является паттерном regex, то вернуть значение по индексу найденного ключа
+		 * @param null|string $key             - вернуть значение ключа мета, либо regex-паттерн (обязатиельно указать INT $use_regex_index), либо объект класса для работы с мета даннойзаписи
+		 * @param null        $use_regex_index - если $key является паттерном regex, то вернуть значение по индексу найденного ключа
 		 * @return hw_post_meta|mixed|null
 		 */
 		public function meta( $key = null, $use_regex_index = null ){
@@ -165,7 +165,7 @@
 
 		/**
 		 * Возвращает массив терминов данного поста
-		 * @param      $taxonomy - если не указать таксономию (указав 0, null, false), то будет вернут массив, сгрупированный по таксономиям
+		 * @param      $taxonomy   - если не указать таксономию (указав 0, null, false), то будет вернут массив, сгрупированный по таксономиям
 		 * @param null $only_field - если указать ключь термина, например name, то вместо WP_Term вернеться расгруппированный объект по ключу
 		 * @return array
 		 */
@@ -176,13 +176,13 @@
 				foreach( $taxonomies as $tax ){
 					$R[ $tax->name() ] = $this->terms( $tax->name(), $only_field );
 				}
-			}elseif( $this->taxonomy_exist( $taxonomy ) ){
+			} elseif( $this->taxonomy_exist( $taxonomy ) ) {
 				$terms = get_the_terms( $this->id(), $taxonomy );
 				if( is_array( $terms ) ){
 					foreach( $terms as $term ){
 						if( is_string( $only_field ) && trim( $only_field ) != '' ){
 							$R[ $term->term_id ] = property_exists( $term, $only_field ) ? $term->{$only_field} : $term;
-						}else{
+						} else {
 							$R[ $term->term_id ] = $term;
 						}
 					}
@@ -191,31 +191,31 @@
 
 			return $R;
 		}
-		
-		
+
+
 		/**
 		 * Возвращает все поля для данного поста
 		 * @return array|hw_input[]
 		 */
 		public function get_fields(){
 			$R = array();
-			if($this->exist()){
-				$R = hiweb()->post_type($this->object->post_type)->get_fields();
+			if( $this->exist() ){
+				$R = hiweb()->post_type( $this->object->post_type )->get_fields();
 			}
 			return $R;
 		}
-		
-		
+
+
 		/**
 		 * @param $fieldId
 		 * @return hw_input|hw_input_checkbox|hw_input_repeat|hw_input_text|mixed|null
 		 */
-		public function get_field($fieldId){
+		public function get_field( $fieldId ){
 			$fields = $this->get_fields();
 			$field = null;
-			if(array_key_exists($fieldId, $fields)){
-				$field = $fields[$fieldId]->copy($fieldId)->value( $this->meta($fieldId) );
-			} else $field = hiweb()->input($fieldId);
+			if( array_key_exists( $fieldId, $fields ) ){
+				$field = $fields[ $fieldId ]->copy( $fieldId )->value( $this->meta( $fieldId ) );
+			} else $field = hiweb()->input( $fieldId );
 			return $field;
 		}
 
@@ -275,7 +275,7 @@
 
 		/**
 		 * Возвращает значение ключа
-		 * @param null $key - ключь, либо regex-паттерн (обязатиельно указать INT $use_regex_index)
+		 * @param null $key             - ключь, либо regex-паттерн (обязатиельно указать INT $use_regex_index)
 		 * @param null $use_regex_index - если $key является паттерном regex, то вернуть значение по индексу найденного ключа
 		 * @return mixed|null
 		 */
@@ -285,7 +285,7 @@
 			}
 			if( !is_int( $use_regex_index ) ){
 				return $this->exist( $key ) ? $this->meta[ $key ] : null;
-			}else{
+			} else {
 				$arr = $this->arr( $key );
 
 				return array_key_exists( $use_regex_index, $arr ) ? $arr[ $use_regex_index ] : null;

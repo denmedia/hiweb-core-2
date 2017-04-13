@@ -1,9 +1,20 @@
 <?php
 
+
 	class hw_fields_static{
 
 		static $hook_template = array(
-			'edit_form_top' => 'default', 'edit_form_before_permalink' => 'postbox', 'edit_form_after_title' => 'postbox', 'edit_form_after_editor' => 'postbox', 'submitpage_box' => 'postbox', 'submitpost_box' => 'postbox', 'edit_page_form' => 'postbox', 'edit_form_advanced' => 'postbox', '_add_form_fields' => 'add-term', '_edit_form' => 'term', 'options' => 'default'
+			'edit_form_top' => 'default',
+			'edit_form_before_permalink' => 'postbox',
+			'edit_form_after_title' => 'postbox',
+			'edit_form_after_editor' => 'postbox',
+			'submitpage_box' => 'postbox',
+			'submitpost_box' => 'postbox',
+			'edit_page_form' => 'postbox',
+			'edit_form_advanced' => 'postbox',
+			'_add_form_fields' => 'add-term',
+			'_edit_form' => 'term',
+			'options' => 'default'
 		);
 
 

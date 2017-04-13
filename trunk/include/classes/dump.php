@@ -36,7 +36,8 @@
 				'array' => '',
 				'object' => ''
 			) ) ){
-				if($type_of_var == 'object') $type_of_var_name = $type_of_var.':'.get_class($mixed);
+				if( $type_of_var == 'object' )
+					$type_of_var_name = $type_of_var . ':' . get_class( $mixed );
 				$r .= ' <span class="hiweb-string-printarr-gettype">[' . $type_of_var_name . ']</span>';
 			}
 			switch( $type_of_var ){

@@ -144,18 +144,27 @@
 						if( strpos( $current_screen['base'], 'options-' ) === 0 && $current_screen['base'] == $filename ){
 							$field->value( get_option( $field->input()->name ) );
 							$sections_position = array(
-								'general' => [ 'default' ], 'writing' => [ 'default' ], 'reading' => [ 'default' ], 'discussion' => [
-									'default', 'avatars'
-								], 'media' => [
-									'default', 'embeds', 'uploads'
-								], 'permalink' => [ 'optional' ]
+								'general' => [ 'default' ],
+								'writing' => [ 'default' ],
+								'reading' => [ 'default' ],
+								'discussion' => [
+									'default',
+									'avatars'
+								],
+								'media' => [
+									'default',
+									'embeds',
+									'uploads'
+								],
+								'permalink' => [ 'optional' ]
 							);
 							$section_id = 'default';
 							if( isset( $sections_position[ $page_name ][ $val ] ) ){
 								$section_id = $sections_position[ $page_name ][ $val ];
 							}
 							add_settings_field( 'hw-section-' . $field->input()->name, '<label for="extra_blog_desc_id">' . $field->name() . '</label>', array(
-								$field, 'the'
+								$field,
+								'the'
 							), $page_name, $section_id );
 						}
 					}

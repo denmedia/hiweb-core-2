@@ -28,7 +28,7 @@
 			if( array_key_exists( $key, $_GET ) )
 				$R = $_GET[ $key ];
 			if( array_key_exists( $key, $_POST ) )
-				$R = stripslashes($_POST[ $key ]);
+				$R = stripslashes( $_POST[ $key ] );
 			return $R;
 		}
 
@@ -39,9 +39,9 @@
 		 * @return string
 		 * @version 1.3
 		 */
-		public function base_url($url = null){
-			if(is_string($url)) {
-				$url = $this->prepare_url($url, null, true);
+		public function base_url( $url = null ){
+			if( is_string( $url ) ){
+				$url = $this->prepare_url( $url, null, true );
 				return $url['base'];
 			} else {
 				//if(hiweb()->cacheExists()) return hiweb()->cache();
@@ -191,7 +191,7 @@
 			if( trim( $query ) != '' ){
 				$params = explode( '&', $query );
 				foreach( $params as $param ){
-					list( $key, $val ) = explode( '=', $param );
+					@list( $key, $val ) = explode( '=', $param );
 					$paramsPair[ $key ] = $val;
 				}
 			}
@@ -207,20 +207,29 @@
 				$domain = array_shift( $dirs );
 			}
 			return array(
-				'url' => $url, 'base_url' => $baseUrl, 'shema' => $shema, 'domain' => $domain, 'dirs' => implode( '/', $dirs ), 'dirs_arr' => $dirs, 'params' => $query, 'params_arr' => $paramsPair
+				'url' => $url,
+				'base_url' => $baseUrl,
+				'shema' => $shema,
+				'domain' => $domain,
+				'dirs' => implode( '/', $dirs ),
+				'dirs_arr' => $dirs,
+				'params' => $query,
+				'params_arr' => $paramsPair
 			);
 		}
 
 
 		/**
 		 * Возвращает папки или папку(если указать индекс) из URL
+		 * @version 2.1
 		 * @param null $url
 		 * @param int  $index
 		 * @return bool|array|string
 		 */
 		public function get_dirs_from_url( $url = null, $index = null ){
-			$urlArr = $this->url_info( $url );
-			return is_int( $index ) ? ( isset( $urlArr['dirs_arr'][ $index ] ) ? $urlArr['dirs_arr'][ $index ] : false ) : $urlArr['dirs_arr'];
+			$urlArr = $this->url_info( $this->prepare_url( $url, $this->base_url() ) );
+			$R = is_int( $index ) ? ( isset( $urlArr['dirs_arr'][ $index ] ) ? $urlArr['dirs_arr'][ $index ] : false ) : $urlArr['dirs_arr'];
+			return $R;
 		}
 
 
@@ -307,7 +316,8 @@
 				return false;
 			}
 			$r = strtr( $path, array(
-				'\\' => $this->separator(), '/' => $this->separator()
+				'\\' => $this->separator(),
+				'/' => $this->separator()
 			) );
 			return $removeLastSeparators ? rtrim( $r, $this->separator() ) : $r;
 		}
@@ -408,24 +418,24 @@
 		 */
 		public function size_format( $size ){
 			$size = intval( $size );
-			if ($size < 1024) {
-				return $size .' B';
-			} elseif ($size < 1048576) {
-				return round($size / 1024, 2) .' KiB';
-			} elseif ($size < 1073741824) {
-				return round($size / 1048576, 2) . ' MiB';
-			} elseif ($size < 1099511627776) {
-				return round($size / 1073741824, 2) . ' GiB';
-			} elseif ($size < 1125899906842624) {
-				return round($size / 1099511627776, 2) .' TiB';
-			} elseif ($size < 1152921504606846976) {
-				return round($size / 1125899906842624, 2) .' PiB';
-			} elseif ($size < 1180591620717411303424) {
-				return round($size / 1152921504606846976, 2) .' EiB';
-			} elseif ($size < 1208925819614629174706176) {
-				return round($size / 1180591620717411303424, 2) .' ZiB';
+			if( $size < 1024 ){
+				return $size . ' B';
+			} elseif( $size < 1048576 ) {
+				return round( $size / 1024, 2 ) . ' KiB';
+			} elseif( $size < 1073741824 ) {
+				return round( $size / 1048576, 2 ) . ' MiB';
+			} elseif( $size < 1099511627776 ) {
+				return round( $size / 1073741824, 2 ) . ' GiB';
+			} elseif( $size < 1125899906842624 ) {
+				return round( $size / 1099511627776, 2 ) . ' TiB';
+			} elseif( $size < 1152921504606846976 ) {
+				return round( $size / 1125899906842624, 2 ) . ' PiB';
+			} elseif( $size < 1180591620717411303424 ) {
+				return round( $size / 1152921504606846976, 2 ) . ' EiB';
+			} elseif( $size < 1208925819614629174706176 ) {
+				return round( $size / 1180591620717411303424, 2 ) . ' ZiB';
 			} else {
-				return round($size / 1208925819614629174706176, 2) .' YiB';
+				return round( $size / 1208925819614629174706176, 2 ) . ' YiB';
 			}
 		}
 
@@ -628,6 +638,48 @@
 		}
 
 
+		/**
+		 * Upload file or files
+		 * @param $_file - $_FILES[file_id]
+		 * @return int|WP_Error
+		 */
+		public function upload( $_file ){
+			if( !isset( $_file['tmp_name'] ) ){
+				return 0;
+			}
+			///
+			ini_set( 'upload_max_filesize', '128M' );
+			ini_set( 'post_max_size', '128M' );
+			ini_set( 'max_input_time', 300 );
+			ini_set( 'max_execution_time', 300 );
+			///
+			$tmp_name = $_file['tmp_name'];
+			$fileName = $_file['name'];
+			if( !is_readable( $tmp_name ) ){
+				return - 1;
+			}
+			///File Upload
+			$wp_filetype = wp_check_filetype( $fileName, null );
+			$wp_upload_dir = wp_upload_dir();
+			$newPath = $wp_upload_dir['path'] . '/' . sanitize_file_name( $fileName );
+			if( !copy( $tmp_name, $newPath ) ){
+				return - 2;
+			}
+			$attachment = array(
+				'guid' => $wp_upload_dir['url'] . '/' . $fileName,
+				'post_mime_type' => $wp_filetype['type'],
+				'post_title' => preg_replace( '/\.[^.]+$/', '', $fileName ),
+				'post_content' => '',
+				'post_status' => 'inherit'
+			);
+			$attachment_id = wp_insert_attachment( $attachment, $newPath );
+			require_once( ABSPATH . 'wp-admin/includes/image.php' );
+			$attachment_data = wp_generate_attachment_metadata( $attachment_id, $newPath );
+			wp_update_attachment_metadata( $attachment_id, $attachment_data );
+			return $attachment_id;
+		}
+
+
 	}
 
 
@@ -739,6 +791,7 @@
 
 
 		public function get_content(){
+			//todo
 		}
 
 	}

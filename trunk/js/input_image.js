@@ -14,8 +14,8 @@ var hw_input_image = {
             var current = jQuery(e.currentTarget).closest('.hw-input-image');
             hw_input_image.deselect_image(current);
         });
-        jQuery('body').on('change', '.hw-input-image input[name]', function(){
-           console.info('!!!'); //todo детек изменения поля для сброса
+        jQuery('body').on('change', '.hw-input-image input[name]', function () {
+            console.info('!!!'); //todo детек изменения поля для сброса
         });
     },
 
@@ -35,7 +35,7 @@ var hw_input_image = {
     select_image: function (current, selection) {
         var input = current.find('input');
         var image_preview = current.find('.image');
-        switch('object'){
+        switch ('object') {
             case typeof selection.sizes.medium:
                 var url = selection.sizes.medium.url;
                 break;

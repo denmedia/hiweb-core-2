@@ -153,7 +153,7 @@
 
 
 		public function __construct( $slug = null, $additionData = null ){
-			$this->update_success_message = __('Options "<b>%s</b>" success updated!');
+			$this->update_success_message = __( 'Options "<b>%s</b>" success updated!' );
 			if( !is_null( $slug ) && trim( $slug ) != '' ){
 				$slug_sanitize = sanitize_file_name( strtolower( $slug ) );
 				$this->menu_slug = $slug_sanitize;
@@ -162,7 +162,8 @@
 			}
 			$this->init( $additionData );
 			add_action( 'admin_menu', array(
-				$this, 'add_action_admin_menu'
+				$this,
+				'add_action_admin_menu'
 			) );
 		}
 
@@ -302,8 +303,8 @@
 			$content = '';
 			ob_start();
 			///
-			if(isset($_REQUEST['settings-updated']) && $_REQUEST['settings-updated']) {
-				echo '<div class="notice notice-success"><p>'.sprintf(__($this->update_success_message, 'hw-core-2'), $this->page_title).'</p></div>';
+			if( isset( $_REQUEST['settings-updated'] ) && $_REQUEST['settings-updated'] ){
+				echo '<div class="notice notice-success"><p>' . sprintf( __( $this->update_success_message, 'hw-core-2' ), $this->page_title ) . '</p></div>';
 			}
 			///
 			$page_is_empty = true;
@@ -335,16 +336,16 @@
 			///
 			//Wrap + Title
 			if( $this->use_title_form )
-			if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_opening' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_opening', $this ) ){
-				echo '<div class="wrap"><h2>' . $this->page_title . '</h2>';
-			}
+				if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_opening' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_opening', $this ) ){
+					echo '<div class="wrap"><h2>' . $this->page_title . '</h2>';
+				}
 			if( $content != '' ){
 				//Form
 				if( $this->use_title_form )
-				if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_form' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_form', $this ) ){
-					echo '<form method="post" action="options.php">';
-					wp_nonce_field( 'update-options' );
-				}
+					if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_form' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_form', $this ) ){
+						echo '<form method="post" action="options.php">';
+						wp_nonce_field( 'update-options' );
+					}
 			}
 			////
 			echo $content;
@@ -356,10 +357,10 @@
 			if( $content != '' ){
 				//Form Close
 				if( $this->use_title_form )
-				if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_form' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_form', $this ) ){
-					submit_button();
-					echo '</form>';
-				}
+					if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_form' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_form', $this ) ){
+						submit_button();
+						echo '</form>';
+					}
 			}
 			//Wrap Close
 			if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug, $this ) ){
@@ -381,7 +382,8 @@
 
 		protected function add_action_admin_menu(){
 			add_menu_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
-				$this, 'the_page'
+				$this,
+				'the_page'
 			), $this->icon_url, $this->position );
 		}
 
@@ -430,7 +432,8 @@
 
 		protected function add_action_admin_menu(){
 			add_submenu_page( $this->parent_slug, $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
-				$this, 'the_page'
+				$this,
+				'the_page'
 			) );
 		}
 
@@ -454,7 +457,8 @@
 
 		protected function add_action_admin_menu(){
 			add_options_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
-				$this, 'the_page'
+				$this,
+				'the_page'
 			) );
 		}
 
@@ -465,7 +469,8 @@
 
 		protected function add_action_admin_menu(){
 			add_theme_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
-				$this, 'the_page'
+				$this,
+				'the_page'
 			) );
 		}
 	}
@@ -490,7 +495,8 @@
 				$this->parent_slug = $parent_slug;
 				$this->parent_slug_short = $math[1];
 				add_action( 'admin_init', array(
-					$this, 'add_settings_section'
+					$this,
+					'add_settings_section'
 				) );
 				/*add_action( 'admin_init', array(
 					$this,
@@ -511,7 +517,8 @@
 					break;*/
 				case 'add_settings_section':
 					add_settings_section( $this->id, $this->title, array(
-						$this, 'the_fields'
+						$this,
+						'the_fields'
 					), $this->parent_slug_short ); //todo!!!
 					break;
 				case 'the_fields':

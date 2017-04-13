@@ -1,18 +1,19 @@
 .hw-fields-block {
-  margin-bottom: 25px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px; }
-  .hw-fields-block .hw-field .hw-field-input input[type="text"] {
+    margin-bottom: 25px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px; }
+
+.hw-fields-block .hw-field .hw-field-input input[type="text"] {
     width: 100%; }
 
 #poststuff .hw-fields-block {
-  margin-bottom: auto; }
+    margin-bottom: auto; }
 
 #postbox-container-1 .hw-fields-block {
-  margin-bottom: 20px; }
+    margin-bottom: 20px; }
 
 .hw-fields-block[data-hook="edit_form_after_editor"] {
-  margin-top: 15px; }
+    margin-top: 15px; }
 
 /*# sourceMappingURL=fields.css.map */

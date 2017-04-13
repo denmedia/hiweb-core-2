@@ -6,7 +6,8 @@
 	class hw_input_image extends hw_input{
 
 		protected $options = array(
-			'width' => 250, 'height' => 120
+			'width' => 250,
+			'height' => 120
 		);
 
 		private $has_image = array();
@@ -53,7 +54,7 @@
 		 */
 		public function html(){
 			if( !hiweb()->context()->is_backend_page() ){
-				hiweb()->console()->error( __('Can not display INPUT [IMAGE], it works only in the back-End') );
+				hiweb()->console()->error( __( 'Can not display INPUT [IMAGE], it works only in the back-End' ) );
 				return '';
 			}
 			wp_enqueue_media();
@@ -61,8 +62,8 @@
 			hiweb()->css( hiweb()->dir_css . '/input_image.css' );
 
 			return '<div class="hw-input-image" id="' . $this->id . '" data-has-image="' . ( $this->have_image( [ $this->options( 'width' ), $this->options( 'height' ) ] ) ? '1' : '0' ) . '">
-<input type="hidden" ' . $this->get_tags() . ' value="'.( $this->has_image ? $this->value() : '' ).'"/>
-	<a href="#" class="image-select" title="'.__('Select/Deselect image...').'" data-click="' . ( $this->have_image( [ $this->options( 'width' ), $this->options( 'height' ) ] ) ? 'deselect' : 'select' ) . '" style="width: ' . $this->options( 'width' ) . 'px; height: ' . $this->options( 'height' ) . 'px;">
+<input type="hidden" ' . $this->get_tags() . ' value="' . ( $this->has_image ? $this->value() : '' ) . '"/>
+	<a href="#" class="image-select" title="' . __( 'Select/Deselect image...' ) . '" data-click="' . ( $this->have_image( [ $this->options( 'width' ), $this->options( 'height' ) ] ) ? 'deselect' : 'select' ) . '" style="width: ' . $this->options( 'width' ) . 'px; height: ' . $this->options( 'height' ) . 'px;">
 		<div class="image" style="' . ( $this->have_image() ? 'background-image:url(' . $this->get_src( [ $this->options( 'width' ), $this->options( 'height' ) ] ) . ')' : '' ) . '"></div>
 		<div class="overlay"></div>
 		<i class="dashicons dashicons-format-image" data-icon="select"></i>

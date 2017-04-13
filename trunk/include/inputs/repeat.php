@@ -16,12 +16,15 @@
 			$R = '<th class="drag"><span class="spacer"></span></th>';
 			if( $this->have_cols() ){
 				$widthFull = 1;
+				$style_attrs_reserved = [ 'width', 'min-width' ];
 				foreach( $this->get_cols() as $field ){
-					$widthFull += 100;//$field->width();
-				}
-				foreach( $this->get_cols() as $field ){
-					$width = round( 100 / $widthFull * 100 );
-					$R .= '<th class="field">' . $field->name() . ( trim( $field->description() ) != '' ? '<p class="description">' . $field->description() . '</p>' : '' ) . '</th>';
+					$style_tag = [];
+					foreach( $field->attr() as $key => $val ){
+						if( array_key_exists( $key, array_flip( $style_attrs_reserved ) ) ){
+							$style_tag[] = $key . ': ' . $val;
+						}
+					}
+					$R .= '<th class="field" style="' . implode( '; ', $style_tag ) . '">' . $field->name() . ( trim( $field->description() ) != '' ? '<p class="description">' . $field->description() . '</p>' : '' ) . '</th>';
 				}
 			} else
 				$R .= '<th><span class="spacer"></span></th>';
@@ -58,9 +61,10 @@
 			} else {
 				$R = '';
 				$R .= $this->get_adminRowNull() . '<tbody class="wrap">';
-					foreach( $this->value() as $row ){
-						$R .= $this->get_adminRow( $row );
-					}
+				if( is_array( $this->value() ) )
+				foreach( $this->value() as $row ){
+					$R .= $this->get_adminRow( $row );
+				}
 				$R .= '<tr class="message" style="' . ( $this->have_rows() ? 'display: none;' : '' ) . '"><td colspan="' . ( count( $this->get_cols() ) + 2 ) . '">' . __( 'For add first row, press PLUS button...', 'hw-core-2' ) . '</td></tr>';
 				$R .= '</tbody>';
 				return '<div class="hw-input-repeat" id="' . $this->id . '"><table>' . $R . '</table></div>';

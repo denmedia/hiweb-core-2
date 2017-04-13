@@ -1,10 +1,6 @@
 <?php
 
-
 	include_once hiweb()->dir_classes . '/post_types.php';
-
-
-	
 
 
 	class hw_wp_user_meta_boxes extends hw_post_type_meta_boxes{
@@ -51,18 +47,6 @@
 				</tbody>
 			</table>
 			<?php
-		}
-
-
-		protected function add_action_options_update( $user_id ){
-			if( !is_null( $this->callback_save_post ) )
-				return call_user_func( $this->callback_save_post, $user_id );else{
-				if( is_array( $this->fields ) )
-					foreach( $this->fields as $id => $field ){
-						hiweb()->wp()->user( $user_id )->meta_update( $field->name(), $_POST[ $field->name() ] );
-					}
-			}
-			return $user_id;
 		}
 
 	}

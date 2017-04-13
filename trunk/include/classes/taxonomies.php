@@ -1,22 +1,22 @@
 <?php
-	
-	
+
+
 	class hw_taxonomies{
-		
+
 		/** @var hw_taxonomy[] */
 		private $taxonomies = array();
 
-		
+
 		public function __construct(){
 			//add_action( 'init', array( $this, 'add_action_init' ) );
 		}
-		
-		
+
+
 		public function is_exist( $taxonomy_name ){
 			return taxonomy_exists( $taxonomy_name );
 		}
-		
-		
+
+
 		/**
 		 * @param null $taxonomy_name
 		 * @return hw_taxonomy
@@ -25,19 +25,19 @@
 			if( !array_key_exists( $taxonomy_name, $this->taxonomies ) ){
 				$this->taxonomies[ $taxonomy_name ] = new hw_taxonomy( $taxonomy_name );
 			}
-			
+
 			return $this->taxonomies[ $taxonomy_name ];
 		}
-		
-		
+
+
 		/**
 		 * @return hw_taxonomy[]
 		 */
 		public function get_all(){
 			return $this->taxonomies;
 		}
-		
-		
+
+
 		/**
 		 * @param $taxonomy_name_source
 		 * @param $taxonomy_name_dest
@@ -51,8 +51,8 @@
 			$this->taxonomies[ $taxonomy_name_dest ]->name( $taxonomy_name_dest );
 			return $this->taxonomies[ $taxonomy_name_dest ];
 		}
-		
-		
+
+
 		/**
 		 * @param int|object|WP_Term $termOrId
 		 * @return hw_taxonomy
@@ -61,17 +61,17 @@
 			$term = get_term( $termOrId );
 			if( $term instanceof WP_Term ){
 				$R = $this->give( $term->taxonomy );
-			}else{
+			} else {
 				$R = $this->give( '' );
 			}
 			return $R;
 		}
-		
+
 	}
-	
-	
+
+
 	class hw_taxonomy{
-		
+
 		private $name;
 		private $labels;
 		private $description;
@@ -90,65 +90,57 @@
 		private $update_count_callback;
 		private $_builtin;
 		private $defaults = array(
-			'labels' => array(), 'description' => '', 'public' => true, 'publicly_queryable' => null, 'hierarchical' => false, 'show_ui' => null, 'show_in_menu' => null, 'show_in_nav_menus' => null, 'show_tagcloud' => null, 'show_in_quick_edit' => null, 'show_admin_column' => false, 'meta_box_cb' => null, 'capabilities' => array(), 'rewrite' => true, 'update_count_callback' => '', '_builtin' => false, 'object_type' => array()
+			'labels' => array(),
+			'description' => '',
+			'public' => true,
+			'publicly_queryable' => null,
+			'hierarchical' => false,
+			'show_ui' => null,
+			'show_in_menu' => null,
+			'show_in_nav_menus' => null,
+			'show_tagcloud' => null,
+			'show_in_quick_edit' => null,
+			'show_admin_column' => false,
+			'meta_box_cb' => null,
+			'capabilities' => array(),
+			'rewrite' => true,
+			'update_count_callback' => '',
+			'_builtin' => false,
+			'object_type' => array()
 		);
 		/** @var array */
 		private $object_type = array();
 		/** @var array */
 		private $terms = array();
+
+		use hw_hidden_methods_props;
+
+
 		/** @var hw_input[] */
-		
-		
+
 		public function __construct( $name ){
 			$this->name = strtolower( $name );
+			if( strlen( $this->name ) < 1 ){
+				return;
+			}
+			if( strlen( $this->name ) > 20 ){
+				hiweb()->console()->warn( 'Name of taxonomy must be between 1 and 20 symbols, this name is [' . $this->name . ']', true );
+			}
 			$this->labels = $name;
-			$this->set_properties();
-			/*if( trim( $this->name ) != '' ){
-				add_action( 'init', array( $this, 'register_taxonomy' ), 10 );
-				add_action( $this->name . '_add_form_fields', array( $this, 'add_action_add_form_fields' ) );
-				add_action( $this->name . '_edit_form', array( $this, 'add_action_add_form_fields' ) );
-				add_action( 'create_term', array( $this, 'add_action_edited_terms' ), 999, 2 );
-				add_action( 'edited_' . $this->name, array( $this, 'add_action_edited_terms' ), 999, 2 );
-			}*/
+			///Create
+			add_action( 'init', array( $this, 'register_taxonomy' ), 0 );
 		}
-		
-		
-		private function set_properties(){
-			if( taxonomy_exists( $this->name ) ){
-				$properties = (array)get_taxonomy( $this->name );
-				foreach( $properties as $key => $val ){
-					if( property_exists( $this, $key ) ){
-						$this->{$key} = $val;
-					}
-				}
-			}
-		}
-		
-		
-		public function __call( $name, $arguments ){
-			switch( $name ){
-				case 'register_taxonomy':
-					$this->register_taxonomy();
-					break;
-				case 'add_action_add_form_fields':
-					$this->add_action_add_form_fields( $arguments[0] );
-					break;
-				case 'add_action_edited_terms':
-					$this->add_action_edited_terms( $arguments[0], $arguments[1] );
-					break;
-			}
-		}
-		
-		
-		public function __clone(){
+
+
+		/*public function __clone(){
 			add_action( 'init', array( $this, 'register_taxonomy' ), 99 );
-		}
-		
-		
+		}*/
+
+
 		private function register_taxonomy(){
 			if( !taxonomy_exists( $this->name ) ){
 				register_taxonomy( $this->name, $this->object_type(), $this->props() );
-			}else{
+			} else {
 				global $wp_taxonomies;
 				foreach( $this->props() as $key => $val ){
 					if( property_exists( $wp_taxonomies[ $this->name ], $key ) ){
@@ -157,12 +149,12 @@
 				}
 			}
 		}
-		
-		
+
+
 		/**
 		 * Получить/Утсановить POST TYPE
 		 * @param null|array|string $object_type - post type
-		 * @param bool $append - добавлять к текущему значению
+		 * @param bool              $append      - добавлять к текущему значению
 		 * @return hw_taxonomy|array
 		 */
 		public function object_type( $object_type = null, $append = false ){
@@ -173,10 +165,10 @@
 					$object_type = array( $object_type );
 				$this->object_type = $append ? array_merge( $this->object_type, $object_type ) : $object_type;
 				return $this;
-			}else return $this->object_type;
+			} else return $this->object_type;
 		}
-		
-		
+
+
 		/**
 		 * @return array
 		 */
@@ -185,29 +177,28 @@
 			if( is_array( $this->defaults ) )
 				foreach( $this->defaults as $key => $def_value ){
 					if( property_exists( $this, $key ) && !is_null( $this->{$key} ) )
-						$R[ $key ] = $this->{$key};else $R[ $key ] = $def_value;
+						$R[ $key ] = $this->{$key}; else $R[ $key ] = $def_value;
 				}
 			return $R;
 		}
-		
-		
+
+
 		/**
 		 * @param null $name
-		 * @return string
+		 * @return hw_taxonomy|string
 		 */
 		public function name( $name = null ){
-			if( is_string( $name ) ){
-				$this->name = $name;
-				$this->set_properties();
+			if( !is_null( $name ) ){
+				$this->{__FUNCTION__} = $name;
 				return $this;
 			}
-			return $this->name;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $labels
-		 * @return $this|string
+		 * @param string|array $labels
+		 * @return hw_taxonomy|string
 		 */
 		public function labels( $labels = null ){
 			if( !is_null( $labels ) ){
@@ -218,228 +209,210 @@
 			}
 			return $this->labels;
 		}
-		
-		
+
+
 		/**
-		 * @param null $description
-		 * @return $this|string
+		 * @param string $set
+		 * @return hw_taxonomy|string
 		 */
-		public function description( $description = null ){
-			if( !is_null( $description ) ){
-				if( !is_array( $description ) )
-					$description = array( 'name' => $description );
-				$this->description = $description;
+		public function description( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->description;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $publicly_queryable
-		 * @return $this|string
+		 * @param string $set
+		 * @return hw_taxonomy|string
 		 */
-		public function publicly_queryable( $publicly_queryable = null ){
-			if( !is_null( $publicly_queryable ) ){
-				if( !is_array( $publicly_queryable ) )
-					$publicly_queryable = array( 'name' => $publicly_queryable );
-				$this->publicly_queryable = $publicly_queryable;
+		public function publicly_queryable( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->publicly_queryable;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $show_in_menu
-		 * @return $this|string
+		 * @param string $set
+		 * @return hw_taxonomy|string
 		 */
-		public function show_in_menu( $show_in_menu = null ){
-			if( !is_null( $show_in_menu ) ){
-				if( !is_array( $show_in_menu ) )
-					$show_in_menu = array( 'name' => $show_in_menu );
-				$this->show_in_menu = $show_in_menu;
+		public function show_in_menu( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->show_in_menu;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $show_in_quick_edit
-		 * @return $this|string
+		 * @param string $set
+		 * @return hw_taxonomy|string
 		 */
-		public function show_in_quick_edit( $show_in_quick_edit = null ){
-			if( !is_null( $show_in_quick_edit ) ){
-				if( !is_array( $show_in_quick_edit ) )
-					$show_in_quick_edit = array( 'name' => $show_in_quick_edit );
-				$this->show_in_quick_edit = $show_in_quick_edit;
+		public function show_in_quick_edit( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->show_in_quick_edit;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $meta_box_cb
-		 * @return $this|string
+		 * @param string $set
+		 * @return hw_taxonomy|string
 		 */
-		public function meta_box_cb( $meta_box_cb = null ){
-			if( !is_null( $meta_box_cb ) ){
-				if( !is_array( $meta_box_cb ) )
-					$meta_box_cb = array( 'name' => $meta_box_cb );
-				$this->meta_box_cb = $meta_box_cb;
+		public function meta_box_cb( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->meta_box_cb;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $capabilities
-		 * @return $this|string
+		 * @param string $set
+		 * @return hw_taxonomy|string
 		 */
-		public function capabilities( $capabilities = null ){
-			if( !is_null( $capabilities ) ){
-				if( !is_array( $capabilities ) )
-					$capabilities = array( 'name' => $capabilities );
-				$this->capabilities = $capabilities;
+		public function capabilities( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->capabilities;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $rewrite
-		 * @return $this|string
+		 * @param array|bool $set
+		 * @return hw_taxonomy|string
 		 */
-		public function rewrite( $rewrite = null ){
-			if( !is_null( $rewrite ) ){
-				if( !is_array( $rewrite ) )
-					$rewrite = array( 'name' => $rewrite );
-				$this->rewrite = $rewrite;
+		public function rewrite( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->rewrite;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $update_count_callback
-		 * @return $this|string
+		 * @param bool $set
+		 * @return hw_taxonomy|string
 		 */
-		public function update_count_callback( $update_count_callback = null ){
-			if( !is_null( $update_count_callback ) ){
-				if( !is_array( $update_count_callback ) )
-					$update_count_callback = array( 'name' => $update_count_callback );
-				$this->update_count_callback = $update_count_callback;
+		public function update_count_callback( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->update_count_callback;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $_builtin
-		 * @return $this|string
+		 * @param bool $set
+		 * @return hw_taxonomy|string
 		 */
-		public function _builtin( $_builtin = null ){
-			if( !is_null( $_builtin ) ){
-				if( !is_array( $_builtin ) )
-					$_builtin = array( 'name' => $_builtin );
-				$this->_builtin = $_builtin;
+		public function _builtin( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->_builtin;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $hierarchical
-		 * @return $this|string
+		 * @param bool $set
+		 * @return hw_taxonomy|string
 		 */
-		public function hierarchical( $hierarchical = null ){
-			if( !is_null( $hierarchical ) ){
-				$this->hierarchical = $hierarchical;
+		public function hierarchical( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->hierarchical;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $public
-		 * @return $this|string
+		 * @param string $set
+		 * @return hw_taxonomy|string
 		 */
-		public function publicly( $public = null ){
-			if( !is_null( $public ) ){
-				$this->public = $public;
+		public function _public( $set = null ){
+			if( !is_null( $set ) ){
+				$this->public = $set;
 				return $this;
 			}
 			return $this->public;
 		}
-		
-		
+
+
 		/**
-		 * @param null $show_ui
-		 * @return $this|string
+		 * @param bool $set
+		 * @return hw_taxonomy|string
 		 */
-		public function show_ui( $show_ui = null ){
-			if( !is_null( $show_ui ) ){
-				$this->show_ui = $show_ui;
+		public function show_ui( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->show_ui;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $show_admin_column
-		 * @return $this|string
+		 * @param bool $set
+		 * @return hw_taxonomy|string
 		 */
-		public function show_admin_column( $show_admin_column = null ){
-			if( !is_null( $show_admin_column ) ){
-				$this->show_admin_column = $show_admin_column;
+		public function show_admin_column( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->show_admin_column;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $show_in_nav_menus
-		 * @return $this|string
+		 * @param bool $set
+		 * @return hw_taxonomy|string
 		 */
-		public function show_in_nav_menus( $show_in_nav_menus = null ){
-			if( !is_null( $show_in_nav_menus ) ){
-				$this->show_in_nav_menus = $show_in_nav_menus;
+		public function show_in_nav_menus( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->show_in_nav_menus;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
-		 * @param null $show_tagcloud
-		 * @return $this|string
+		 * @param bool $set
+		 * @return hw_taxonomy|string
 		 */
-		public function show_tagcloud( $show_tagcloud = null ){
-			if( !is_null( $show_tagcloud ) ){
-				$this->show_tagcloud = $show_tagcloud;
+		public function show_tagcloud( $set = null ){
+			if( !is_null( $set ) ){
+				$this->{__FUNCTION__} = $set;
 				return $this;
 			}
-			return $this->show_tagcloud;
+			return $this->{__FUNCTION__};
 		}
-		
-		
+
+
 		/**
 		 * Возвращает все термины таксономии
 		 * @param string $returnKeyGoup
 		 * @param string $orderby
-		 * @param bool $hide_empty
-		 * @param int $number
-		 * @param int $offset
+		 * @param bool   $hide_empty
+		 * @param int    $number
+		 * @param int    $offset
 		 * @param string $field
 		 * @return int|WP_Error|WP_Term[]
 		 */
@@ -458,20 +431,20 @@
 								$this->terms[ $argsString ][ $term->{$returnKeyGoup} ][] = $term;
 							}
 						}
-					}else{
+					} else {
 						foreach( $terms as $term ){
 							$this->terms[ $argsString ][ $term->term_id ] = $term;
 						}
 					}
-				}else{
+				} else {
 					$this->terms[ $argsString ] = array();
 				}
 			}
-			
+
 			return $this->terms[ $argsString ];
 		}
-		
-		
+
+
 		/**
 		 * Копирование объекта
 		 * @param $new_name
@@ -480,6 +453,6 @@
 		public function copy( $new_name ){
 			return hiweb()->taxonomies()->copy( $this->name, $new_name );
 		}
-		
-		
+
+
 	}

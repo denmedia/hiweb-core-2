@@ -25,6 +25,9 @@
 		private $prepend = '';
 		private $append = '';
 
+		/** @var array Attributes array */
+		private $attributes = [];
+
 
 		/**
 		 * hw_field constructor.
@@ -89,13 +92,34 @@
 
 
 		/**
+		 * @param null|string|array $name_or_array
+		 * @param null              $value
+		 * @return hw_field|array|mixed|null
+		 */
+		public function attr( $name_or_array = null, $value = null ){
+			if( is_array( $name_or_array ) ){
+				$this->attributes = array_merge( $this->attributes, $name_or_array );
+				return $this;
+			} elseif( !is_string( $name_or_array ) || trim( $name_or_array ) == '' ) {
+				return $this->attributes;
+			} elseif( is_null( $value ) ) {
+				return array_key_exists( $name_or_array, $this->attributes ) ? $this->attributes[ $name_or_array ] : null;
+			} else {
+				$this->attributes[ $name_or_array ] = $value;
+				return $this;
+			}
+		}
+
+
+		/**
 		 * Установить / Получить значение опции, при установке свойства, возвращаеться объект
 		 * @param null|string|array $option_key   - ключ опции, либо массив [ключ => значение]. Если передать не массив и не строку, то ф-я вернет весь массив опций.
 		 * @param null|mixed|true   $option_value - значение опции, если option_key был ключем, если он был массивом, то значени true перепишет все опции. Если значение не передать (null), то ф-я вернут значение данного ключа
-		 * @return array|mixed|hw_input
+		 * @return array|mixed|hw_field
 		 */
 		public function options( $option_key = null, $option_value = null ){
-			return $this->input()->options( $option_key, $option_value );
+			$R = $this->input()->options( $option_key, $option_value );
+			return ( $R instanceof hw_input ) ? $this : $R;
 		}
 
 

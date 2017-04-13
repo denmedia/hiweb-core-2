@@ -41,7 +41,7 @@
 			$this->input = hiweb()->inputs()->is_exist( $id ) ? hiweb()->inputs()->give( $id ) : false;
 			if( !did_action( 'wp' ) ){
 				hiweb()->console()->warn( 'hiweb()→meta() warn: action [wp] dosen\'t did! Auto detect queried object is not possible!' );
-			}else{
+			} else {
 				switch( get_class( get_queried_object() ) ){
 					case 'WP_Post':
 						$this->set_post( get_queried_object_id() );
@@ -59,7 +59,8 @@
 						$this->object_type = 'post';
 						break;
 				}
-				if($this->input instanceof hw_input) $this->input->value($this->get());
+				if( $this->input instanceof hw_input )
+					$this->input->value( $this->get() );
 			}
 		}
 
@@ -72,16 +73,16 @@
 			if( is_null( $this->value ) ){
 				if( $this->object_type == 'post' ){
 					$this->value = get_post_meta( $this->object_id, $this->id, true );
-				}elseif( $this->object_type == 'term' ){
+				} elseif( $this->object_type == 'term' ) {
 					$this->value = get_term_meta( $this->object_id, $this->id, true );
-				}elseif( $this->object_type == 'user' ){
+				} elseif( $this->object_type == 'user' ) {
 					$this->value = hiweb()->user( $this->object_id )->meta( $this->id );
 				}
 			}
 			return $this->value;
 		}
-		
-		
+
+
 		/**
 		 * Выводит значение поля
 		 */
@@ -126,11 +127,11 @@
 			$this->object_type = 'post';
 			if( $post instanceof WP_Post ){
 				$this->object_id = $post->ID;
-			}elseif( is_numeric( $post ) ){
+			} elseif( is_numeric( $post ) ) {
 				$this->object_id = $post;
-			}elseif( get_queried_object() instanceof WP_Post ){
+			} elseif( get_queried_object() instanceof WP_Post ) {
 				$this->object_id = get_queried_object_id();
-			}else{
+			} else {
 				hiweb()->console()->warn( 'hiweb()→meta()→set_post() error: post id for [' . $this->id . '] not found!' );
 			}
 			return $this;
@@ -141,11 +142,11 @@
 			$this->object_type = 'term';
 			if( $term instanceof WP_Term ){
 				$this->object_id = $term->term_id;
-			}elseif( is_numeric( $term ) ){
+			} elseif( is_numeric( $term ) ) {
 				$this->object_id = $term;
-			}elseif( get_queried_object() instanceof WP_Term ){
+			} elseif( get_queried_object() instanceof WP_Term ) {
 				$this->object_id = get_queried_object_id();
-			}else{
+			} else {
 				hiweb()->console()->warn( 'hiweb()→meta()→set_post() error: term id for [' . $this->id . '] not found!' );
 			}
 			return $this;
@@ -156,11 +157,11 @@
 			$this->object_type = 'user';
 			if( $user instanceof WP_User ){
 				$this->object_id = $user->ID;
-			}elseif( is_numeric( $user ) ){
+			} elseif( is_numeric( $user ) ) {
 				$this->object_id = $user;
-			}elseif( get_queried_object() instanceof WP_User ){
+			} elseif( get_queried_object() instanceof WP_User ) {
 				$this->object_id = get_queried_object_id();
-			}else{
+			} else {
 				hiweb()->console()->warn( 'hiweb()→meta()→set_post() error: user id for [' . $this->id . '] not found!' );
 			}
 			return $this;
@@ -210,13 +211,13 @@
 			if( !is_array( $this->rows ) ){
 				foreach( $this->get() as $row_values ){
 					if( is_array( $row_values ) )
-						$this->rows[] = new hw_meta_field_row( $this, $row_values );else hiweb()->console()->warn( 'hiweb()→meta()→the_row() error: once of the rows is not array!', 1 );
+						$this->rows[] = new hw_meta_field_row( $this, $row_values ); else hiweb()->console()->warn( 'hiweb()→meta()→the_row() error: once of the rows is not array!', 1 );
 				}
 			}
 			///
 			if( count( $this->rows ) == 0 ){
 				return false;
-			}else{
+			} else {
 				$this->row = array_shift( $this->rows );
 				return $this->row;
 			}
@@ -234,7 +235,7 @@
 			}
 			if( is_null( $this->row ) ){
 				$row = reset( $this->get() );
-			}else{
+			} else {
 				$row = $this->row;
 			}
 			return array_key_exists( $subfield_id, $this->row ) ? $this->row[ $subfield_id ] : null;

@@ -61,6 +61,7 @@
 			return $this->field->input()->reset_row();
 		}
 
+
 		/**
 		 * @return bool
 		 */
@@ -71,7 +72,8 @@
 			return $this->field->input()->have_rows();
 		}
 
-		public function get_sub_field($subFieldId){
+
+		public function get_sub_field( $subFieldId ){
 			//todo
 		}
 

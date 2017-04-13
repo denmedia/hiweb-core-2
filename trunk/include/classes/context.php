@@ -30,7 +30,8 @@
 		 */
 		public function is_login_page(){
 			return array_key_exists( $GLOBALS['pagenow'], array_flip( [
-				'wp-login.php', 'wp-register.php'
+				'wp-login.php',
+				'wp-register.php'
 			] ) );
 		}
 
