@@ -26,10 +26,3 @@
 
 		add_action( 'admin_notices', 'hw_core_php_version_error' );
 	}
-
-	//TODO!
-	add_field( 'test', 'text', 'Проверка тестового поля' )->location()->taxonomy('category');
-
-	add_action( 'wp', function(){
-		hiweb()->console( get_field( 'test' ) );
-	} );
