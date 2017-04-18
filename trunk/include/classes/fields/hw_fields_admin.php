@@ -54,6 +54,7 @@
 						}
 				} );
 				///TAXONOMY SAVE
+				add_action( 'create_term', [ $this, 'edited_term' ], 10, 3 );
 				add_action( 'edited_term', [ $this, 'edited_term' ], 10, 3 );
 				///OPTIONS FIELDS
 				add_action( 'admin_init', [ $this, 'options_page_add_fields' ], 999999 );
@@ -95,7 +96,7 @@
 							if( $admin_page instanceof hw_admin_menu_abstract ){
 								$fields = hiweb()->fields()->locations()->get_fields_by( 'admin_menu', [ 'slug' => $admin_page->menu_slug() ] );
 								foreach( $fields as $field ){
-									$field_option_name = 'hiweb-'.$admin_page->menu_slug().'-'.$field->get_id();
+									$field_option_name = 'hiweb-' . $admin_page->menu_slug() . '-' . $field->get_id();
 									$field->value( get_option( $field_option_name, null ) );
 									$field->input()->name = $field_option_name;
 								}
@@ -144,13 +145,7 @@
 
 		///////////////////TAXONOMY
 		private function get_fields_by_taxonomy( $taxonomy ){
-			$R = [];
-			if( function_exists( 'get_current_screen' ) && is_object( get_current_screen() ) ){
-				/** @var hw_field[] $R */
-				$R = hiweb()->fields()->locations()->get_fields_by( 'taxonomy', [], [ 'name' => '.*' ], true );
-				$R = hiweb()->fields()->locations()->get_fields_by( 'taxonomy', [ 'name' => $taxonomy ], [], true );
-			}
-			return $R;
+			return hiweb()->fields()->locations()->get_fields_by( 'taxonomy', [ 'name' => $taxonomy ] );
 		}
 
 
@@ -167,7 +162,6 @@
 				if( $term instanceof WP_Term )
 					foreach( $fields as $field ){
 						$field->value( get_term_meta( $term->term_id, $field->get_id(), true ) );
-						hiweb()->console( $field->value() );
 					}
 				hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 			}

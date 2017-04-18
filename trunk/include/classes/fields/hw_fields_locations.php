@@ -96,7 +96,7 @@
 				}
 				$filter_pattern[] = ')|(?!"' . $key . '":\[(?:"[\w\d]+"|\d)\]).)*';
 				//(?:"slug":\["theme"\]|(?!"slug":\["\w+"\]).)
-				$filter_pattern = '/^' . $group . ':{' . implode('',$filter_pattern) . '}$/i';
+				$filter_pattern = '/^' . $group . ':{|\[' . implode('',$filter_pattern) . '}|\]$/i';
 				if( !array_key_exists( $filter_pattern, $PATTERNS ) )
 					$PATTERNS[ $filter_pattern ] = preg_match( $filter_pattern, $ruleId );
 				if( $PATTERNS[ $filter_pattern ] == 0 )
@@ -274,6 +274,7 @@
 		 */
 		public function taxonomy( $taxonomy = null ){
 			$this->rules['taxonomy'] = [];
+			$this->update_rulesId();
 			$location = new hw_fields_location_taxonomy( $this );
 			if( is_array( $taxonomy ) || is_string( $taxonomy ) ){
 				$location->name( $taxonomy );
