@@ -10,6 +10,7 @@
 	trait hw_input_value{
 
 		protected $value = null;
+		protected $value_original = null;
 
 		/** @var null|array */
 		protected $cols_source = null;
@@ -23,6 +24,7 @@
 
 
 		protected function set_value( $value ){
+			$this->value_original = $value;
 			$this->value = [ [] ];
 			switch( $this->dimension ){
 				case 0:
@@ -50,72 +52,6 @@
 			}
 		}
 
-
-		//		/**
-		//		 * Set colspan source
-		//		 * @param $cols
-		//		 * @return bool
-		//		 */
-		//		protected function set_cols_source( $cols = null ){
-		//			if( !is_array( $cols ) ){
-		//				return false;
-		//			}
-		//			if( $this->dimension < 1 ){
-		//				hiweb()->console()->info( sprintf( __( 'Dimension [%s] set to [1], for set cols source' ), $this->dimension ), true );
-		//				$this->set_dimension( 1 );
-		//			}
-		//			$this->cols_source = $cols;
-		//			return true;
-		//		}
-		//
-		//
-		//		/**
-		//		 * @return array|null
-		//		 */
-		//		protected function get_cols_source(){
-		//			return $this->cols_source;
-		//		}
-		//
-		//
-		//		/**
-		//		 * @return bool
-		//		 */
-		//		protected function have_cols_source(){
-		//			return ( $this->dimension > 0 && is_array( $this->cols_source ) && count( $this->cols_source ) > 0 );
-		//		}
-		//
-		//
-		//		/**
-		//		 * @return bool
-		//		 */
-		//		protected function have_rows_source(){
-		//			return ( $this->dimension > 1 && is_array( $this->rows_source ) && count( $this->rows_source ) > 0 );
-		//		}
-		//
-		//
-		//		/**
-		//		 * @param $rows
-		//		 * @return bool
-		//		 */
-		//		protected function set_rows_source( $rows ){
-		//			if( !is_array( $rows ) ){
-		//				return false;
-		//			}
-		//			if( $this->dimension < 2 ){
-		//				hiweb()->console()->info( sprintf( __( 'Dimension [%s] set to [2], for set cols source' ), $this->dimension ), true );
-		//				$this->set_dimension( 2 );
-		//			}
-		//			$this->rows_source = $rows;
-		//			return true;
-		//		}
-		//
-		//
-		//		/**
-		//		 * @return array|null
-		//		 */
-		//		protected function get_rows_source(){
-		//			return $this->rows_source;
-		//		}
 
 		/**
 		 * Set demension from 0 to 3

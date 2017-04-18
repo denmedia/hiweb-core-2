@@ -25,7 +25,7 @@
 		 * @return string
 		 * @version 1.4
 		 */
-		public function getHtml_arrayPrint( $mixed, $depth = 4, $showObjects = true ){
+		public function getHtml_arrayPrint( $mixed, $depth = 6, $showObjects = true ){
 			if( $depth < 1 ){
 				return '<div class="hiweb-string-printarr">...</div>';
 			}
@@ -78,7 +78,7 @@
 		}
 
 
-		protected function print_this( $mixed, $depth = 4, $showObjects = true ){
+		protected function print_this( $mixed, $depth = 6, $showObjects = true ){
 			echo '<link rel="stylesheet" href="' . hiweb()->url_css . '/arrays.css"/>';
 			echo $this->getHtml_arrayPrint( $mixed, $depth, $showObjects );
 			return $this;

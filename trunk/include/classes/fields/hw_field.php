@@ -12,7 +12,7 @@
 		private $description;
 		///
 		private $type;
-		/** @var hw_field_location[] */
+		/** @var hw_fields_location_root[] */
 		private $hooks = array();
 		/** @var null|hw_input */
 		private $input;
@@ -191,17 +191,18 @@
 
 
 		/**
-		 * @return hw_field_location
+		 * @return hw_fields_location_root
 		 */
 		public function location(){
-			$hook = hiweb()->fields()->hook( $this );
-			$this->hooks[] = $hook;
-			return $hook;
+			return hiweb()->fields()->locations()->add( $this );
+			//$hook = hiweb()->fields()->hook( $this );
+			//$this->hooks[] = $hook;
+			//return $hook;
 		}
 
 
 		/**
-		 * @return hw_field_location[]
+		 * @return hw_fields_location_root[]
 		 */
 		public function get_locations(){
 			return $this->hooks;

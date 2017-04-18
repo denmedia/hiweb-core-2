@@ -23,7 +23,7 @@
 				$this->field = hiweb()->fields()->get( $fieldId );
 				$this->field->value( $this->value() );
 			} else {
-				hiweb()->console()->warn( sprintf( __( 'Filed [%s] not exists', 'hw-core-2' ), $fieldId ), true );
+				hiweb()->console()->warn( sprintf( __( 'Field [%s] not exists', 'hw-core-2' ), $fieldId ), true );
 			}
 		}
 
@@ -50,7 +50,58 @@
 		public function value(){
 			if( !$this->is_exists() )
 				return null;
-			return hw_fields_static::get_value_by_context( $this->id, $this->contextId );
+			///
+			$GROUP = 'options';
+			$ARGS = [];
+			$value = null;
+			///GROUP TEST
+			if( is_string( $this->contextId ) ){ //Контекст является опцией
+				//todo: проверить не admin menu ли это...
+				$GROUP = 'options';
+				$value = get_option( 'hiweb-' . $this->contextId . '-' . $this->id(), null );
+			} else { //Контекст задан объектом
+				///
+				if( !is_object( $this->contextId ) && did_action( 'wp' ) )
+					$this->contextId = get_queried_object();
+				elseif(is_numeric($this->contextId)){
+					$temp_contenxt = get_queried_object();
+					if( $temp_contenxt instanceof WP_Post ){
+						$this->contextId = get_post($this->contextId);
+					} elseif( $temp_contenxt instanceof WP_Term ) {
+						$this->contextId = get_term($this->contextId, $temp_contenxt->taxonomy);
+					} elseif( $temp_contenxt instanceof WP_User ) {
+						$this->contextId = get_user_by('user_login',$this->contextId);
+					} else {
+						hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s] by data ['.$this->contextId.'].' ), $this->field->get_id() ), true );
+					}
+				}
+				///
+				if( $this->contextId instanceof WP_Post ){
+					$GROUP = 'post_type';
+					$ARGS[] = [ 'ID' => $this->contextId->ID ];
+					$ARGS[] = [ 'front_page' => ( $this->contextId->ID == get_option( 'page_on_front' ) ) ];
+					$value = get_post_meta( $this->contextId->ID, $this->id(), true );
+				} elseif( $this->contextId instanceof WP_Term ) {
+					$GROUP = 'taxonomy';
+					$ARGS[] = [ 'term_id' => $this->contextId->term_id ];
+					$value = get_term_meta( $this->contextId->term_id, $this->id(), true );
+				} elseif( $this->contextId instanceof WP_User ) {
+					$GROUP = 'users';
+					$ARGS[] = [ 'term_id' => $this->contextId->user_id ];
+					$value = get_user_meta( $this->contextId->ID, $this->id(), true );
+				} else {
+					hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s], since the action has not yet done.' ), $this->field->get_id() ), true );
+				}
+			}
+			//
+			///
+			$fields = hiweb()->fields()->locations()->get_fields_by( $GROUP, $ARGS );
+			if( !array_key_exists( $this->id(), $fields ) || !$fields[ $this->id() ] instanceof hw_field )
+				return null;
+			$this->field = $fields[ $this->id() ];
+			$this->field->value( $value );
+			///
+			return $value;
 		}
 
 

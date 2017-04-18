@@ -52,6 +52,13 @@
 		}
 
 
+		public function have_rows(){
+			if( !is_array( $this->value_original ) ){
+				return false;
+			} else return parent::have_rows();
+		}
+
+
 		public function html( $arguments = null ){
 			hiweb()->css( hiweb()->url_css . '/input_repeat.css' );
 			hiweb()->js( hiweb()->url_js . '/input_repeat.js', array( 'jquery-ui-sortable' ) );
@@ -61,10 +68,10 @@
 			} else {
 				$R = '';
 				$R .= $this->get_adminRowNull() . '<tbody class="wrap">';
-				if( is_array( $this->value() ) )
-				foreach( $this->value() as $row ){
-					$R .= $this->get_adminRow( $row );
-				}
+				if( $this->have_rows() )
+					foreach( $this->value() as $row ){
+						$R .= $this->get_adminRow( $row );
+					}
 				$R .= '<tr class="message" style="' . ( $this->have_rows() ? 'display: none;' : '' ) . '"><td colspan="' . ( count( $this->get_cols() ) + 2 ) . '">' . __( 'For add first row, press PLUS button...', 'hw-core-2' ) . '</td></tr>';
 				$R .= '</tbody>';
 				return '<div class="hw-input-repeat" id="' . $this->id . '"><table>' . $R . '</table></div>';

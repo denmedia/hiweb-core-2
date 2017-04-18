@@ -1,9 +1,9 @@
 <?php
 
-	include_once 'fields/hw_field_location.php';
+	include_once 'fields/hw_fields_locations.php';
 	include_once 'fields/hw_field.php';
-	include_once 'fields/hw_fields_static.php';
 	include_once 'fields/hw_field_frontend.php';
+	include_once 'fields/hw_fields_admin.php';
 
 
 	class hw_fields{
@@ -12,15 +12,10 @@
 		use hw_hidden_methods_props;
 
 
-		private $dir = 'fields';
-
-		/** @var hw_field_location[] */
-		private $hooks = array();
-
 		/** @var hw_field[] */
-		private $fields = array();
+		public $fields = array();
 		/** @var hw_field_frontend[] */
-		private $fields_byContext = array();
+		public $fields_byContext = array();
 
 		private $fieldId_globalId = array();
 		private $globalId_fieldId = array();
@@ -31,46 +26,6 @@
 		/** @var hw_field */
 		public $loop_rows_field;
 		private $current_row = array();
-
-
-		public function __construct(){
-			$this->dir = hiweb()->dir_classes . '/' . $this->dir;
-			///
-			add_action( 'current_screen', array(
-				$this,
-				'do_distribute'
-			), 999999999999 );
-			///
-			add_action( 'save_post', array(
-				$this,
-				'save_post'
-			) );
-			///
-			add_action( 'personal_options_update', array(
-				$this,
-				'user_options_update'
-			) );
-			add_action( 'edit_user_profile_update', array(
-				$this,
-				'user_options_update'
-			) );
-			///
-			add_action( 'init', function(){
-				if( function_exists( 'get_taxonomies' ) ){
-					foreach( get_taxonomies() as $taxonomy ){
-						//Save Term
-						add_action( 'create_term', array(
-							$this,
-							'save_taxonomy'
-						), 99 );
-						add_action( 'edited_' . $taxonomy, array(
-							$this,
-							'save_taxonomy'
-						), 99 );
-					}
-				}
-			} );
-		}
 
 
 		/**
@@ -88,6 +43,33 @@
 			$this->fieldId_globalId[ $fieldId ][] = $field;
 			$this->globalId_fieldId[ $global_id ][] = $field;
 			return $field;
+		}
+
+
+		/**
+		 * Смена глобального ID для поля
+		 * @param $oldGlobalId
+		 * @param $newGlobalId
+		 * @return bool
+		 */
+		public function change_globalId( $oldGlobalId, $newGlobalId ){
+			if( !isset( $this->fields[ $oldGlobalId ] ) )
+				return false;
+			$field = $this->fields[ $oldGlobalId ];
+			unset( $this->fields[ $oldGlobalId ] );
+			$this->fields[ $newGlobalId ] = $field;
+			if( isset( $this->fieldId_globalId[ $field->get_id() ] ) && is_array( $this->fieldId_globalId[ $field->get_id() ] ) )
+				foreach( $this->fieldId_globalId[ $field->get_id() ] as $index => $globalIds ){
+					if( $globalIds == $oldGlobalId ){
+						$this->fieldId_globalId[ $field->get_id() ][ $index ] = $newGlobalId;
+					}
+				}
+			if( isset( $this->globalId_fieldId[ $oldGlobalId ] ) && is_array( $this->globalId_fieldId[ $oldGlobalId ] ) ){
+				$ids = $this->globalId_fieldId[ $oldGlobalId ];
+				unset( $this->globalId_fieldId[ $oldGlobalId ] );
+				$this->globalId_fieldId[ $newGlobalId ] = $ids;
+			}
+			return true;
 		}
 
 
@@ -136,97 +118,6 @@
 
 
 		/**
-		 * Добавление функции в бэк-энд редакторе типов поста, пользователя, таксономий
-		 * @param hw_field $hw_field
-		 * @return hw_field_location
-		 */
-		protected function hook( hw_field $hw_field ){
-			$edit_hook = new hw_field_location( $hw_field );
-			$this->hooks[] = $edit_hook;
-			return $edit_hook;
-		}
-
-
-		/**
-		 * @return hw_field_location[]
-		 */
-		protected function get_hooks(){
-			$R = array();
-			if( is_array( $this->hooks ) )
-				foreach( $this->hooks as $hook ){
-					if( $hook instanceof hw_field_location )
-						$R[] = $hook;
-				}
-			return $R;
-		}
-
-
-		///////////////////////
-
-		protected function do_distribute(){
-			include 'fields/do_distribute.php';
-		}
-
-
-		/**
-		 * @param null $post_id
-		 * @param null $post
-		 */
-		private function save_post( $post_id = null, $post = null ){
-			/*$update_data = array();
-			foreach( $_POST as $key => $value ){
-				if( strpos( $key, hiweb()->fields()->input_prefix ) === 0 ){
-					$update_data[ $key ] = $value;
-				}
-			}*/
-			/** @var hw_field_location $hook */
-			foreach( $this->get_hooks() as $hook ){
-				$input_name = $hook->get_field()->input()->name;
-				if( array_key_exists( $input_name, $_POST ) ){
-					//todo: сделать фильтр, если данного поля на самом деле не должно быть
-					update_post_meta( $post_id, $hook->get_field()->input()->name, $_POST[ $input_name ] );
-				}
-			}
-		}
-
-
-		/**
-		 * @param integer $term_id
-		 */
-		private function save_taxonomy( $term_id ){
-			/*$update_data = array();
-			foreach( $_POST as $key => $value ){
-				if( strpos( $key, hiweb()->fields()->input_prefix ) === 0 ){
-					$update_data[ $key ] = $value;
-				}
-			}*/
-			/** @var hw_field_location $hook */
-			foreach( $this->get_hooks() as $hook ){
-				$input_name = $hook->get_field()->input()->name;
-				if( array_key_exists( $input_name, $_POST ) ){
-					//todo: сделать фильтр, если данного поля на самом деле не должно быть
-					update_term_meta( $term_id, $hook->get_field()->input()->name, $_POST[ $input_name ] );
-				}
-			}
-		}
-
-
-		/**
-		 * User Options Update
-		 * @param $user_id
-		 */
-		private function user_options_update( $user_id ){
-			if( !isset( $_POST['user_id'] ) )
-				return;
-			foreach( $this->get_hooks() as $hook ){
-				if( count( $hook->get_rules_by_group( 'users' ) ) > 0 && isset( $_POST[ $hook->get_field()->input()->name ] ) ){
-					update_user_meta( $_POST['user_id'], $hook->get_field()->input()->name, $_POST[ $hook->get_field()->input()->name ] );
-				}
-			}
-		}
-
-
-		/**
 		 * @return mixed
 		 */
 		public function the_row(){
@@ -249,6 +140,17 @@
 		 */
 		public function reset_rows(){
 			return $this->loop_rows_field->input()->reset_row();
+		}
+
+
+		/**
+		 * @return hw_fields_locations
+		 */
+		public function locations(){
+			static $class;
+			if( !$class instanceof hw_fields_locations )
+				$class = new hw_fields_locations();
+			return $class;
 		}
 
 	}

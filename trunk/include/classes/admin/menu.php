@@ -3,6 +3,7 @@
 
 	class hw_admin_menu{
 
+		/** @var hw_admin_menu_abstract[] */
 		private $pages = array();
 
 		/** @var hw_admin_menu_page[] */
@@ -173,36 +174,6 @@
 
 
 		/**
-		 * Add field to options page
-		 * @param $field
-		 */
-		public function add_field( hw_field $field ){
-			$this->fields[ $field->get_id() ] = $field;
-		}
-
-
-		/**
-		 * Return all fields from options page
-		 * @return hw_field[]
-		 */
-		public function get_fields(){
-			return $this->fields;
-		}
-
-
-		/**
-		 * Remove field by ID
-		 * @param $fieldId
-		 * @return bool
-		 */
-		public function remove_field( $fieldId ){
-			$R = isset( $this->fields[ $fieldId ] );
-			unset( $this->fields[ $fieldId ] );
-			return $R;
-		}
-
-
-		/**
 		 *
 		 */
 		protected function add_action_admin_menu(){
@@ -294,6 +265,16 @@
 
 
 		/**
+		 * @param hw_field $hw_field
+		 * @return array|hw_field[]
+		 */
+		public function add_field(hw_field $hw_field){
+			$this->fields[] = $hw_field;
+			return $this->fields;
+		}
+
+
+		/**
 		 * Выводит страницу опций
 		 */
 		protected function the_page(){
@@ -318,16 +299,18 @@
 			///Field
 			do_action( 'hw_admin_menu_page', $this );
 			///hook content
-			if( has_action( 'hw_admin_menu_page_' . $this->menu_slug ) ){
-				do_action( 'hw_admin_menu_page_' . $this->menu_slug, $this );
+			if( has_action( 'hw_admin_menu_page_content_' . $this->menu_slug ) ){
+				do_action( 'hw_admin_menu_page_content_' . $this->menu_slug, $this );
 				$page_is_empty = false;
 			}
 			///Fields to options
-			if( is_array( $this->fields ) ){
+			$fields = hiweb()->fields()->locations()->get_fields_by('admin_menu',['slug' => $this->menu_slug()]);
+			if( is_array( $fields ) ){
 				$field_ids = array();
-				foreach( $this->fields as $field ){
-					register_setting( 'hw_options_group_' . $this->menu_slug, $field->input()->name );
-					$field_ids[] = $field->input()->name;
+				foreach( $fields as $field ){
+					$field_option_name = 'hiweb-'.$this->menu_slug().'-'.$field->get_id();
+					register_setting( 'hw_options_group_' . $this->menu_slug, $field_option_name );
+					$field_ids[] = $field_option_name;
 				}
 				echo '<input type="hidden" name="action" value="update" /><input type="hidden" name="page_options" value="' . implode( ',', $field_ids ) . '" />';
 			}
@@ -336,7 +319,7 @@
 			///
 			//Wrap + Title
 			if( $this->use_title_form )
-				if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_opening' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_opening', $this ) ){
+				if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_pre' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_pre', $this ) ){
 					echo '<div class="wrap"><h2>' . $this->page_title . '</h2>';
 				}
 			if( $content != '' ){
