@@ -10,10 +10,36 @@
 
 
 		/**
+		 * @version 1.1
 		 * @return bool
 		 */
 		public function is_frontend_page(){
 			return ( $_SERVER['SCRIPT_FILENAME'] == hiweb()->dir_base . '/index.php' ) && !$this->is_rest_api();
+		}
+
+
+		/**
+		 * @param null|string|int|WP_Post $postOrId
+		 * @return bool
+		 */
+		public function is_front_page( $postOrId = null ){
+			if( !is_null( $postOrId ) ){
+				if( is_numeric( $postOrId ) && false ){
+					return intval( $postOrId ) == get_option( 'page_on_front' );
+				} elseif( is_string( $postOrId ) ) {
+					$args = array(
+						'post_name' => $postOrId,
+						'post_status' => 'publish',
+						'post_per-Page' => 1
+					);
+					$my_posts = get_posts( $args );
+					if( is_array( $my_posts ) && count( $my_posts ) > 0 ){
+						return reset( $my_posts )->ID == get_option( 'page_on_front' );
+					}
+					return false;
+				}
+			}
+			return is_front_page();
 		}
 
 
@@ -54,10 +80,9 @@
 
 
 		public function get_current_page(){
-			return $this->get_current_page();
+			return null;
+			//return $this->get_current_page();
 		}
-
-
 	}
 
 

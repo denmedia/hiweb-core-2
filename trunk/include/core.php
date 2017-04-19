@@ -98,15 +98,10 @@
 
 			/**
 			 * Возвращает данные контекста, текущего контекста
-			 * @param null|true|array|WP_Post|WP_Term|WP_Post_Type|WP_Taxonomy $context
-			 * @return hw_context|hw_context_current_prepare
+			 * @return hw_context
 			 */
-			public function context( $context = null ){
-				if( is_null( $context ) ){
-					return $this->give_class( 'context' );
-				} else {
-					return $this->give_class( 'context' )->prepare( $context );
-				}
+			public function context(){
+				return $this->give_class( 'context' );
 			}
 
 
