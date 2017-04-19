@@ -96,7 +96,7 @@
 							if( $admin_page instanceof hw_admin_menu_abstract ){
 								$fields = hiweb()->fields()->locations()->get_fields_by( 'admin_menu', [ 'slug' => $admin_page->menu_slug() ] );
 								foreach( $fields as $field ){
-									$field_option_name = 'hiweb-' . $admin_page->menu_slug() . '-' . $field->get_id();
+									$field_option_name = hiweb()->fields()->get_options_field_id($admin_page->menu_slug(),$field->get_id());// 'hiweb-' . $admin_page->menu_slug() . '-' . $field->get_id();
 									$field->value( get_option( $field_option_name, null ) );
 									$field->input()->name = $field_option_name;
 								}
@@ -126,7 +126,7 @@
 				add_settings_section( 'hiweb-' . $page, $data['title'], '', $page );
 				foreach( $data['fields'] as $field ){
 					if( $field instanceof hw_field ){
-						$field_options_name = 'hiweb-' . $page . '-' . $field->get_id();
+						$field_options_name = hiweb()->fields()->get_options_field_id($page, $field->get_id()); //'hiweb-' . $page . '-' . $field->get_id();
 						if( $current_options_page_update && !isset( $_POST[ $field_options_name ] ) ){
 							delete_option( $field_options_name );
 						} else {

@@ -29,6 +29,16 @@
 
 
 		/**
+		 * @param string $field_id
+		 * @param string $page_slug
+		 * @return string
+		 */
+		public function get_options_field_id( $page_slug, $field_id ){
+			return 'hiweb-' . $page_slug . '-' . $field_id;
+		}
+
+
+		/**
 		 * Добавить поле
 		 * @param        $fieldId
 		 * @param string $type

@@ -56,23 +56,21 @@
 			$value = null;
 			///GROUP TEST
 			if( is_string( $this->contextId ) ){ //Контекст является опцией
-				//todo: проверить не admin menu ли это...
 				$GROUP = 'options';
-				$value = get_option( 'hiweb-' . $this->contextId . '-' . $this->id(), null );
+				$value = get_option( hiweb()->fields()->get_options_field_id( $this->contextId, $this->id() ), null ); //get_option( 'hiweb-' . $this->contextId . '-' . $this->id(), null );
 			} else { //Контекст задан объектом
 				///
 				if( !is_object( $this->contextId ) && did_action( 'wp' ) )
-					$this->contextId = get_queried_object();
-				elseif(is_numeric($this->contextId)){
+					$this->contextId = get_queried_object(); elseif( is_numeric( $this->contextId ) ) {
 					$temp_contenxt = get_queried_object();
 					if( $temp_contenxt instanceof WP_Post ){
-						$this->contextId = get_post($this->contextId);
+						$this->contextId = get_post( $this->contextId );
 					} elseif( $temp_contenxt instanceof WP_Term ) {
-						$this->contextId = get_term($this->contextId, $temp_contenxt->taxonomy);
+						$this->contextId = get_term( $this->contextId, $temp_contenxt->taxonomy );
 					} elseif( $temp_contenxt instanceof WP_User ) {
-						$this->contextId = get_user_by('user_login',$this->contextId);
+						$this->contextId = get_user_by( 'user_login', $this->contextId );
 					} else {
-						hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s] by data ['.$this->contextId.'].' ), $this->field->get_id() ), true );
+						hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s] by data [' . $this->contextId . '].' ), $this->field->get_id() ), true );
 					}
 				}
 				///
