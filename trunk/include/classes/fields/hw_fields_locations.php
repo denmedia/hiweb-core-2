@@ -98,93 +98,19 @@
 				//(?:"slug":\["theme"\]|(?!"slug":\["\w+"\]).)
 				$filter_pattern = '/^' . $group . ':(?:{|\[)' . implode('',$filter_pattern) . '(?:}|\])$/i';
 				if( !array_key_exists( $filter_pattern, $PATTERNS ) )
-					$PATTERNS[ $filter_pattern ] = preg_match( $filter_pattern, $ruleId );
-				if( $PATTERNS[ $filter_pattern ] == 0 )
+					$PATTERNS[ $filter_pattern.' : '.$ruleId ] = preg_match( $filter_pattern, $ruleId );
+				if( $PATTERNS[ $filter_pattern.' : '.$ruleId ] == 0 )
 					$R = false;
 			}
 			//
 			return $return_result_array ? $PATTERNS : $R;
 		}
 
-
-		/**
-		 * @param       $group
-		 * @param array $filter
-		 * @param array $not_in_filter
-		 * @param bool  $like
-		 * @return string
-		 */
-		/*public function get_pattern_by( $group, $filter = [], $not_in_filter = [], $like = true ){
-			///PREPARE PATTERN FILTER
-			$pattern = [ '/^' . $group . ':{' ];
-			if( $like ){
-				$pattern[] = '.*';
-			}
-			if( !is_array( $filter ) )
-				$filter = [ $filter ];
-			if( !is_array( $not_in_filter ) )
-				$not_in_filter = [ $not_in_filter ];
-			///ATTRIBUTES FILTER
-			$filter_pattern = [];
-			foreach( $filter as $key => $val ){
-				if( !is_array( $val ) && !is_bool( $val ) )
-					$val = [ $val ];
-				$pattern_val = [];
-				if( count( $val ) > 1 ){
-					foreach( $val as $key2 => $val2 ){
-						$pattern_val[] = json_encode( $val2, JSON_UNESCAPED_UNICODE );
-					}
-					$filter_pattern[] = '"' . $key . '":(?>\[' . implode( '|', $pattern_val ) . '\])';
-				} else {
-					$filter_pattern[] = '"' . $key . '":(?>' . strtr( json_encode( $val, JSON_UNESCAPED_UNICODE ), [ '[' => '\[', ']' => '\]' ] ) . ')';
-				}
-			}
-			//Attributes construct
-			if( count( $filter_pattern ) > 0 ){
-				if( count( $filter_pattern ) > 1 )
-					$pattern[] = '(?>';
-				$pattern[] = '(?>' . implode( ',?)|(?>', $filter_pattern ) . ',?)';
-				if( count( $filter_pattern ) > 1 )
-					$pattern[] = '){' . count( $filter_pattern ) . '}';
-			}
-			///ATTRIBUTES NOT IN FILTER
-			$filter_pattern = [];
-			foreach( $not_in_filter as $key => $val ){
-				if( !is_array( $val ) && !is_bool( $val ) )
-					$val = [ $val ];
-				$pattern_val = [];
-				if( count( $val ) > 1 ){
-					foreach( $val as $key2 => $val2 ){
-						$pattern_val[] = json_encode( $val2, JSON_UNESCAPED_UNICODE );
-					}
-					$filter_pattern[] = '"' . $key . '":(?>\[' . implode( '|', $pattern_val ) . '\])';
-				} else {
-					$filter_pattern[] = '"' . $key . '":(?>' . strtr( json_encode( $val, JSON_UNESCAPED_UNICODE ), [ '[' => '\[', ']' => '\]' ] ) . ')';
-				}
-			}
-			//Attributes construct
-			if( count( $filter_pattern ) > 0 ){
-				if( count( $filter_pattern ) > 1 )
-					$pattern[] = '(?>';
-				$pattern[] = '[^(?>' . implode( ',?)|(?>', $filter_pattern ) . ',?)]';
-				if( count( $filter_pattern ) > 1 )
-					$pattern[] = '){' . count( $filter_pattern ) . '}';
-			}
-			//LIKE
-			if( !$like )
-				$pattern[] = '}$';
-			$pattern[] = '/i';
-			//PATTER CONSTRUCT
-			return implode( '', $pattern );
-		}*/
-
 		/**
 		 * Return Locations by filter
 		 * USE: $locations = hiweb()->locations()->get_by( $group = 'post_type', $filter = [ 'post_type' => 'page' ], $like = true );
 		 * @param string $group
 		 * @param array  $filter
-		 * @param array  $not_in_filter
-		 * @param bool   $like
 		 * @return hw_fields_location_root[]
 		 */
 		public function get_by( $group, $filter = [] ){
@@ -202,8 +128,6 @@
 		 * Get fields by filtered locations
 		 * @param       $group
 		 * @param array $filter
-		 * @param array $not_in_filter
-		 * @param bool  $like
 		 * @return hw_field[]
 		 */
 		public function get_fields_by( $group, $filter = [] ){

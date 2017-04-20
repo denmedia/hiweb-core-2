@@ -308,9 +308,7 @@
 			if( is_array( $fields ) ){
 				$field_ids = array();
 				foreach( $fields as $field ){
-					$field_option_name = 'hiweb-'.$this->menu_slug().'-'.$field->get_id();
-					register_setting( 'hw_options_group_' . $this->menu_slug, $field_option_name );
-					$field_ids[] = $field_option_name;
+					$field_ids[] = hiweb()->fields()->get_options_field_id($this->menu_slug(), $field->get_id());
 				}
 				echo '<input type="hidden" name="action" value="update" /><input type="hidden" name="page_options" value="' . implode( ',', $field_ids ) . '" />';
 			}
@@ -465,7 +463,6 @@
 		private $title;
 		private $parent_slug;
 		private $parent_slug_short;
-		private $inputs = array();
 		///
 		private $pattern_slug = '/options-(.*)(\.php)$/';
 
@@ -477,36 +474,6 @@
 			if( preg_match( $this->pattern_slug, $parent_slug, $math ) > 0 ){
 				$this->parent_slug = $parent_slug;
 				$this->parent_slug_short = $math[1];
-				add_action( 'admin_init', array(
-					$this,
-					'add_settings_section'
-				) );
-				/*add_action( 'admin_init', array(
-					$this,
-					'register_setting'
-				) );*/
-			}
-		}
-
-
-		public function __call( $name, $arguments ){
-			switch( $name ){
-				/*case 'register_setting':
-					foreach( $this->get_fields() as $input ){
-						if( $input instanceof hw_input ){
-							register_setting( $this->id, $input->name() );
-						}
-					}
-					break;*/
-				case 'add_settings_section':
-					add_settings_section( $this->id, $this->title, array(
-						$this,
-						'the_fields'
-					), $this->parent_slug_short ); //todo!!!
-					break;
-				case 'the_fields':
-					$this->the_fields();
-					break;
 			}
 		}
 

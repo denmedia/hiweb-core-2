@@ -15,7 +15,6 @@
 		private function get_adminRowNull(){
 			$R = '<th class="drag"><span class="spacer"></span></th>';
 			if( $this->have_cols() ){
-				$widthFull = 1;
 				$style_attrs_reserved = [ 'width', 'min-width' ];
 				foreach( $this->get_cols() as $field ){
 					$style_tag = [];

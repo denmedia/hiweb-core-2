@@ -90,15 +90,20 @@
 			if( function_exists( 'get_current_screen' ) ){
 				foreach( hiweb()->admin()->menu()->get_pages() as $slug => $page ){
 					$current_screen_id = get_current_screen()->id;
+					$fields = hiweb()->fields()->locations()->get_fields_by( 'admin_menu', [ 'slug' => $slug ] );
+					foreach( $fields as $field ){
+						register_setting( $slug, hiweb()->fields()->get_options_field_id( $slug, $field->get_id() ) );
+					}
 					//
 					if( ( get_class( $page ) == 'hw_admin_submenu_page' && preg_match( '/^(?>\w+_page_' . $slug . ')$/i', $current_screen_id ) > 0 ) || get_class( $page ) == 'hw_admin_menu_page' && preg_match( '/^(?>toplevel_page_' . $slug . ')$/i', $current_screen_id ) > 0 ){
 						add_action( 'hw_admin_menu_page_content_' . $slug, function( $admin_page ){
 							if( $admin_page instanceof hw_admin_menu_abstract ){
 								$fields = hiweb()->fields()->locations()->get_fields_by( 'admin_menu', [ 'slug' => $admin_page->menu_slug() ] );
 								foreach( $fields as $field ){
-									$field_option_name = hiweb()->fields()->get_options_field_id($admin_page->menu_slug(),$field->get_id());// 'hiweb-' . $admin_page->menu_slug() . '-' . $field->get_id();
+									$field_option_name = hiweb()->fields()->get_options_field_id( $admin_page->menu_slug(), $field->get_id() );
 									$field->value( get_option( $field_option_name, null ) );
 									$field->input()->name = $field_option_name;
+									$field->input()->id = $field_option_name;
 								}
 								hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 							}
@@ -126,7 +131,7 @@
 				add_settings_section( 'hiweb-' . $page, $data['title'], '', $page );
 				foreach( $data['fields'] as $field ){
 					if( $field instanceof hw_field ){
-						$field_options_name = hiweb()->fields()->get_options_field_id($page, $field->get_id()); //'hiweb-' . $page . '-' . $field->get_id();
+						$field_options_name = hiweb()->fields()->get_options_field_id( $page, $field->get_id() );
 						if( $current_options_page_update && !isset( $_POST[ $field_options_name ] ) ){
 							delete_option( $field_options_name );
 						} else {
