@@ -324,6 +324,8 @@
 
 	class hw_fields_location_post_type{
 
+		use hw_hidden_methods_props;
+
 		/** @var hw_fields_location_root */
 		private $location_root;
 
@@ -421,6 +423,8 @@
 
 	class hw_fields_location_taxonomy{
 
+		use hw_hidden_methods_props;
+
 		/** @var hw_fields_location_root */
 		private $location_root;
 
@@ -457,10 +461,20 @@
 			return $this;
 		}
 
+
+		/**
+		 * @return hw_field
+		 */
+		public function get_field(){
+			return $this->location_root->get_field();
+		}
+
 	}
 
 
 	class hw_fields_location_user{
+
+		use hw_hidden_methods_props;
 
 		/** @var hw_fields_location_root */
 		private $location_root;
@@ -469,10 +483,20 @@
 		public function __construct( hw_fields_location_root $location_root ){
 			$this->location_root = $location_root;
 		}
+
+
+		/**
+		 * @return hw_field
+		 */
+		public function get_field(){
+			return $this->location_root->get_field();
+		}
 	}
 
 
 	class hw_fields_location_options_page{
+
+		use hw_hidden_methods_props;
 
 		/** @var hw_fields_location_root */
 		private $location_root;
@@ -502,10 +526,20 @@
 			$this->location_root->update_rulesId();
 			return $this;
 		}
+
+
+		/**
+		 * @return hw_field
+		 */
+		public function get_field(){
+			return $this->location_root->get_field();
+		}
 	}
 
 
 	class hw_fields_location_admin_menu{
+
+		use hw_hidden_methods_props;
 
 		/** @var hw_fields_location_root */
 		private $location_root;
@@ -524,5 +558,13 @@
 			$this->location_root->rules['admin_menu'][ __FUNCTION__ ] = is_array( $set ) ? $set : [ $set ];
 			$this->location_root->update_rulesId();
 			return $this;
+		}
+
+
+		/**
+		 * @return hw_field
+		 */
+		public function get_field(){
+			return $this->location_root->get_field();
 		}
 	}
