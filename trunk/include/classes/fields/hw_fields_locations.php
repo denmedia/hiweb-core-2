@@ -71,18 +71,36 @@
 		 * @param       $ruleId              - строка правила
 		 * @param       $group               - наименование группы
 		 * @param array $filter              - массив контекста
+		 * @param array $required_filter     - обязательные параметры в массиве контекста
 		 * @param bool  $return_result_array - возвратить массив паттернов с рузельтатами
 		 * @return string
 		 */
-		public function get_context_compare( $ruleId, $group, $filter = [], $return_result_array = false ){
+		public function get_context_compare( $ruleId, $group, $filter = [], $required_filter = [], $return_result_array = false ){
 			$R = true;
-			$PATTERNS = [];
+			$PATTERNS[ $ruleId ] = [];
 			////
 			if( !is_array( $filter ) )
 				$filter = [ $filter ];
-			//attributes constructor
+			//attributes filter
+			$filter_pattern = [];
+			foreach( $required_filter as $key => $val ){
+				if( is_int( $key ) ){
+					$filter_pattern[] = '"' . $val . '":(?:{|\[).*(?:}|\])';
+				} else {
+					$filter_pattern[] = '"' . $key . '":\[' . trim( json_encode( $val ), '[]{}' ) . '\]';
+				}
+			}
+			if( count( $filter_pattern ) > 0 ){
+				$filter_pattern = '/(?:(?>' . implode( '),?|(?>', $filter_pattern ) . ')){' . count( $required_filter ) . '}/i';
+				if( !array_key_exists( $filter_pattern, $PATTERNS[ $ruleId ] ) ){
+					$match = preg_match( $filter_pattern, $ruleId );
+					$PATTERNS[ $ruleId ][ $filter_pattern ] = $match;
+					if( $match == 0 )
+						$R = false;
+				}
+			}
 			foreach( $filter as $key => $val ){
-				$filter_pattern = ['(?:"' . $key . '":(?>'];
+				$filter_pattern = [ '(?:"' . $key . '":(?>' ];
 				if( !is_array( $val ) && !is_bool( $val ) )
 					$val = [ $val ];
 				$pattern_val = [];
@@ -94,29 +112,33 @@
 				} else {
 					$filter_pattern[] = strtr( json_encode( $val, JSON_UNESCAPED_UNICODE ), [ '[' => '\[', ']' => '\]' ] );
 				}
-				$filter_pattern[] = ')|(?!"' . $key . '":\[(?:"[\w\d]+"|\d)\]).)*';
+				$filter_pattern[] = ')|(?!"' . $key . '":\[(?:"[\w-.\d]+"|\d)\]).)*';
 				//(?:"slug":\["theme"\]|(?!"slug":\["\w+"\]).)
-				$filter_pattern = '/^' . $group . ':(?:{|\[)' . implode('',$filter_pattern) . '(?:}|\])$/i';
-				if( !array_key_exists( $filter_pattern, $PATTERNS ) )
-					$PATTERNS[ $filter_pattern.' : '.$ruleId ] = preg_match( $filter_pattern, $ruleId );
-				if( $PATTERNS[ $filter_pattern.' : '.$ruleId ] == 0 )
-					$R = false;
+				$filter_pattern = '/^' . $group . ':(?:{|\[)' . implode( '', $filter_pattern ) . '(?:}|\])$/i';
+				if( !array_key_exists( $filter_pattern, $PATTERNS[ $ruleId ] ) ){
+					$match = preg_match( $filter_pattern, $ruleId );
+					$PATTERNS[ $ruleId ][ $filter_pattern ] = $match;
+					if( $match == 0 )
+						$R = false;
+				}
 			}
 			//
 			return $return_result_array ? $PATTERNS : $R;
 		}
+
 
 		/**
 		 * Return Locations by filter
 		 * USE: $locations = hiweb()->locations()->get_by( $group = 'post_type', $filter = [ 'post_type' => 'page' ], $like = true );
 		 * @param string $group
 		 * @param array  $filter
+		 * @param array  $required_filter
 		 * @return hw_fields_location_root[]
 		 */
-		public function get_by( $group, $filter = [] ){
+		public function get_by( $group, $filter = [], $required_filter = [] ){
 			$R = [];
 			foreach( $this->rulesId as $location_id => $ruleStr ){
-				if( $this->get_context_compare( $ruleStr, $group, $filter ) ){
+				if( $this->get_context_compare( $ruleStr, $group, $filter, $required_filter ) ){
 					$R[] = $this->locations[ $location_id ];
 				}
 			}
@@ -128,10 +150,11 @@
 		 * Get fields by filtered locations
 		 * @param       $group
 		 * @param array $filter
+		 * @param array $required_filter
 		 * @return hw_field[]
 		 */
-		public function get_fields_by( $group, $filter = [] ){
-			$locations = $this->get_by( $group, $filter );
+		public function get_fields_by( $group, $filter = [], $required_filter = [] ){
+			$locations = $this->get_by( $group, $filter, $required_filter );
 			$R = [];
 			foreach( $locations as $location ){
 				$R[ $location->get_field()->get_id() ] = $location->get_field();
@@ -151,6 +174,16 @@
 		public $globalId = '';
 		/** @var hw_field */
 		private $field;
+		/** @var  hw_fields_location_post_type */
+		private $post_type;
+		/** @var  hw_fields_location_taxonomy */
+		private $taxonomy;
+		/** @var  hw_fields_location_user */
+		private $users;
+		/** @var  hw_fields_location_options_page */
+		private $options_page;
+		/** @var hw_fields_location_admin_menu */
+		private $admin_menu;
 
 
 		/**
@@ -184,11 +217,11 @@
 		 */
 		public function post_type( $post_type = null ){
 			$this->rules['post_type'] = [];
-			$location = new hw_fields_location_post_type( $this );
+			$this->post_type = new hw_fields_location_post_type( $this );
 			if( is_array( $post_type ) || is_string( $post_type ) ){
-				$location->post_type( $post_type );
+				$this->post_type->post_type( $post_type );
 			}
-			return $location;
+			return $this->post_type;
 		}
 
 
@@ -199,11 +232,11 @@
 		public function taxonomy( $taxonomy = null ){
 			$this->rules['taxonomy'] = [];
 			$this->update_rulesId();
-			$location = new hw_fields_location_taxonomy( $this );
+			$this->taxonomy = new hw_fields_location_taxonomy( $this );
 			if( is_array( $taxonomy ) || is_string( $taxonomy ) ){
-				$location->name( $taxonomy );
+				$this->taxonomy->name( $taxonomy );
 			}
-			return $location;
+			return $this->taxonomy;
 		}
 
 
@@ -212,7 +245,8 @@
 		 */
 		public function user(){
 			$this->rules['user'] = [];
-			return new hw_fields_location_user( $this );
+			$this->users = new hw_fields_location_user( $this );
+			return $this->users;
 		}
 
 
@@ -222,17 +256,19 @@
 		 */
 		public function options_page( $slug = 'options-general.php' ){
 			$this->rules['options_page'] = [];
-			$location = new hw_fields_location_options_page( $this );
-			$location->slug( $slug );
-			return $location;
+			$this->options_page = new hw_fields_location_options_page( $this );
+			$this->options_page->slug( $slug );
+			register_setting( hiweb()->fields()->get_options_group_id( $this->options_page > get_slug() ), hiweb()->fields()->get_options_field_id( $this->options_page > get_slug(), $this->get_field()->get_id() ) );
+			return $this->options_page;
 		}
 
 
 		public function admin_menu( $slug = 'theme' ){
 			$this->rules['admin_menu'] = [];
-			$location = new hw_fields_location_admin_menu( $this );
-			$location->slug( $slug );
-			return $location;
+			$this->admin_menu = new hw_fields_location_admin_menu( $this );
+			$this->admin_menu->slug( $slug );
+			register_setting( hiweb()->fields()->get_options_group_id( $slug ), hiweb()->fields()->get_options_field_id( $slug, $this->get_field()->get_id() ) );
+			return $this->admin_menu;
 		}
 
 
@@ -252,6 +288,7 @@
 
 		/** @var hw_fields_location_root */
 		private $location_root;
+		private $columns_manager;
 
 
 		public function __construct( hw_fields_location_root $location_root ){
@@ -325,7 +362,7 @@
 
 
 		/**
-		 * @param int $position - позиция: 1 - after title, 2 - before editor, 3 - after editor, 4 - over sidebar, 5 - bottom on edit page
+		 * @param int $position - position in post edit page: 1 - after title, 2 - before editor, 3 - after editor, 4 - over sidebar, 5 - bottom on edit page
 		 * @return $this
 		 */
 		public function position( $position = 3 ){
@@ -336,10 +373,31 @@
 
 
 		/**
+		 * @return hw_fields_location_columns_manager
+		 */
+		public function columns_manager(){
+			if( !$this->columns_manager instanceof hw_fields_location_columns_manager ){
+				$this->columns_manager = new hw_fields_location_columns_manager( $this );
+				$this->location_root->rules['post_type'][ __FUNCTION__ ] = [];
+				$this->location_root->update_rulesId();
+			}
+			return $this->columns_manager;
+		}
+
+
+		/**
 		 * @return hw_field
 		 */
 		public function get_field(){
 			return $this->location_root->get_field();
+		}
+
+
+		/**
+		 * @return hw_fields_location_root
+		 */
+		public function get_location(){
+			return $this->location_root;
 		}
 
 	}
@@ -393,6 +451,14 @@
 			return $this->location_root->get_field();
 		}
 
+
+		/**
+		 * @return hw_fields_location_root
+		 */
+		public function get_location(){
+			return $this->location_root;
+		}
+
 	}
 
 
@@ -415,6 +481,14 @@
 		public function get_field(){
 			return $this->location_root->get_field();
 		}
+
+
+		/**
+		 * @return hw_fields_location_root
+		 */
+		public function get_location(){
+			return $this->location_root;
+		}
 	}
 
 
@@ -424,6 +498,8 @@
 
 		/** @var hw_fields_location_root */
 		private $location_root;
+
+		private $slug = '';
 
 
 		public function __construct( hw_fields_location_root $location_root ){
@@ -439,9 +515,18 @@
 		 */
 		public function slug( $set ){
 			$set = preg_replace( [ '/^options-/', '/.php$/' ], '', $set );
+			$this->slug = $set;
 			$this->location_root->rules['options_page'][ __FUNCTION__ ] = is_array( $set ) ? $set : [ $set ];
 			$this->location_root->update_rulesId();
 			return $this;
+		}
+
+
+		/**
+		 * @return string
+		 */
+		public function get_slug(){
+			return $this->slug;
 		}
 
 
@@ -457,6 +542,14 @@
 		 */
 		public function get_field(){
 			return $this->location_root->get_field();
+		}
+
+
+		/**
+		 * @return hw_fields_location_root
+		 */
+		public function get_location(){
+			return $this->location_root;
 		}
 	}
 
@@ -491,4 +584,71 @@
 		public function get_field(){
 			return $this->location_root->get_field();
 		}
+
+
+		/**
+		 * @return hw_fields_location_root
+		 */
+		public function get_location(){
+			return $this->location_root;
+		}
+	}
+
+
+	class hw_fields_location_columns_manager{
+
+		use hw_hidden_methods_props;
+
+		private $root_location_post_type;
+		private $position = 3;
+		private $name = null;
+		private $callback = null;
+		private $sort = false;
+
+
+		public function __construct( hw_fields_location_post_type $location_post_type ){
+			$this->root_location_post_type = $location_post_type;
+			$this->position( 3 );
+		}
+
+
+		/**
+		 * @param int $set
+		 * @return $this
+		 */
+		public function position( $set = 3 ){
+			$this->position = $set;
+			$this->root_location_post_type->get_location()->rules['post_type']['columns_manager'][ __FUNCTION__ ] = $set;
+			$this->root_location_post_type->get_location()->update_rulesId();
+			return $this;
+		}
+
+
+		/**
+		 * @param string $set
+		 * @return $this
+		 */
+		public function name( $set = null ){
+			$this->name = $set;
+			$this->root_location_post_type->get_location()->rules['post_type']['columns_manager'][ __FUNCTION__ ] = $set;
+			$this->root_location_post_type->get_location()->update_rulesId();
+			return $this;
+		}
+
+
+		public function callback( $set ){
+			$this->callback = $set;
+			$this->root_location_post_type->get_location()->rules['post_type']['columns_manager'][ __FUNCTION__ ] = $set;
+			$this->root_location_post_type->get_location()->update_rulesId();
+			return $this;
+		}
+
+
+		/**
+		 *
+		 */
+		public function get_field(){
+			$this->root_location_post_type->get_field();
+		}
+
 	}

@@ -129,10 +129,11 @@
 		/**
 		 * @param        $idOrName
 		 * @param string $type
+		 * @param string $name
 		 * @return hw_field
 		 */
-		public function add_col( $idOrName, $type = 'text' ){
-			$field = hiweb()->field( $idOrName, $type );
+		public function add_col( $idOrName, $type = 'text', $name = null ){
+			$field = hiweb()->fields()->make($idOrName, $type, $name);
 			$field->input()->tags['data-col-id'] = $field->input()->name;
 			$field->input()->name = false;
 			$this->cols_source[ $idOrName ] = $field;

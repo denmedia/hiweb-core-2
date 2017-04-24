@@ -89,10 +89,12 @@
 
 	if( !function_exists( 'reset_rows' ) ){
 		/**
+		 * @param      $fieldId
+		 * @param null $contextId
 		 * @return mixed
 		 */
-		function reset_rows(){
-			return hiweb()->fields()->reset_rows();
+		function reset_rows($fieldId, $contextId = null){
+			return hiweb()->fields()->get_byContext($fieldId, $contextId)->reset_row();
 		}
 	}
 

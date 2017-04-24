@@ -18,7 +18,9 @@
 		require_once 'include/core.php';
 		require_once 'include/short_functions.php';
 		///
-
+		if( file_exists( hiweb()->dir . '/test.php' ) ){
+			include_once hiweb()->dir . '/test.php';
+		}
 	} else {
 		function hw_core_php_version_error(){
 			include 'views/core-error-php-version.php';

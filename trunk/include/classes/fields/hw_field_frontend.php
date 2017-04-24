@@ -23,7 +23,7 @@
 				$this->field = hiweb()->fields()->get( $fieldId );
 				$this->field->value( $this->value() );
 			} else {
-				hiweb()->console()->warn( sprintf( __( 'Field [%s] not exists', 'hw-core-2' ), $fieldId ), true );
+				hiweb()->console()->warn( sprintf( __( 'Field [%s] not exists', 'hw-core-2' ), $fieldId ), 3 );
 			}
 		}
 
@@ -91,7 +91,6 @@
 					hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s], since the action has not yet done.' ), $this->field->get_id() ), true );
 				}
 			}
-			//
 			///
 			$fields = hiweb()->fields()->locations()->get_fields_by( $GROUP, $ARGS );
 			if( !array_key_exists( $this->id(), $fields ) || !$fields[ $this->id() ] instanceof hw_field )
@@ -99,7 +98,11 @@
 			$this->field = $fields[ $this->id() ];
 			$this->field->value( $value );
 			///
-			return $value;
+			return $this->field->value();
+		}
+
+		public function content($args = null, $args2 = null){
+			return $this->field->content($args, $args2);
 		}
 
 

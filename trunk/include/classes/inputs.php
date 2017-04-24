@@ -238,7 +238,6 @@
 
 		/**
 		 * Возвращает HTML
-		 * @param null $arguments - Дополнительные аргументы
 		 * @return string
 		 */
 		public function html(){

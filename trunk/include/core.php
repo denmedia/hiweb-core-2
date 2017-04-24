@@ -59,6 +59,10 @@
 				$this->dir_js = $this->dir . '/' . $this->dir_js;
 				///Load traits
 				$this->path()->include_dir( $this->dir_traits );
+				///ERRORS DISPLAY
+				if( defined( WP_DEBUG ) && WP_DEBUG ){
+					$this->errors();
+				}
 			}
 
 
@@ -106,6 +110,15 @@
 
 
 			/**
+			 * Display Errors ON, Debug enable
+			 * @return hw_errors
+			 */
+			public function errors(){
+				return $this->give_class( 'errors' );
+			}
+
+
+			/**
 			 * @return hw_fields
 			 */
 			public function fields(){
@@ -113,15 +126,15 @@
 			}
 
 
-			/**
-			 * @param        $fieldId - индификатор поля
-			 * @param string $type    - тип поля
-			 * @param null   $name    - имя поля
-			 * @return hw_field
-			 */
-			public function field( $fieldId, $type = 'text', $name = null ){
-				return $this->fields()->make( $fieldId, $type, $name );
-			}
+//			/**
+//			 * @param        $fieldId - индификатор поля
+//			 * @param string $type    - тип поля
+//			 * @param null   $name    - имя поля
+//			 * @return hw_field
+//			 */
+//			public function field( $fieldId, $type = 'text', $name = null ){
+//				return $this->fields()->make( $fieldId, $type, $name );
+//			}
 
 
 			/**

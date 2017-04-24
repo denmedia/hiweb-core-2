@@ -34,7 +34,25 @@
 		 * @return string
 		 */
 		public function get_options_field_id( $page_slug, $field_id ){
-			return 'hiweb-' . $page_slug . '-' . $field_id;
+			return $page_slug . '-' . $field_id;
+		}
+
+
+		/**
+		 * @param $page_slug
+		 * @return string
+		 */
+		public function get_options_group_id( $page_slug ){
+			return 'hiweb-options-group-' . $page_slug;
+		}
+
+
+		/**
+		 * @param $field_id
+		 * @return string
+		 */
+		public function get_columns_field_id( $field_id ){
+			return 'hiweb-column-' . $field_id;
 		}
 
 
@@ -145,13 +163,12 @@
 		}
 
 
-		/**
-		 * @return mixed
-		 */
-		public function reset_rows(){
-			return $this->loop_rows_field->input()->reset_row();
-		}
-
+		//		/**
+		//		 * @return mixed
+		//		 */
+		//		public function reset_rows(){
+		//			return $this->loop_rows_field->input()->reset_row();
+		//		}
 
 		/**
 		 * @return hw_fields_locations
@@ -162,5 +179,18 @@
 				$class = new hw_fields_locations();
 			return $class;
 		}
+
+
+		/**
+		 * Зарегистрировать тип инпута
+		 * @param string $type
+		 * @param        $callable
+		 * @param int    $priority - приоритет определяет какой класс откроется
+		 * @return void
+		 */
+		public function register_content_type( $type = 'text', $callable, $priority = 10 ){
+			add_filter( 'hiweb-fields-content-type-' . $type, $callable, $priority, 3 );
+		}
+
 
 	}

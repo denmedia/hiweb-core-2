@@ -30,7 +30,7 @@
 		public function __construct(){
 
 			if( hiweb()->context()->is_backend_page() ){
-				///POSTS BACKEND
+				///POSTS PAGE EDIT BACKEND
 				add_action( 'edit_form_top', [ $this, 'edit_form_top' ] );
 				add_action( 'edit_form_before_permalink', [ $this, 'edit_form_before_permalink' ] );
 				add_action( 'edit_form_after_title', [ $this, 'edit_form_after_title' ] );
@@ -40,6 +40,9 @@
 				add_action( 'edit_form_advanced', [ $this, 'edit_form_advanced' ] );
 				add_action( 'edit_page_form', [ $this, 'edit_page_form' ] );
 				add_action( 'dbx_post_sidebar', [ $this, 'dbx_post_sidebar' ] );
+				///POSTS COLUMNS
+				add_action( 'manage_posts_custom_column', [ $this, 'manage_posts_custom_column' ], 10, 2 );
+				add_filter( 'manage_posts_columns', [ $this, 'manage_posts_columns' ] );
 				///POSTS SAVE
 				add_action( 'save_post', [ $this, 'save_post' ], 10, 3 );
 				////////
@@ -90,10 +93,6 @@
 			if( function_exists( 'get_current_screen' ) ){
 				foreach( hiweb()->admin()->menu()->get_pages() as $slug => $page ){
 					$current_screen_id = get_current_screen()->id;
-					$fields = hiweb()->fields()->locations()->get_fields_by( 'admin_menu', [ 'slug' => $slug ] );
-					foreach( $fields as $field ){
-						register_setting( $slug, hiweb()->fields()->get_options_field_id( $slug, $field->get_id() ) );
-					}
 					//
 					if( ( get_class( $page ) == 'hw_admin_submenu_page' && preg_match( '/^(?>\w+_page_' . $slug . ')$/i', $current_screen_id ) > 0 ) || get_class( $page ) == 'hw_admin_menu_page' && preg_match( '/^(?>toplevel_page_' . $slug . ')$/i', $current_screen_id ) > 0 ){
 						add_action( 'hw_admin_menu_page_content_' . $slug, function( $admin_page ){
@@ -138,7 +137,6 @@
 							$field->value( get_option( $field_options_name, null ) );
 							$field->input()->name = $field_options_name;
 							add_settings_field( $field_options_name, $field->name(), [ $field->input(), 'the' ], $page, 'hiweb-' . $page );
-							register_setting( $page, $field_options_name );
 						}
 					}
 				}
@@ -291,6 +289,54 @@
 		//Post Type: PAGE, Position 6
 		public function dbx_post_sidebar( $post = null ){
 			$this->the_form_post( $post, 6 );
+		}
+
+
+		//Post COLUMNS MANAGE
+		public function manage_posts_custom_column( $column = null, $post_id = null ){
+			$locations = hiweb()->fields()->locations()->get_by( 'post_type', [ 'post_type' => get_current_screen()->post_type ], [ 'columns_manager' ] );
+			foreach( $locations as $location ){
+				if( $column == hiweb()->fields()->get_columns_field_id( $location->get_field()->get_id() ) ){
+					$callback = $location->post_type->columns_manager()->callback;
+					if( is_null( $callback ) ){
+						echo $location->get_field()->prepend().' <span>'.hiweb()->fields()->get_byContext( $location->get_field()->get_id(), get_post( $post_id ) )->content([50,50], true).'</span> '.$location->get_field()->append();
+					} else {
+						if( is_callable( $callback ) ){
+							call_user_func( $callback, [ $post_id, $location->get_field(), $location ] );
+						} else {
+							echo $callback;
+						}
+					}
+				}
+			}
+		}
+
+
+		public function manage_posts_columns( $columns ){
+			if( function_exists( 'get_current_screen' ) ){
+				$locations = hiweb()->fields()->locations()->get_by( 'post_type', [ 'post_type' => get_current_screen()->post_type ], [ 'columns_manager' ] );
+				foreach( $locations as $location ){
+					$col_position = $location->post_type->columns_manager()->position;
+					$field = $location->get_field();
+					if( count( $columns ) > $col_position ){
+						$old_columns = $columns;
+						$columns = [];
+						$num = 0;
+						foreach( $old_columns as $key => $name ){
+							if( $col_position == $num ){
+								$columns[ hiweb()->fields()->get_columns_field_id( $field->get_id() ) ] = $field->name();
+							}
+							$num ++;
+							$columns[ $key ] = $name;
+						}
+					} else {
+						$columns[ hiweb()->fields()->get_columns_field_id( $field->get_id() ) ] = $field->name();
+					}
+				}
+			} else {
+				hiweb()->console()->warn( 'Function [get_current_screen] not defined', true );
+			}
+			return $columns;
 		}
 
 

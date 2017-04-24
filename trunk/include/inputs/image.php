@@ -1,6 +1,17 @@
 <?php
 
 	hiweb()->inputs()->register_type( 'image', 'hw_input_image' );
+	hiweb()->fields()->register_content_type( 'image', function( $value, $size = 'thumbnail', $return_image_html = false ){
+		if( !is_numeric( $value ) )
+			return false;
+		if($return_image_html){
+			return wp_get_attachment_image($value, $size);
+		}
+		$R = wp_get_attachment_image_src( $value, $size );
+		if( !is_array( $R ) || !array_key_exists( 0, $R ) )
+			return false;
+		return $R[0];
+	} );
 
 
 	class hw_input_image extends hw_input{

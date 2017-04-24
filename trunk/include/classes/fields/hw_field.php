@@ -62,10 +62,14 @@
 		/**
 		 * @param        $idOrName
 		 * @param string $type
+		 * @param string $name
 		 * @return hw_field
 		 */
-		public function add_col( $idOrName, $type = 'text' ){
-			return $this->input()->add_col( $idOrName, $type );
+		public function add_col( $idOrName, $type = 'text', $name = '' ){
+			$field = $this->input()->add_col( $idOrName, $type );
+			if( is_string( $name ) && $name != '' )
+				$field->name( $name );
+			return $field;
 		}
 
 
@@ -191,21 +195,20 @@
 
 
 		/**
-		 * @return hw_fields_location_root
+		 * @param mixed $args
+		 * @param null  $args2
+		 * @return mixed
 		 */
-		public function location(){
-			return hiweb()->fields()->locations()->add( $this );
-			//$hook = hiweb()->fields()->hook( $this );
-			//$this->hooks[] = $hook;
-			//return $hook;
+		public function content($args = null,$args2 = null){
+			return apply_filters( 'hiweb-fields-content-type-' . $this->get_type(), $this->value(), $args, $args2 );
 		}
 
 
 		/**
-		 * @return hw_fields_location_root[]
+		 * @return hw_fields_location_root
 		 */
-		public function get_locations(){
-			return $this->hooks;
+		public function location(){
+			return hiweb()->fields()->locations()->add( $this );
 		}
 
 
@@ -246,12 +249,12 @@
 
 
 		/**
-		 * @param null $set
-		 * @return $this
+		 * @param string $set
+		 * @return string|hw_field
 		 */
 		public function prepend( $set = null ){
 			if( is_null( $set ) ){
-				return $this->prepend;
+				return (string)$this->prepend;
 			}
 			$this->prepend = $set;
 			return $this;
@@ -259,8 +262,8 @@
 
 
 		/**
-		 * @param null $set
-		 * @return $this
+		 * @param string $set
+		 * @return string|hw_field
 		 */
 		public function append( $set = null ){
 			if( is_null( $set ) ){
