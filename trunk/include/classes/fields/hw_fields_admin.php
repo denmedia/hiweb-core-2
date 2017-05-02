@@ -41,8 +41,16 @@
 				add_action( 'edit_page_form', [ $this, 'edit_page_form' ] );
 				add_action( 'dbx_post_sidebar', [ $this, 'dbx_post_sidebar' ] );
 				///POSTS COLUMNS
-				add_action( 'manage_posts_custom_column', [ $this, 'manage_posts_custom_column' ], 10, 2 );
-				add_filter( 'manage_posts_columns', [ $this, 'manage_posts_columns' ] );
+				add_action( 'init', function(){
+					if( !function_exists( 'get_post_types' ) )
+						return;
+					$post_types = get_post_types();
+					if( is_array( $post_types ) )
+						foreach( $post_types as $post_type ){
+							add_action( 'manage_' . $post_type . '_posts_custom_column', [ $this, 'manage_posts_custom_column' ], 10, 2 );
+							add_filter( 'manage_' . $post_type . '_posts_columns', [ $this, 'manage_posts_columns' ] );
+						}
+				} );
 				///POSTS SAVE
 				add_action( 'save_post', [ $this, 'save_post' ], 10, 3 );
 				////////
@@ -299,7 +307,7 @@
 				if( $column == hiweb()->fields()->get_columns_field_id( $location->get_field()->get_id() ) ){
 					$callback = $location->post_type->columns_manager()->callback;
 					if( is_null( $callback ) ){
-						echo $location->get_field()->prepend().' <span>'.hiweb()->fields()->get_byContext( $location->get_field()->get_id(), get_post( $post_id ) )->content([50,50], true).'</span> '.$location->get_field()->append();
+						echo $location->get_field()->prepend() . ' <span>' . hiweb()->fields()->get_byContext( $location->get_field()->get_id(), get_post( $post_id ) )->content( [ 50, 50 ], true ) . '</span> ' . $location->get_field()->append();
 					} else {
 						if( is_callable( $callback ) ){
 							call_user_func( $callback, [ $post_id, $location->get_field(), $location ] );
@@ -316,21 +324,23 @@
 			if( function_exists( 'get_current_screen' ) ){
 				$locations = hiweb()->fields()->locations()->get_by( 'post_type', [ 'post_type' => get_current_screen()->post_type ], [ 'columns_manager' ] );
 				foreach( $locations as $location ){
-					$col_position = $location->post_type->columns_manager()->position;
+					$column_manager = $location->post_type->columns_manager();
+					$col_position = $column_manager->position;
 					$field = $location->get_field();
+					$column_name = $column_manager->name == '' ? $field->name() : $column_manager->name;
 					if( count( $columns ) > $col_position ){
 						$old_columns = $columns;
 						$columns = [];
 						$num = 0;
 						foreach( $old_columns as $key => $name ){
 							if( $col_position == $num ){
-								$columns[ hiweb()->fields()->get_columns_field_id( $field->get_id() ) ] = $field->name();
+								$columns[ hiweb()->fields()->get_columns_field_id( $field->get_id() ) ] = $column_name;
 							}
 							$num ++;
 							$columns[ $key ] = $name;
 						}
 					} else {
-						$columns[ hiweb()->fields()->get_columns_field_id( $field->get_id() ) ] = $field->name();
+						$columns[ hiweb()->fields()->get_columns_field_id( $field->get_id() ) ] = $column_name;
 					}
 				}
 			} else {
