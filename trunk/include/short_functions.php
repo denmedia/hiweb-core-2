@@ -37,6 +37,31 @@
 		}
 	}
 
+	if( !function_exists( 'get_field_content' ) ){
+		/**
+		 * @param            $fieldId
+		 * @param null       $contextId
+		 * @param null|mixed $args
+		 * @param null|mixed $args2
+		 * @return mixed
+		 */
+		function get_field_content( $fieldId, $contextId = null, $args = null, $args2 = null ){
+			return hiweb()->fields()->get_byContext( $fieldId, $contextId )->content( $args, $args2 );
+		}
+	}
+
+	if( !function_exists( 'the_field_content' ) ){
+		/**
+		 * @param            $fieldId
+		 * @param null       $contextId
+		 * @param null|mixed $args
+		 * @param null|mixed $args2
+		 */
+		function the_field_content( $fieldId, $contextId = null, $args = null, $args2 = null ){
+			echo hiweb()->fields()->get_byContext( $fieldId, $contextId )->content( $args, $args2 );
+		}
+	}
+
 	if( !function_exists( 'the_field' ) ){
 		/**
 		 * @param      $fieldId

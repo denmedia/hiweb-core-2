@@ -78,6 +78,7 @@
 					$GROUP = 'post_type';
 					$ARGS[] = [ 'ID' => $this->contextId->ID ];
 					$ARGS[] = [ 'front_page' => ( $this->contextId->ID == get_option( 'page_on_front' ) ) ];
+					$ARGS[] = [ 'post_name' => $this->contextId->post_name ];
 					$value = get_post_meta( $this->contextId->ID, $this->id(), true );
 				} elseif( $this->contextId instanceof WP_Term ) {
 					$GROUP = 'taxonomy';
@@ -100,6 +101,7 @@
 			///
 			return $this->field->value();
 		}
+
 
 		public function content($args = null, $args2 = null){
 			return $this->field->content($args, $args2);

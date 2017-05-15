@@ -218,10 +218,12 @@
 					$args['position'] = $position;
 				$args['post_type'] = get_current_screen()->id;
 
-				//Front Page Fields
+				//POST SETTINGS
 				if( $post instanceof WP_Post ){
+				//Front Page Fields
 					$args['front_page'] = intval( $post->ID ) == intval( get_option( 'page_on_front' ) );
 					$args['ID'] = $post->ID;
+					$args['post_name'] = $post->post_name;
 				}
 				$R = hiweb()->fields()->locations()->get_fields_by( 'post_type', $args );
 				if( $post instanceof WP_Post ){

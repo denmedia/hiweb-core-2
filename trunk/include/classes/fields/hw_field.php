@@ -60,13 +60,13 @@
 		///////////////////////
 
 		/**
-		 * @param        $idOrName
+		 * @param        $id
 		 * @param string $type
 		 * @param string $name
 		 * @return hw_field
 		 */
-		public function add_col( $idOrName, $type = 'text', $name = '' ){
-			$field = $this->input()->add_col( $idOrName, $type );
+		public function add_col( $id, $type = 'text', $name = '' ){
+			$field = $this->input()->add_col( $id, $type );
 			if( is_string( $name ) && $name != '' )
 				$field->name( $name );
 			return $field;
