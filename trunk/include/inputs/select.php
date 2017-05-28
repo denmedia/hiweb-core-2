@@ -22,7 +22,7 @@
 					$R .= '<option ' . $selected . ' value="' . htmlentities( $key, ENT_QUOTES, 'UTF-8' ) . '">' . $val . '</option>';
 				}
 			}
-			return '<select class="hw-input-select" ' . $this->get_tags() . '>' . $R . '</select>';
+			return '<select class="hw-input-select" ' . $this->tags_html() . '>' . $R . '</select>';
 		}
 
 	}

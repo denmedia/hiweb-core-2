@@ -157,7 +157,7 @@
 			$locations = $this->get_by( $group, $filter, $required_filter );
 			$R = [];
 			foreach( $locations as $location ){
-				$R[ $location->get_field()->get_id() ] = $location->get_field();
+				$R[ $location->get_field()->id() ] = $location->get_field();
 			}
 			return $R;
 		}
@@ -258,7 +258,7 @@
 			$this->rules['options_page'] = [];
 			$this->options_page = new hw_fields_location_options_page( $this );
 			$this->options_page->slug( $slug );
-			register_setting( hiweb()->fields()->get_options_group_id( $this->options_page > get_slug() ), hiweb()->fields()->get_options_field_id( $this->options_page > get_slug(), $this->get_field()->get_id() ) );
+			register_setting( hiweb()->fields()->get_options_group_id( $this->options_page > get_slug() ), hiweb()->fields()->get_options_field_id( $this->options_page > get_slug(), $this->get_field()->id() ) );
 			return $this->options_page;
 		}
 
@@ -267,7 +267,7 @@
 			$this->rules['admin_menu'] = [];
 			$this->admin_menu = new hw_fields_location_admin_menu( $this );
 			$this->admin_menu->slug( $slug );
-			register_setting( hiweb()->fields()->get_options_group_id( $slug ), hiweb()->fields()->get_options_field_id( $slug, $this->get_field()->get_id() ) );
+			register_setting( hiweb()->fields()->get_options_group_id( $slug ), hiweb()->fields()->get_options_field_id( $slug, $this->get_field()->id() ) );
 			return $this->admin_menu;
 		}
 

@@ -52,7 +52,7 @@
 				$field_or_fields = array( $field_or_fields );
 			foreach( $field_or_fields as $field ){
 				if( $field instanceof hw_field ){
-					$this->fields[ $field->get_id() ] = $field;
+					$this->fields[ $field->id() ] = $field;
 				}
 			}
 			return $this;

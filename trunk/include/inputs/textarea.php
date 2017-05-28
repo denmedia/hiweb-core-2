@@ -7,7 +7,7 @@
 
 		public function html(){
 			hiweb()->css( hiweb()->url_css . '/input-textarea.css' );
-			return '<textarea class="input-textarea" ' . $this->get_tags() . '>' . $this->value() . '</textarea>';
+			return '<textarea class="input-textarea" ' . $this->tags_html() . '>' . $this->value() . '</textarea>';
 		}
 
 	}

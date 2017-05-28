@@ -1,9 +1,11 @@
 <?php
 
 	include_once 'fields/hw_fields_locations.php';
+	include_once 'fields/hw_fields_home.php';
 	include_once 'fields/hw_field.php';
 	include_once 'fields/hw_field_frontend.php';
-	include_once 'fields/hw_fields_admin.php';
+	include_once 'fields/hw_fields_backend.php';
+	include_once 'fields/hw_fields_loop.php';
 
 
 	class hw_fields{
@@ -12,20 +14,49 @@
 		use hw_hidden_methods_props;
 
 
-		/** @var hw_field[] */
-		public $fields = array();
-		/** @var hw_field_frontend[] */
-		public $fields_byContext = array();
+		/**
+		 * @return hw_fields_home
+		 */
+		public function home(){
+			static $class;
+			if( !$class instanceof hw_fields_home )
+				$class = new hw_fields_home();
+			return $class;
+		}
 
-		private $fieldId_globalId = array();
-		private $globalId_fieldId = array();
 
-		/**  */
-		public $hook_fields = array();
+		/**
+		 * @return hw_fields_loop
+		 */
+		public function loop(){
+			static $class;
+			if( !$class instanceof hw_fields_loop )
+				$class = new hw_fields_loop();
+			return $class;
+		}
 
-		/** @var hw_field */
-		public $loop_rows_field;
-		private $current_row = array();
+
+		/**
+		 * @return hw_fields_locations
+		 */
+		public function locations(){
+			static $class;
+			if( !$class instanceof hw_fields_locations )
+				$class = new hw_fields_locations();
+			return $class;
+		}
+
+
+		/**
+		 * Зарегистрировать тип инпута
+		 * @param string $type
+		 * @param        $callable
+		 * @param int    $priority - приоритет определяет какой класс откроется
+		 * @return void
+		 */
+		public function register_content_type( $type = 'text', $callable, $priority = 10 ){
+			add_filter( 'hiweb-fields-content-type-' . $type, $callable, $priority, 3 );
+		}
 
 
 		/**
@@ -57,139 +88,68 @@
 
 
 		/**
-		 * Добавить поле
-		 * @param        $fieldId
-		 * @param string $type
-		 * @param null   $fieldName
-		 * @return hw_field
+		 * @param null $context_id
+		 * @return array
 		 */
-		public function make( $fieldId, $type = 'text', $fieldName = null ){
-			$global_id = hiweb()->string()->rand();
-			$field = new hw_field( $fieldId, $global_id, $type );
-			$field->name( $fieldName );
-			$this->fields[ $global_id ] = $field;
-			$this->fieldId_globalId[ $fieldId ][] = $field;
-			$this->globalId_fieldId[ $global_id ][] = $field;
-			return $field;
-		}
-
-
-		/**
-		 * Смена глобального ID для поля
-		 * @param $oldGlobalId
-		 * @param $newGlobalId
-		 * @return bool
-		 */
-		public function change_globalId( $oldGlobalId, $newGlobalId ){
-			if( !isset( $this->fields[ $oldGlobalId ] ) )
-				return false;
-			$field = $this->fields[ $oldGlobalId ];
-			unset( $this->fields[ $oldGlobalId ] );
-			$this->fields[ $newGlobalId ] = $field;
-			if( isset( $this->fieldId_globalId[ $field->get_id() ] ) && is_array( $this->fieldId_globalId[ $field->get_id() ] ) )
-				foreach( $this->fieldId_globalId[ $field->get_id() ] as $index => $globalIds ){
-					if( $globalIds == $oldGlobalId ){
-						$this->fieldId_globalId[ $field->get_id() ][ $index ] = $newGlobalId;
+		public function context_to_array( $context_id = null ){
+			$GROUP = 'options';
+			$ARGS = [];
+			$value = null;
+			///GROUP TEST
+			if( is_string( $context_id ) ){ //Контекст является опцией
+				$GROUP = 'options';
+				$ARGS[] = [ 'slug' => $context_id ]; //todo? было закомментированно
+			} else { //Контекст задан объектом
+				///
+				if( !is_object( $context_id ) && did_action( 'wp' ) )
+					$context_id = get_queried_object(); elseif( is_numeric( $context_id ) ) {
+					$temp_contenxt = get_queried_object();
+					if( $temp_contenxt instanceof WP_Post ){
+						$context_id = get_post( $context_id );
+					} elseif( $temp_contenxt instanceof WP_Term ) {
+						$context_id = get_term( $context_id, $temp_contenxt->taxonomy );
+					} elseif( $temp_contenxt instanceof WP_User ) {
+						$context_id = get_user_by( 'user_login', $context_id );
+					} else {
+						hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s] by data [' . $context_id . '].' ), $this->field->id() ), true );
 					}
 				}
-			if( isset( $this->globalId_fieldId[ $oldGlobalId ] ) && is_array( $this->globalId_fieldId[ $oldGlobalId ] ) ){
-				$ids = $this->globalId_fieldId[ $oldGlobalId ];
-				unset( $this->globalId_fieldId[ $oldGlobalId ] );
-				$this->globalId_fieldId[ $newGlobalId ] = $ids;
+				///
+				if( $context_id instanceof WP_Post ){
+					$GROUP = 'post_type';
+					$ARGS[] = [ 'ID' => $context_id->ID ];
+					$ARGS[] = [ 'front_page' => ( $context_id->ID == get_option( 'page_on_front' ) ) ];
+					$ARGS[] = [ 'post_name' => $context_id->post_name ];
+				} elseif( $context_id instanceof WP_Term ) {
+					$GROUP = 'taxonomy';
+					$ARGS[] = [ 'term_id' => $context_id->term_id ];
+				} elseif( $context_id instanceof WP_User ) {
+					$GROUP = 'users';
+					$ARGS[] = [ 'term_id' => $context_id->user_id ];
+				} else {
+					hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context and convert to global_id.' ) ), true );
+				}
 			}
-			return true;
+			return [
+				$GROUP,
+				$ARGS,
+				$context_id
+			];
 		}
 
 
 		/**
-		 * Return TRUE, if field exists
-		 * @param $fieldOrGlobalId
-		 * @return bool
+		 * @param string $field_id
+		 * @param null   $content_id
+		 * @param bool   $md5
+		 * @return string
 		 */
-		public function is_exists( $fieldOrGlobalId ){
-			return isset( $this->fieldId_globalId[ $fieldOrGlobalId ] ) || isset( $this->globalId_fieldId[ $fieldOrGlobalId ] );
-		}
-
-
-		/**
-		 * Get all exists fields
-		 * @return hw_field[]
-		 */
-		public function get_fields(){
-			return $this->fields;
-		}
-
-
-		/**
-		 * @param $field_id
-		 * @return hw_field
-		 */
-		public function get( $field_id ){
-			if( !isset( $this->fieldId_globalId[ $field_id ] ) ){
-				hiweb()->console()->warn( sprintf( __( 'Field id:[%s] not found to display value by context', 'hw-core-2' ), $field_id ) );
-				return $this->make( $field_id );
-			}
-			return end( $this->fieldId_globalId[ $field_id ] );
-		}
-
-
-		/**
-		 * @param      $fieldId
-		 * @param null $contextId
-		 * @return hw_field_frontend
-		 */
-		public function get_byContext( $fieldId, $contextId = null ){
-			$global_id = hiweb()->string()->rand();
-			$this->fields_byContext[ $fieldId ] = new hw_field_frontend( $fieldId, $global_id, $contextId );
-			return $this->fields_byContext[ $fieldId ];
-		}
-
-
-		/**
-		 * @return mixed
-		 */
-		public function the_row(){
-			if( $this->loop_rows_field instanceof hw_field ){
-				$this->current_row = $this->loop_rows_field->input()->the_row();
-				return $this->current_row;
-			}
-			return null;
-		}
-
-
-		public function get_sub_field( $sub_field_id ){
-			if( is_array( $this->current_row ) && array_key_exists( $sub_field_id, $this->current_row ) )
-				return $this->current_row[ $sub_field_id ]; else return null;
-		}
-
-
-		//		/**
-		//		 * @return mixed
-		//		 */
-		//		public function reset_rows(){
-		//			return $this->loop_rows_field->input()->reset_row();
-		//		}
-
-		/**
-		 * @return hw_fields_locations
-		 */
-		public function locations(){
-			static $class;
-			if( !$class instanceof hw_fields_locations )
-				$class = new hw_fields_locations();
-			return $class;
-		}
-
-
-		/**
-		 * Зарегистрировать тип инпута
-		 * @param string $type
-		 * @param        $callable
-		 * @param int    $priority - приоритет определяет какой класс откроется
-		 * @return void
-		 */
-		public function register_content_type( $type = 'text', $callable, $priority = 10 ){
-			add_filter( 'hiweb-fields-content-type-' . $type, $callable, $priority, 3 );
+		public function context_to_id( $field_id, $content_id = null, $md5 = true ){
+			$R = json_encode( [
+				$field_id,
+				$this->context_to_array( $content_id )
+			] );
+			return $md5 ? md5( $R ) : $R;
 		}
 
 

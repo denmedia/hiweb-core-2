@@ -1,37 +1,168 @@
-.hw-input-gallery {
-  background: #fff;
-  text-align: center;
-  display: block;
-  width: 100%; }
-  .hw-input-gallery a.button {
-    float: left;
-    display: inline-block;
-    margin: 0 1px 1px 0;
-    width: 84px;
-    min-height: 84px;
-    text-align: center;
-    background: #ccc 50% 50% no-repeat;
-    background-size: cover;
-    -webkit-box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.1); }
-    .hw-input-gallery a.button[href="#source"] {
-      display: none; }
-    .hw-input-gallery a.button .dashicons {
-      font-size: 34px;
-      position: relative;
+.hw-input-images {
+  position: relative;
+  padding-right: 30px;
+  min-height: 95px; }
+  .hw-input-images [data-ctrl] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    border-left: 1px dotted #eee; }
+    .hw-input-images [data-ctrl] button {
+      background: none;
+      border: none;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      -webkit-opacity: 0.5;
+      -moz-opacity: 0.5;
+      -ms-opacity: 0.5;
+      -o-opacity: 0.5;
+      opacity: 0.5;
+      -webkit-transition: opacity 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+      -moz-transition: opacity 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+      -o-transition: opacity 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+      transition: opacity 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms; }
+      .hw-input-images [data-ctrl] button:hover {
+        -webkit-opacity: 1;
+        -moz-opacity: 1;
+        -ms-opacity: 1;
+        -o-opacity: 1;
+        opacity: 1;
+        transform: scale(1.3); }
+  .hw-input-images [data-ctrl-sub] {
+    -webkit-transition: padding 500ms ease-in-out 0ms;
+    -moz-transition: padding 500ms ease-in-out 0ms;
+    -o-transition: padding 500ms ease-in-out 0ms;
+    transition: padding 500ms ease-in-out 0ms; }
+    .hw-input-images [data-ctrl-sub] .attachment-preview {
+      background: transparent; }
+    .hw-input-images [data-ctrl-sub] .dashicons {
       top: 50%;
-      margin-top: -18px;
-      margin-left: -14px;
-      text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7); }
-    .hw-input-gallery a.button:hover {
-      background: 50% 50% no-repeat #ccc;
-      background-size: cover; }
-      .hw-input-gallery a.button:hover .dashicons {
-        font-size: 54px;
-        margin-top: -28px;
-        margin-left: -34px; }
-  .hw-input-gallery .clear {
+      position: absolute;
+      text-align: center;
+      -webkit-transform: translate(-50%, -50%) scale(2);
+      -moz-transform: translate(-50%, -50%) scale(2);
+      -o-transform: translate(-50%, -50%) scale(2);
+      transform: translate(-50%, -50%) scale(2);
+      -webkit-transition: transform 100ms ease-in-out 0ms, opacity 100ms ease-in-out 0ms;
+      -moz-transition: transform 100ms ease-in-out 0ms, opacity 100ms ease-in-out 0ms;
+      -o-transition: transform 100ms ease-in-out 0ms, opacity 100ms ease-in-out 0ms;
+      transition: transform 100ms ease-in-out 0ms, opacity 100ms ease-in-out 0ms;
+      -webkit-opacity: 0.3;
+      -moz-opacity: 0.3;
+      -ms-opacity: 0.3;
+      -o-opacity: 0.3;
+      opacity: 0.3; }
+    .hw-input-images [data-ctrl-sub]:hover {
+      padding: 14px; }
+      .hw-input-images [data-ctrl-sub]:hover .dashicons {
+        -webkit-transform: translate(-50%, -50%) scale(2.5);
+        -moz-transform: translate(-50%, -50%) scale(2.5);
+        -o-transform: translate(-50%, -50%) scale(2.5);
+        transform: translate(-50%, -50%) scale(2.5);
+        -webkit-opacity: 1;
+        -moz-opacity: 1;
+        -ms-opacity: 1;
+        -o-opacity: 1;
+        opacity: 1; }
+  .hw-input-images .attachments .attachment {
+    width: 10%;
+    padding: 2px;
+    background: white;
+    z-index: 1 !important;
+    -webkit-transition: opacity 700ms ease-in-out 0ms, filter 700ms ease-in-out 0ms, transform 700ms ease-in-out 0ms;
+    -moz-transition: opacity 700ms ease-in-out 0ms, filter 700ms ease-in-out 0ms, transform 700ms ease-in-out 0ms;
+    -o-transition: opacity 700ms ease-in-out 0ms, filter 700ms ease-in-out 0ms, transform 700ms ease-in-out 0ms;
+    transition: opacity 700ms ease-in-out 0ms, filter 700ms ease-in-out 0ms, transform 700ms ease-in-out 0ms; }
+    .hw-input-images .attachments .attachment[data-image-id]:hover {
+      -webkit-transform: scale(1.1);
+      -moz-transform: scale(1.1);
+      -o-transform: scale(1.1);
+      transform: scale(1.1);
+      position: relative;
+      z-index: 10 !important;
+      -webkit-transition: filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+      -moz-transition: filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+      -o-transition: filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+      transition: filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms; }
+      .hw-input-images .attachments .attachment[data-image-id]:hover img {
+        -webkit-opacity: 0.3;
+        -moz-opacity: 0.3;
+        -ms-opacity: 0.3;
+        -o-opacity: 0.3;
+        opacity: 0.3;
+        -webkit-transition: opacity 200ms ease-in-out 0ms;
+        -moz-transition: opacity 200ms ease-in-out 0ms;
+        -o-transition: opacity 200ms ease-in-out 0ms;
+        transition: opacity 200ms ease-in-out 0ms; }
+      .hw-input-images .attachments .attachment[data-image-id]:hover [data-click-remove] {
+        -webkit-opacity: 1;
+        -moz-opacity: 1;
+        -ms-opacity: 1;
+        -o-opacity: 1;
+        opacity: 1;
+        -webkit-transform: translate(0, -50%) scale(1.8);
+        -moz-transform: translate(0, -50%) scale(1.8);
+        -o-transform: translate(0, -50%) scale(1.8);
+        transform: translate(0, -50%) scale(1.8);
+        -webkit-text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        -moz-text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        -o-text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8); }
+    .hw-input-images .attachments .attachment[data-source] {
+      display: none; }
+    .hw-input-images .attachments .attachment [data-click-remove] {
+      color: white;
+      position: relative;
+      z-index: 10;
+      top: 50%;
+      left: 0;
+      right: 0;
+      text-align: center;
+      -webkit-transform: translate(0, -50%);
+      -moz-transform: translate(0, -50%);
+      -o-transform: translate(0, -50%);
+      transform: translate(0, -50%);
+      -webkit-opacity: 0;
+      -moz-opacity: 0;
+      -ms-opacity: 0;
+      -o-opacity: 0;
+      opacity: 0;
+      -webkit-transition: all 500ms ease-in-out 0ms;
+      -moz-transition: all 500ms ease-in-out 0ms;
+      -o-transition: all 500ms ease-in-out 0ms;
+      transition: all 500ms ease-in-out 0ms; }
+  .hw-input-images .attachments .ui-sortable-helper {
+    -webkit-transition: opacity 200ms ease-in-out 0ms, filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+    -moz-transition: opacity 200ms ease-in-out 0ms, filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+    -o-transition: opacity 200ms ease-in-out 0ms, filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+    transition: opacity 200ms ease-in-out 0ms, filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+    -webkit-box-shadow: 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
+    -o-box-shadow: 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
+    -webkit-transform: scale(1.2) !important;
+    -moz-transform: scale(1.2) !important;
+    -o-transform: scale(1.2) !important;
+    transform: scale(1.2) !important;
+    -webkit-opacity: 0.8;
+    -moz-opacity: 0.8;
+    -ms-opacity: 0.8;
+    -o-opacity: 0.8;
+    opacity: 0.8;
+    padding: 0;
+    z-index: 20; }
+  .hw-input-images .attachments .ui-sortable-placeholder {
+    margin-bottom: -9px;
+    background: url(img/pattern-3.png);
+    -webkit-transition: all 500ms ease-in-out 0ms;
+    -moz-transition: all 500ms ease-in-out 0ms;
+    -o-transition: all 500ms ease-in-out 0ms;
+    transition: all 500ms ease-in-out 0ms; }
+  .hw-input-images .clear {
     clear: both; }
 
 /*# sourceMappingURL=input_images.css.map */

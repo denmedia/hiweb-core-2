@@ -10,10 +10,26 @@
 }
 
 @mixin hw_transition($key: all, $duration: 500ms, $easing: ease-in-out, $delay: 0ms) {
-	-webkit-transition: $key $duration $easing $delay;
-	-moz-transition: $key $duration $easing $delay;
-	-o-transition: $key $duration $easing $delay;
-	transition: $key $duration $easing $delay;
+	$params:null;
+	@each $val in $key {
+		@if($params == '') {
+			$params: $val $duration $easing $delay;
+		}@else{
+			$params: $params, $val $duration $easing $delay;
+		}
+
+	}
+	-webkit-transition: $params;
+	-moz-transition: $params;
+	-o-transition: $params;
+	transition: $params;
+}
+
+@mixin hw_transform($transform: none){
+	-webkit-transform: $transform;
+	-moz-transform: $transform;
+	-o-transform: $transform;
+	transform: $transform;
 }
 
 @mixin hw_filter($filter: blur(5px)) {
@@ -40,9 +56,18 @@
 	opacity: $opacity;
 }
 
-@mixin hw_box_shadow($size: 1px) {
-	-webkit-box-shadow: 0 1px $size rgba(0, 0, 0, .04);
-	-moz-box-shadow: 0 1px $size rgba(0, 0, 0, .04);
-	-o-box-shadow: 0 1px $size rgba(0, 0, 0, .04);
-	box-shadow: 0 1px $size rgba(0, 0, 0, .04);
+@mixin hw_box_shadow($size: 1px, $opacity: .04, $offset_x: 0px, $offset_y: 0px) {
+	$props: $offset_x $offset_y $size 0 rgba(0, 0, 0, $opacity);
+	-webkit-box-shadow: $props;
+	-moz-box-shadow: $props;
+	-o-box-shadow: $props;
+	box-shadow: $props;
+}
+
+@mixin hw_text_shadow($size: 5px, $x: 0, $y: 0, $color: rgba(0, 0, 0, 0.35)){
+	$props: $x $y $size $color;
+	-webkit-text-shadow: $props;
+	-moz-text-shadow: $props;
+	-o-text-shadow: $props;
+	text-shadow: $props;
 }

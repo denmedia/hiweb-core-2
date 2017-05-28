@@ -1,5 +1,7 @@
 <?php
 
+	require_once hiweb()->dir_classes . '/inputs/hw_input_axis_rows.php';
+
 
 	/**
 	 * Created by PhpStorm.
@@ -15,13 +17,21 @@
 		private $field;
 		private $contextId;
 
+		private $GROUP = 'options';
+		private $ARGS = [];
+		private $value;
+		/** @var hw_input_axis_rows */
+		private $rows;
 
-		public function __construct( $fieldId, $global_id, $contextId = null ){
+
+		public function __construct( $fieldId, $contextId = null, $global_id = '' ){
 			$this->id = $fieldId;
 			$this->contextId = $contextId;
+			$this->global_id = $global_id;
 			if( $this->is_exists() ){
-				$this->field = hiweb()->fields()->get( $fieldId );
+				$this->field = hiweb()->fields()->home()->get( $fieldId );
 				$this->field->value( $this->value() );
+				$this->define_values();
 			} else {
 				hiweb()->console()->warn( sprintf( __( 'Field [%s] not exists', 'hw-core-2' ), $fieldId ), 3 );
 			}
@@ -37,10 +47,103 @@
 
 
 		/**
+		 * @return string
+		 */
+		public function global_id(){
+			return $this->global_id;
+		}
+
+
+		/**
 		 * @return bool
 		 */
 		public function is_exists(){
-			return hiweb()->fields()->is_exists( $this->id );
+			return hiweb()->fields()->home()->is_exists( $this->id );
+		}
+
+
+		private function define_values(){
+			$this->GROUP = '';
+			$this->ARGS = [];
+			if( $this->is_exists() ){
+				///
+				$context_arr = hiweb()->fields()->context_to_array( $this->contextId );
+				if( is_array( $context_arr ) ){
+					$this->GROUP = $context_arr[0];
+					$this->ARGS = $context_arr[1];
+					$this->contextId = $context_arr[2];
+					switch( $this->GROUP ){
+						case 'options':
+							$this->value = get_option( hiweb()->fields()->get_options_field_id( $this->contextId, $this->id() ), null );
+							break;
+						case 'post_type':
+							$this->value = get_post_meta( $this->contextId->ID, $this->id(), true );
+							break;
+						case 'taxonomy':
+							$this->value = get_term_meta( $this->contextId->term_id, $this->id(), true );
+							break;
+						case 'users':
+							$this->value = get_user_meta( $this->contextId->ID, $this->id(), true );
+							break;
+						default:
+							hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s], since the action has not yet done.' ), $this->field->id() ), true );
+							break;
+					}
+				}
+			}
+		}
+
+
+		/**
+		 * @return mixed
+		 */
+		public function context_value(){
+			return $this->value;
+		}
+
+
+		/**
+		 * @return string
+		 */
+		public function context_group(){
+			return $this->GROUP;
+		}
+
+
+		/**
+		 * @return array
+		 */
+		public function context_args(){
+			return $this->ARGS;
+		}
+
+
+		/**
+		 * @return hw_field
+		 */
+		public function field(){
+			if( !$this->field instanceof hw_field ){
+				if( !$this->is_exists() )
+					return null;
+				///
+				$fields = hiweb()->fields()->locations()->get_fields_by( $this->context_group(), $this->context_args() );
+				if( !array_key_exists( $this->id(), $fields ) || !$fields[ $this->id() ] instanceof hw_field ){
+					return null;
+				}
+				$this->field = $fields[ $this->id() ];
+			} else {
+				$this->field = hiweb()->fields()->home()->get( $this->id() );
+			}
+			$this->field->value( $this->context_value() );
+			return $this->field;
+		}
+
+
+		/**
+		 * @return hw_input
+		 */
+		public function input(){
+			return $this->field()->input();
 		}
 
 
@@ -48,87 +151,38 @@
 		 * @return mixed|null
 		 */
 		public function value(){
-			if( !$this->is_exists() )
-				return null;
-			///
-			$GROUP = 'options';
-			$ARGS = [];
-			$value = null;
-			///GROUP TEST
-			if( is_string( $this->contextId ) ){ //Контекст является опцией
-				$GROUP = 'options';
-				$value = get_option( hiweb()->fields()->get_options_field_id( $this->contextId, $this->id() ), null ); //get_option( 'hiweb-' . $this->contextId . '-' . $this->id(), null );
-			} else { //Контекст задан объектом
-				///
-				if( !is_object( $this->contextId ) && did_action( 'wp' ) )
-					$this->contextId = get_queried_object(); elseif( is_numeric( $this->contextId ) ) {
-					$temp_contenxt = get_queried_object();
-					if( $temp_contenxt instanceof WP_Post ){
-						$this->contextId = get_post( $this->contextId );
-					} elseif( $temp_contenxt instanceof WP_Term ) {
-						$this->contextId = get_term( $this->contextId, $temp_contenxt->taxonomy );
-					} elseif( $temp_contenxt instanceof WP_User ) {
-						$this->contextId = get_user_by( 'user_login', $this->contextId );
-					} else {
-						hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s] by data [' . $this->contextId . '].' ), $this->field->get_id() ), true );
-					}
-				}
-				///
-				if( $this->contextId instanceof WP_Post ){
-					$GROUP = 'post_type';
-					$ARGS[] = [ 'ID' => $this->contextId->ID ];
-					$ARGS[] = [ 'front_page' => ( $this->contextId->ID == get_option( 'page_on_front' ) ) ];
-					$ARGS[] = [ 'post_name' => $this->contextId->post_name ];
-					$value = get_post_meta( $this->contextId->ID, $this->id(), true );
-				} elseif( $this->contextId instanceof WP_Term ) {
-					$GROUP = 'taxonomy';
-					$ARGS[] = [ 'term_id' => $this->contextId->term_id ];
-					$value = get_term_meta( $this->contextId->term_id, $this->id(), true );
-				} elseif( $this->contextId instanceof WP_User ) {
-					$GROUP = 'users';
-					$ARGS[] = [ 'term_id' => $this->contextId->user_id ];
-					$value = get_user_meta( $this->contextId->ID, $this->id(), true );
-				} else {
-					hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context for the field: [%s], since the action has not yet done.' ), $this->field->get_id() ), true );
-				}
-			}
-			///
-			$fields = hiweb()->fields()->locations()->get_fields_by( $GROUP, $ARGS );
-			if( !array_key_exists( $this->id(), $fields ) || !$fields[ $this->id() ] instanceof hw_field )
-				return null;
-			$this->field = $fields[ $this->id() ];
-			$this->field->value( $value );
-			///
-			return $this->field->value();
+			return $this->field()->value();
 		}
 
 
-		public function content($args = null, $args2 = null){
-			return $this->field->content($args, $args2);
+		public function the(){
+			echo $this->value();
 		}
 
 
 		/**
+		 * @param null|mixed $args
+		 * @param null|mixed $args2
 		 * @return mixed
 		 */
-		public function reset_row(){
-			return $this->field->input()->reset_row();
+		public function content( $args = null, $args2 = null ){
+			return $this->field()->content( $args, $args2 );
+		}
+
+
+		public function the_content( $args = null, $args2 = null ){
+			echo $this->content( $args, $args2 );
 		}
 
 
 		/**
-		 * @return bool
+		 * @return hw_input_axis_rows
 		 */
-		public function have_rows(){
-			if( !$this->is_exists() )
-				return false;
-			hiweb()->fields()->loop_rows_field = $this->field;
-			return $this->field->input()->have_rows();
-		}
-
-
-		public function get_sub_field( $subFieldId ){
-			//todo
+		public function rows(){
+			if( !$this->rows instanceof hw_input_axis_rows ){
+				$this->rows = new hw_input_axis_rows( $this );
+			}
+			return $this->rows;
 		}
 
 

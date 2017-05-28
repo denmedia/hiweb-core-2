@@ -308,7 +308,7 @@
 			if( is_array( $fields ) ){
 				$field_ids = array();
 				foreach( $fields as $field ){
-					$field_ids[] = hiweb()->fields()->get_options_field_id($this->menu_slug(), $field->get_id());
+					$field_ids[] = hiweb()->fields()->get_options_field_id($this->menu_slug(), $field->id());
 				}
 				echo '<input type="hidden" name="action" value="update" /><input type="hidden" name="page_options" value="' . implode( ',', $field_ids ) . '" />';
 			}

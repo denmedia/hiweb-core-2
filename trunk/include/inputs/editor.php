@@ -7,7 +7,7 @@
 
 		public function html(){
 			ob_start();
-			wp_editor( $this->get_value(), $this->name, $settings = $this->options() );
+			wp_editor( $this->get_value(), $this->name(), $settings = $this->attributes() );
 			return ob_get_clean();
 		}
 

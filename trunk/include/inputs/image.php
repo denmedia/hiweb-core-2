@@ -4,8 +4,8 @@
 	hiweb()->fields()->register_content_type( 'image', function( $value, $size = 'thumbnail', $return_image_html = false ){
 		if( !is_numeric( $value ) )
 			return false;
-		if($return_image_html){
-			return wp_get_attachment_image($value, $size);
+		if( $return_image_html ){
+			return wp_get_attachment_image( $value, $size );
 		}
 		$R = wp_get_attachment_image_src( $value, $size );
 		if( !is_array( $R ) || !array_key_exists( 0, $R ) )
@@ -16,7 +16,7 @@
 
 	class hw_input_image extends hw_input{
 
-		protected $options = array(
+		protected $attributes = array(
 			'width' => 250,
 			'height' => 120
 		);
@@ -72,10 +72,19 @@
 			hiweb()->js( hiweb()->dir_js . '/input_image.js', array( 'jquery' ) );
 			hiweb()->css( hiweb()->dir_css . '/input_image.css' );
 
-			return '<div class="hw-input-image" id="' . $this->id . '" data-has-image="' . ( $this->have_image( [ $this->options( 'width' ), $this->options( 'height' ) ] ) ? '1' : '0' ) . '">
-<input type="hidden" ' . $this->get_tags() . ' value="' . ( $this->has_image ? $this->value() : '' ) . '"/>
-	<a href="#" class="image-select" title="' . __( 'Select/Deselect image...' ) . '" data-click="' . ( $this->have_image( [ $this->options( 'width' ), $this->options( 'height' ) ] ) ? 'deselect' : 'select' ) . '" style="width: ' . $this->options( 'width' ) . 'px; height: ' . $this->options( 'height' ) . 'px;">
-		<div class="image" style="' . ( $this->have_image() ? 'background-image:url(' . $this->get_src( [ $this->options( 'width' ), $this->options( 'height' ) ] ) . ')' : '' ) . '"></div>
+			return '<div class="hw-input-image" id="' . $this->id . '" data-has-image="' . ( $this->have_image( [
+					$this->attributes( 'width' ),
+					$this->attributes( 'height' )
+				] ) ? '1' : '0' ) . '">
+<input type="hidden" ' . $this->tags_html() . ' value="' . ( $this->has_image ? $this->value() : '' ) . '"/>
+	<a href="#" class="image-select" title="' . __( 'Select/Deselect image...' ) . '" data-click="' . ( $this->have_image( [
+					$this->attributes( 'width' ),
+					$this->attributes( 'height' )
+				] ) ? 'deselect' : 'select' ) . '" style="width: ' . $this->attributes( 'width' ) . 'px; height: ' . $this->attributes( 'height' ) . 'px;">
+		<div class="image" style="' . ( $this->have_image() ? 'background-image:url(' . $this->get_src( [
+						$this->attributes( 'width' ),
+						$this->attributes( 'height' )
+					] ) . ')' : '' ) . '"></div>
 		<div class="overlay"></div>
 		<i class="dashicons dashicons-format-image" data-icon="select"></i>
 		<i class="dashicons dashicons-no-alt" data-icon="deselect"></i>

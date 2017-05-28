@@ -1,28 +1,73 @@
 /**
  * Created by hiweb on 21.10.2016.
  */
+String.prototype.escapeRegExp = function () {
+    return this.toString().replace(/[\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+};
+
 var hw_input_repeat = {
 
     selector: '.hw-input-repeat',
-    selector_source: '.row.source',
+    selector_source: '[data-row-source]',
     selector_wrap: 'tbody.wrap',
-    selector_row: '.row',
-    selector_button_add: '[data-click="add"]',
-    selector_button_remove: '[data-click="remove"]',
+    selector_row: '[data-row]',
+    selector_button_add: '[data-action-add]',
+    selector_button_clear: '[data-action-clear]',
+    selector_button_remove: '[data-action-remove]',
+    selector_button_duplicate: '[data-action-duplicate]',
 
     init: function () {
-        jQuery('body').on('click', hw_input_repeat.selector + ' ' + hw_input_repeat.selector_button_add, hw_input_repeat.click_add).on('click', hw_input_repeat.selector + ' ' + hw_input_repeat.selector_button_remove, hw_input_repeat.click_remove);
+        jQuery('body').on('click', hw_input_repeat.selector + ' ' + hw_input_repeat.selector_button_add, hw_input_repeat.click_add).on('click', hw_input_repeat.selector + ' ' + hw_input_repeat.selector_button_remove, hw_input_repeat.click_remove).on('click', hw_input_repeat.selector + ' ' + hw_input_repeat.selector_button_duplicate, hw_input_repeat.click_duplicate).on('click', hw_input_repeat.selector + ' ' + hw_input_repeat.selector_button_clear, hw_input_repeat.click_clear_full);
         hw_input_repeat.make_sortable();
-        hw_input_repeat.make_table_names(jQuery(hw_input_repeat.selector));
+        // hw_input_repeat.make_table_names(jQuery(hw_input_repeat.selector));
+    },
+
+    /**
+     *
+     * @param root
+     * @returns {*|{}}
+     */
+    get_row_source: function (root) {
+        return jQuery(root).find('> table > tbody[data-rows-source] > tr[data-row]');
+    },
+
+    /**
+     *
+     * @param root
+     * @returns {*|{}}
+     */
+    get_rows_list: function (root) {
+        return jQuery(root).find('> table > tbody[data-rows-list]');
+    },
+
+    /**
+     *
+     * @param root
+     * @returns {*|{}}
+     */
+    get_rows: function (root) {
+        return jQuery(root).find('> table > tbody[data-rows-list] > tr[data-row]');
+    },
+
+    get_cols: function (root) {
+        return jQuery(root).find('> table > thead [data-col]');
+    },
+
+    get_cols_by_row: function (row) {
+        return row.find('> [data-col]');
     },
 
     make_sortable: function () {
-        jQuery(hw_input_repeat.selector + ' tbody').sortable({
+        var roots = hw_input_repeat.get_rows_list(hw_input_repeat.selector);
+        if (roots['sortable']['destroy'] !== undefined) {
+            roots.sortable("destroy");
+        }
+        roots.sortable({
             update: function () {
                 hw_input_repeat.make_table_names(jQuery(this).closest(hw_input_repeat.selector));
             },
-            distance: 5,
-            handle: '.drag-handle',
+            distance: 3,
+            handle: '> [data-drag], > [data-drag] button, > [data-drag] i',
             helper: function (e, ui) {
                 ui.find('th, td').each(function () {
                     jQuery(this).width(jQuery(this).width());
@@ -37,41 +82,101 @@ var hw_input_repeat = {
         jQuery(hw_input_repeat.selector + ' tbody').disableSelection();
     },
 
-    make_table_names: function (current) {
-        var row = 0;
-        current.each(function () {
-            var subcurrent = jQuery(this);
-            subcurrent.find(hw_input_repeat.selector_wrap + ' > tr').not(hw_input_repeat.selector_source).each(function () {
-                var tr = jQuery(this);
-                tr.find('[data-col-id]').each(function () {
-                    jQuery(this).attr('name', subcurrent.attr('id') + '[' + tr.index() + '][' + jQuery(this).attr('data-col-id') + ']')
+    make_table_names: function (root) {
+        root = jQuery(root);
+        var base_name = root.attr('name');
+        //set rows
+        var index = 0;
+        //Each rows
+        hw_input_repeat.get_rows(root).each(function () {
+            var row = jQuery(this).attr('data-row', index);
+            index++;
+            //Each cols
+            hw_input_repeat.get_cols_by_row(row).each(function () {
+                var col_id = jQuery(this).attr('data-col');
+                var replace_name = base_name + '[' + index + '][' + col_id + ']';
+                //Each inputs
+                jQuery(this).find('[name]').each(function () {
+                    var input = jQuery(this);
+                    var pattern = '^' + base_name.escapeRegExp() + '\\\[(\\\s{1}|\\\d+)\\\]\\\[' + col_id + '\\\]';
+                    var newName = input.attr('name').replace(new RegExp(pattern, 'i'), replace_name);
+                    input.attr('name', newName);
                 });
             });
         });
-
+        root.find('> table > tbody[data-rows-message] [data-row-empty]').attr('data-row-empty', index > 0 ? '1' : '0');
+        hw_input_repeat.make_sortable();
     },
 
     click_add: function (e) {
         e.preventDefault();
-        var current = jQuery(this).closest(hw_input_repeat.selector);
-        var newLine = current.find(hw_input_repeat.selector_source).clone().removeClass('source').hide().fadeIn();
-        jQuery(current).find(hw_input_repeat.selector_wrap).append(newLine);
-        jQuery(current).find('.message').hide();
-        hw_input_repeat.make_table_names(current);
+        var prepend = jQuery(this).is('[data-action-add="1"]');
+        var root = jQuery(this).closest(hw_input_repeat.selector);
+        var row_list = hw_input_repeat.get_rows_list(root);
+        var newLine = hw_input_repeat.get_row_source(root).clone().hide().fadeIn();
+        if (prepend) {
+            row_list.prepend(newLine);
+        } else {
+            row_list.append(newLine);
+        }
+        newLine.css('opacity', 0).animate({opacity: 1}).find('> td')
+            .wrapInner('<div style="display: none;" />')
+            .parent()
+            .find('> td > div')
+            .slideDown(700, function () {
+                var $set = jQuery(this);
+                $set.replaceWith($set.contents());
+            });
+        hw_input_repeat.make_table_names(root);
+
+    },
+
+    click_duplicate: function (e) {
+        e.preventDefault();
+        var row = jQuery(this).closest(hw_input_repeat.selector_row);
+        var newRow = row.clone().insertAfter(row);
+        newRow.css('opacity', 0).animate({opacity: 1}).find('> td')
+            .wrapInner('<div style="display: none;" />')
+            .parent()
+            .find('> td > div')
+            .slideDown(700, function () {
+                var $set = jQuery(this);
+                $set.replaceWith($set.contents());
+
+            });
+        hw_input_repeat.make_table_names(jQuery(this).closest(hw_input_repeat.selector));
     },
 
     click_remove: function (e) {
         e.preventDefault();
-        var current = jQuery(this).closest(hw_input_repeat.selector);
-        jQuery(this).closest(hw_input_repeat.selector_row).fadeOut(function () {
-            jQuery(this).remove();
-            hw_input_repeat.make_table_names(current);
-            var rows = current.find(hw_input_repeat.selector_wrap + ' > tr.row').not(hw_input_repeat.selector_source).length;
-            console.info(rows);
-            if (rows == 0) {
-                current.find('.message').fadeIn();
-            }
-        });
+        var row = jQuery(this).closest(hw_input_repeat.selector_row);
+        hw_input_repeat.do_remove_row(row);
+    },
+
+    do_remove_row: function (row) {
+        return jQuery(row).find('> td')
+            .wrapInner('<div style="display: block;" />')
+            .parent()
+            .find('> td > div')
+            .slideUp(700, function () {
+                var root = row.closest(hw_input_repeat.selector);
+                jQuery(this).parent().parent().remove();
+                row.remove();
+                hw_input_repeat.make_table_names(root);
+                if (hw_input_repeat.get_rows(root).length === 0) {
+                    jQuery(root).find('.message').fadeIn();
+                }
+            });
+    },
+
+    click_clear_full: function (e) {
+        e.preventDefault();
+        if (confirm('Remove all table rows?')) {
+            var root = jQuery(this).closest(hw_input_repeat.selector);
+            hw_input_repeat.get_rows(root).each(function () {
+                hw_input_repeat.do_remove_row(this)
+            });
+        }
     }
 
 };

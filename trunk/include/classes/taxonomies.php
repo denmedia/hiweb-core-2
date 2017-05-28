@@ -114,7 +114,6 @@
 		private $terms = array();
 
 		use hw_hidden_methods_props;
-		use hw_add_fields;
 
 
 		/** @var hw_input[] */

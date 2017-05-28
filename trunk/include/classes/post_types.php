@@ -88,8 +88,6 @@
 		/** @var array */
 		private $_meta_boxes = array();
 
-		use hw_add_fields;
-
 
 		public function __construct( $post_type ){
 			$this->_type = sanitize_file_name( strtolower( $post_type ) );

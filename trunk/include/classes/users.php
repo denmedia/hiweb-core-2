@@ -4,7 +4,6 @@
 	class hw_users{
 
 		use hw_hidden_methods_props;
-		use hw_add_fields;
 
 		/** @var hw_user[] */
 		private $users = array();
