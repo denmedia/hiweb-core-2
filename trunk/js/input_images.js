@@ -91,7 +91,8 @@ var hw_input_images = {
         var source = hw_input_images.get_source(root).clone();
         source.find('img').attr('src', url);
         source.removeAttr('data-source').attr('data-image-id', selection);
-        source.find('input').val(selection.id);
+        var input = source.find('input');
+        input.val(selection.id).attr('name', input.attr('data-name'));
         source.attr('id', root.attr('data-id'));
         if (add_right) {
             hw_input_images.get_list_root(root).append(source);
@@ -116,8 +117,8 @@ var hw_input_images = {
     },
 
     event_click_clear: function (e) {
-        if(confirm('Remove all images?')){
-            hw_input_images.get_list_images(e).each(function(){
+        if (confirm('Remove all images?')) {
+            hw_input_images.get_list_images(e).each(function () {
                 hw_input_images.event_click_remove(this);
             });
         }
