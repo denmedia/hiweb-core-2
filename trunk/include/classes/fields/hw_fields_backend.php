@@ -68,7 +68,7 @@
 					'dbx_post_sidebar'
 				] );
 				///POSTS COLUMNS
-				add_action( 'init', function(){
+				add_action( 'admin_init', function(){
 					if( !function_exists( 'get_post_types' ) )
 						return;
 					$post_types = get_post_types();

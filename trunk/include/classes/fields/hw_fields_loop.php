@@ -56,12 +56,12 @@
 				if( $ffield instanceof hw_field_frontend ){
 					if( $ffield->input()->has_col( $col_id ) ){
 						return $ffield;
-					}
+					} else hiweb()->console()->warn( 'Не получается найти $col_id:[' . $col_id . '] в инпуте [' . $ffield->id() . ' → ' . $ffield->input()->name() . ']', true );
 				}
 				if( $ffield instanceof hw_input ){
 					if( $ffield->has_col( $col_id ) ){
 						return $ffield;
-					}
+					} else hiweb()->console()->warn( 'Не получается найти $col_id:[' . $col_id . '] в инпуте [' . $ffield->name() . ']', true );
 				}
 			}
 			return null;

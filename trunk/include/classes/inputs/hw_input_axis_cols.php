@@ -113,7 +113,7 @@
 
 		/**
 		 * @param null|string $set
-		 * @return string|hw_input
+		 * @return string|hw_input_axis_col
 		 */
 		public function name( $set = null ){
 			if( is_null( $set ) ){
@@ -127,7 +127,7 @@
 
 		/**
 		 * @param null|string $set
-		 * @return string|hw_input
+		 * @return string|hw_input_axis_col
 		 */
 		public function description( $set = null ){
 			if( is_null( $set ) ){
