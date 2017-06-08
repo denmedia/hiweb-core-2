@@ -4,7 +4,7 @@
 	class hw_post_types{
 
 		/** @var hw_post_type[] */
-		private $types = array();
+		private $types = [];
 
 
 		/**
@@ -27,37 +27,11 @@
 		private $_type;
 		/** @var WP_Error|WP_Post_Type */
 		private $_object;
-		private $_defaults = array(
-			'label' => null,
-			'labels' => array(),
-			'description' => '',
-			'public' => true,
-			'hierarchical' => false,
-			'exclude_from_search' => null,
-			'publicly_queryable' => null,
-			'show_ui' => true,
-			'show_in_menu' => null,
-			'show_in_nav_menus' => null,
-			'show_in_admin_bar' => null,
-			'menu_position' => null,
-			'menu_icon' => 'dashicons-sticky',
-			'capability_type' => 'post',
-			'capabilities' => array(),
-			'map_meta_cap' => null,
-			'supports' => array(),
-			'register_meta_box_cb' => null,
-			'taxonomies' => array(),
-			'has_archive' => false,
-			'rewrite' => true,
-			'query_var' => true,
-			'can_export' => true,
-			'delete_with_user' => null,
-			'_builtin' => false,
-			'_edit_link' => 'post.php?post=%d',
-		);
+		private $_defaults = [ 'label' => null, 'labels' => [], 'description' => '', 'public' => true, 'hierarchical' => false, 'exclude_from_search' => null, 'publicly_queryable' => null, 'show_ui' => true, 'show_in_menu' => null, 'show_in_nav_menus' => null, 'show_in_admin_bar' => null, 'menu_position' => null, 'menu_icon' => 'dashicons-sticky', 'capability_type' => 'post', 'capabilities' => [], 'map_meta_cap' => null, 'supports' => [], 'register_meta_box_cb' => null, 'taxonomies' => [],
+			'has_archive' => false, 'rewrite' => true, 'query_var' => true, 'can_export' => true, 'delete_with_user' => null, '_builtin' => false, '_edit_link' => 'post.php?post=%d', ];
 		///////PROPS
 		private $label;
-		private $labels = array();
+		private $labels = [];
 		private $description;
 		private $public;
 		private $hierarchical;
@@ -83,30 +57,30 @@
 		private $_builtin;
 		private $_edit_link;
 
+		private $columns_manager_thumbnail = false;
+
 		/** @var  hw_taxonomy[] */
-		private $_taxonomies = array();
+		private $_taxonomies = [];
 		/** @var array */
-		private $_meta_boxes = array();
+		private $_meta_boxes = [];
 
 
 		public function __construct( $post_type ){
 			$this->_type = sanitize_file_name( strtolower( $post_type ) );
 			$this->label = $post_type;
 			$this->set_props();
-			add_action( 'init', array( $this, 'add_action_init_create' ), 99999 );
+			add_action( 'init', [ $this, 'add_action_init_create' ], 99999 );
 			///Add metas...
-			add_action( 'edit_form_top', array( $this, 'add_action_edit_form_top' ) );
-			add_action( 'edit_form_before_permalink', array( $this, 'add_action_edit_form_before_permalink' ) );
-			add_action( 'edit_form_after_title', array( $this, 'add_action_edit_form_after_title' ) );
-			add_action( 'edit_form_after_editor', array( $this, 'add_action_edit_form_after_editor' ) );
-			if( $post_type == 'page' )
-				add_action( 'submitpage_box', array( $this, 'add_action_submitpage_box' ) ); else
-				add_action( 'submitpost_box', array( $this, 'add_action_submitpage_box' ) );
-			if( $post_type == 'page' )
-				add_action( 'edit_page_form', array( $this, 'add_action_edit_form_advanced' ) ); else
-				add_action( 'edit_form_advanced', array( $this, 'add_action_edit_form_advanced' ) );
+			add_action( 'edit_form_top', [ $this, 'add_action_edit_form_top' ] );
+			add_action( 'edit_form_before_permalink', [ $this, 'add_action_edit_form_before_permalink' ] );
+			add_action( 'edit_form_after_title', [ $this, 'add_action_edit_form_after_title' ] );
+			add_action( 'edit_form_after_editor', [ $this, 'add_action_edit_form_after_editor' ] );
+			if( $post_type == 'page' ) add_action( 'submitpage_box', [ $this, 'add_action_submitpage_box' ] ); else
+				add_action( 'submitpost_box', [ $this, 'add_action_submitpage_box' ] );
+			if( $post_type == 'page' ) add_action( 'edit_page_form', [ $this, 'add_action_edit_form_advanced' ] ); else
+				add_action( 'edit_form_advanced', [ $this, 'add_action_edit_form_advanced' ] );
 			///Save Meta
-			add_action( 'save_post', array( $this, 'add_action_save_post' ), 99999, 2 );
+			add_action( 'save_post', [ $this, 'add_action_save_post' ], 99999, 2 );
 		}
 
 
@@ -410,6 +384,7 @@
 
 		///////
 
+
 		/**
 		 * @param null $set
 		 * @return $this
@@ -444,8 +419,7 @@
 		 * @return $this
 		 */
 		public function labels_set( $key = 'name', $value = '' ){
-			if( is_object( $this->labels ) )
-				$this->labels->{$key} = $value; else $this->labels[ $key ] = $value;
+			if( is_object( $this->labels ) ) $this->labels->{$key} = $value; else $this->labels[ $key ] = $value;
 			return $this;
 		}
 
@@ -472,7 +446,7 @@
 		 * @return array
 		 */
 		public function props(){
-			$R = array();
+			$R = [];
 			foreach( $this->_defaults as $key => $def_value ){
 				$R[ $key ] = ( !property_exists( $this, $key ) || is_null( $this->{$key} ) ) ? $def_value : $this->{$key};
 			}
@@ -495,8 +469,7 @@
 		 */
 		public function add_meta_box( $id, $hiweb_meta_boxes = null ){
 			if( !isset( $this->_meta_boxes[ $id ] ) ){
-				if( $hiweb_meta_boxes[ $id ] instanceof hw_post_type_meta_boxes )
-					$this->_meta_boxes = $hiweb_meta_boxes; else $this->_meta_boxes[ $id ] = new hw_post_type_meta_boxes( $id );
+				if( $hiweb_meta_boxes[ $id ] instanceof hw_post_type_meta_boxes ) $this->_meta_boxes = $hiweb_meta_boxes; else $this->_meta_boxes[ $id ] = new hw_post_type_meta_boxes( $id );
 			}
 			return $this->_meta_boxes[ $id ];
 		}
@@ -520,6 +493,20 @@
 		 */
 		public function meta_boxes(){
 			return $this->_meta_boxes;
+		}
+
+
+		/**
+		 * @param bool $set
+		 * @return array
+		 */
+		public function columns_manager_thumbnail( $set = true ){
+			if($set){
+				return hiweb()->tools()->thumbnail_upload()->post_type( $this->type() );
+			} else {
+				return hiweb()->tools()->thumbnail_upload()->remove_post_type( $this->type() );
+			}
+
 		}
 
 
@@ -550,23 +537,20 @@
 						if( $key == 'label' ){
 							$wp_post_types[ $this->_type ]->{$key} = __( $this->{$key} );
 						} elseif( $key == 'labels' ) {
-							if( is_object( $val ) )
-								foreach( $val as $label => $name ){
-									if( isset( $this->labels[ $label ] ) ){
-										$wp_post_types[ $this->_type ]->{$key}->{$label} = $this->labels[ $label ];
-									}
+							if( is_object( $val ) ) foreach( $val as $label => $name ){
+								if( isset( $this->labels[ $label ] ) ){
+									$wp_post_types[ $this->_type ]->{$key}->{$label} = $this->labels[ $label ];
 								}
+							}
 						} else {
 							$wp_post_types[ $this->_type ]->{$key} = $this->{$key};
 						}
 					}
 				}
 				//If PT exist
-				if( is_array( $this->supports ) && count( $this->supports ) > 0 )
-					foreach( $_wp_post_type_features[ $this->_type ] as $support => $value ){
-						if( !array_key_exists( $support, array_flip( $this->supports ) ) )
-							unset( $_wp_post_type_features[ $this->_type ][ $support ] );
-					}
+				if( is_array( $this->supports ) && count( $this->supports ) > 0 ) foreach( $_wp_post_type_features[ $this->_type ] as $support => $value ){
+					if( !array_key_exists( $support, array_flip( $this->supports ) ) ) unset( $_wp_post_type_features[ $this->_type ][ $support ] );
+				}
 			} else {
 				//Register PT
 				$this->_object = register_post_type( $this->_type, $this->props() );
@@ -584,7 +568,7 @@
 		protected $_id;
 		protected $title = '&nbsp;';
 		protected $callback;
-		protected $screen = array();
+		protected $screen = [];
 		protected $context = 'normal'; //normal, advanced или side
 		protected $priority = 'default';
 		protected $callback_args;
@@ -615,8 +599,7 @@
 		 * @return $this
 		 */
 		public function title( $title = null ){
-			if( is_null( $title ) )
-				return $this->title; else $this->title = $title;
+			if( is_null( $title ) ) return $this->title; else $this->title = $title;
 			return $this;
 		}
 
@@ -626,8 +609,7 @@
 		 * @return $this
 		 */
 		public function callback( $callback = null ){
-			if( is_null( $callback ) )
-				return $this->callback; else $this->callback = $callback;
+			if( is_null( $callback ) ) return $this->callback; else $this->callback = $callback;
 			return $this;
 		}
 
@@ -638,12 +620,11 @@
 		 * @return $this
 		 */
 		public function screen( $screen = null, $append = true ){
-			$this->screen = is_array( $this->screen ) ? $this->screen : array( $this->screen );
+			$this->screen = is_array( $this->screen ) ? $this->screen : [ $this->screen ];
 			if( is_null( $screen ) ){
 				return $this->screen;
 			} else {
-				if( !is_array( $screen ) )
-					$screen = array( $screen );
+				if( !is_array( $screen ) ) $screen = [ $screen ];
 				$this->screen = $append ? $this->screen + $screen : $screen;
 			}
 			return $this;
@@ -655,8 +636,7 @@
 		 * @return $this
 		 */
 		public function context( $context = null ){
-			if( is_null( $context ) )
-				return $this->context; else $this->context = $context;
+			if( is_null( $context ) ) return $this->context; else $this->context = $context;
 			return $this;
 		}
 
@@ -666,8 +646,7 @@
 		 * @return $this
 		 */
 		public function priority( $priority = null ){
-			if( is_null( $priority ) )
-				return $this->priority; else $this->priority = $priority;
+			if( is_null( $priority ) ) return $this->priority; else $this->priority = $priority;
 			return $this;
 		}
 
@@ -677,8 +656,7 @@
 		 * @return $this
 		 */
 		public function callback_args( $callback_args = null ){
-			if( is_null( $callback_args ) )
-				return $this->callback_args; else $this->callback_args = $callback_args;
+			if( is_null( $callback_args ) ) return $this->callback_args; else $this->callback_args = $callback_args;
 			return $this;
 		}
 
@@ -688,8 +666,7 @@
 		 * @return $this
 		 */
 		public function callback_save_post( $callback = null ){
-			if( is_null( $callback ) )
-				return $this->callback_save_post; else $this->callback_save_post = $callback;
+			if( is_null( $callback ) ) return $this->callback_save_post; else $this->callback_save_post = $callback;
 			return $this;
 		}
 
@@ -721,39 +698,35 @@
 		 *
 		 */
 		protected function my_hooks(){
-			add_action( 'add_meta_boxes', array( $this, 'add_action_add_meta_box' ), 10, 2 );
-			add_action( 'save_post', array( $this, 'add_action_save_post' ), 10, 2 );
+			add_action( 'add_meta_boxes', [ $this, 'add_action_add_meta_box' ], 10, 2 );
+			add_action( 'save_post', [ $this, 'add_action_save_post' ], 10, 2 );
 		}
 
 
 		protected function add_action_add_meta_box( $post_type, $post = null ){
-			add_meta_box( $this->_id, $this->title, is_null( $this->callback ) ? array( $this, 'generate_meta_box' ) : $this->callback, $this->screen, $this->context, $this->priority, $this->callback_args );
+			add_meta_box( $this->_id, $this->title, is_null( $this->callback ) ? [ $this, 'generate_meta_box' ] : $this->callback, $this->screen, $this->context, $this->priority, $this->callback_args );
 		}
 
 
 		protected function add_action_save_post( $post_id = null ){
-			if( !is_null( $this->callback_save_post ) )
-				return call_user_func( $this->callback_save_post, $post_id ); else {
-				if( is_array( $this->fields ) )
-					foreach( $this->fields as $id => $field ){
-						update_post_meta( $post_id, $field->name(), $_POST[ $field->name() ] );
-					}
+			if( !is_null( $this->callback_save_post ) ) return call_user_func( $this->callback_save_post, $post_id ); else {
+				if( is_array( $this->fields ) ) foreach( $this->fields as $id => $field ){
+					update_post_meta( $post_id, $field->name(), $_POST[ $field->name() ] );
+				}
 			}
 			return $post_id;
 		}
 
 
 		protected function generate_meta_box( $post, $meta_box ){
-			if( is_array( $this->fields ) )
-				foreach( $this->fields as $id => $field ){
-					if( $post instanceof WP_Post )
-						$field->value( get_post_meta( $post->ID, $field->name(), true ) );
-					?>
-					<p>
-						<strong><?php echo $field->label(); ?></strong>
-						<label class="screen-reader-text" for="<?php echo $id ?>"><?php echo $field->label() ?></label>
-					</p>
-					<?php $field->the();
-				} else ?><span>no fields</span><?php
+			if( is_array( $this->fields ) ) foreach( $this->fields as $id => $field ){
+				if( $post instanceof WP_Post ) $field->value( get_post_meta( $post->ID, $field->name(), true ) );
+				?>
+				<p>
+					<strong><?php echo $field->label(); ?></strong>
+					<label class="screen-reader-text" for="<?php echo $id ?>"><?php echo $field->label() ?></label>
+				</p>
+				<?php $field->the();
+			} else ?><span>no fields</span><?php
 		}
 	}

@@ -12,7 +12,7 @@
 
 		class hw_core{
 
-			private $classes = array();
+			private $classes = [];
 			/** @var string Корневая папка плагина */
 			public $dir = '';
 			public $dir_base = '';
@@ -27,6 +27,8 @@
 			public $dir_classes = 'classes';
 			/** @var string Корневая папка трейтов */
 			public $dir_traits = 'traits';
+			/** @var string Корневая папка трейтов */
+			public $dir_tools = 'tools';
 			/** @var string Путь до папки стилей */
 			public $dir_css = 'css';
 			/** @var string URL папки стилей */
@@ -55,6 +57,7 @@
 				$this->dir_views = $this->dir . '/' . $this->dir_views;
 				$this->dir_classes = $this->dir_include . '/' . $this->dir_classes;
 				$this->dir_traits = $this->dir_include . '/' . $this->dir_traits;
+				$this->dir_tools = $this->dir_include . '/' . $this->dir_tools;
 				$this->dir_css = $this->dir . '/' . $this->dir_css;
 				$this->dir_js = $this->dir . '/' . $this->dir_js;
 				///Load traits
@@ -95,8 +98,7 @@
 			 * @return bool|hw_console
 			 */
 			public function console( $data = null ){
-				if( !is_null( $data ) || trim( $data ) != '' )
-					return $this->give_class( 'console' )->info( $data ); else return $this->give_class( 'console', $data );
+				if( !is_null( $data ) || trim( $data ) != '' ) return $this->give_class( 'console' )->info( $data ); else return $this->give_class( 'console', $data );
 			}
 
 
@@ -126,16 +128,15 @@
 			}
 
 
-//			/**
-//			 * @param        $fieldId - индификатор поля
-//			 * @param string $type    - тип поля
-//			 * @param null   $name    - имя поля
-//			 * @return hw_field
-//			 */
-//			public function field( $fieldId, $type = 'text', $name = null ){
-//				return $this->fields()->make( $fieldId, $type, $name );
-//			}
-
+			//			/**
+			//			 * @param        $fieldId - индификатор поля
+			//			 * @param string $type    - тип поля
+			//			 * @param null   $name    - имя поля
+			//			 * @return hw_field
+			//			 */
+			//			public function field( $fieldId, $type = 'text', $name = null ){
+			//				return $this->fields()->make( $fieldId, $type, $name );
+			//			}
 
 			/**
 			 * Возвращает класс-контроллер форм
@@ -191,7 +192,7 @@
 			 * @param bool  $in_footer - показывать в фтуре
 			 * @return mixed
 			 */
-			public function js( $file, $afterJS = array(), $in_footer = false ){
+			public function js( $file, $afterJS = [], $in_footer = false ){
 				return $this->give_class( 'js' )->enqueue( $file, $afterJS, $in_footer );
 			}
 
@@ -225,8 +226,7 @@
 			 */
 			public function meta( $field_id = null, $screen_id = null ){
 				$meta = $this->give_class( 'meta' )->give( $field_id );
-				if( !is_null( $screen_id ) )
-					$meta->object_id = $screen_id;
+				if( !is_null( $screen_id ) ) $meta->object_id = $screen_id;
 				return $meta;
 			}
 
@@ -311,6 +311,14 @@
 
 
 			/**
+			 * @return bool|hw_tools
+			 */
+			public function tools(){
+				return $this->give_class( 'tools' );
+			}
+
+
+			/**
 			 * Подключение класса
 			 * @param            $name
 			 * @param null|mixed $data
@@ -319,8 +327,7 @@
 			 * @version 1.2
 			 */
 			protected function give_class( $name, $data = null, $newInstance = false ){
-				if( !array_key_exists( $name, $this->classes ) )
-					$this->classes[ $name ] = array();
+				if( !array_key_exists( $name, $this->classes ) ) $this->classes[ $name ] = [];
 				$index = count( $this->classes[ $name ] );
 				if( $index == 0 || $newInstance ){
 					$className = 'hw_' . $name;

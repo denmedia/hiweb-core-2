@@ -10,11 +10,11 @@
 }
 
 @mixin hw_transition($key: all, $duration: 500ms, $easing: ease-in-out, $delay: 0ms) {
-	$params:null;
+	$params: null;
 	@each $val in $key {
-		@if($params == '') {
+		@if ($params == '') {
 			$params: $val $duration $easing $delay;
-		}@else{
+		} @else {
 			$params: $params, $val $duration $easing $delay;
 		}
 
@@ -25,7 +25,7 @@
 	transition: $params;
 }
 
-@mixin hw_transform($transform: none){
+@mixin hw_transform($transform: none) {
 	-webkit-transform: $transform;
 	-moz-transform: $transform;
 	-o-transform: $transform;
@@ -48,6 +48,14 @@
 	left: $left;
 }
 
+@mixin hw_position_stretch_2($padding: 0) {
+	position: absolute;
+	top: $padding;
+	right: $padding;
+	bottom: $padding;
+	left: $padding;
+}
+
 @mixin hw_opacity($opacity) {
 	-webkit-opacity: $opacity;
 	-moz-opacity: $opacity;
@@ -64,10 +72,49 @@
 	box-shadow: $props;
 }
 
-@mixin hw_text_shadow($size: 5px, $x: 0, $y: 0, $color: rgba(0, 0, 0, 0.35)){
+@mixin hw_text_shadow($size: 5px, $x: 0, $y: 0, $color: rgba(0, 0, 0, 0.35)) {
 	$props: $x $y $size $color;
 	-webkit-text-shadow: $props;
 	-moz-text-shadow: $props;
 	-o-text-shadow: $props;
 	text-shadow: $props;
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */
+{
+	from {
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	to {
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes rotating {
+	from {
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	to {
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+
+@mixin hw_rotate($time: 2s, $easing: linear ) {
+	-webkit-animation: rotating $time $easing infinite;
+	-moz-animation: rotating $time $easing infinite;
+	-ms-animation: rotating $time $easing infinite;
+	-o-animation: rotating $time $easing infinite;
+	animation: rotating $time $easing infinite;
 }

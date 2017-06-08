@@ -41,6 +41,52 @@
 
 
 		/**
+		 * Поместить значение в массив на определенную виртуальную позицию, указав ключ
+		 * @param      $array
+		 * @param      $value
+		 * @param null $index -
+		 * @param null $key
+		 * @return array
+		 */
+		public function push( $array, $value, $index = null, $key = null ){
+			if( !is_array( $array ) )
+				$array = [ $array ];
+			if( $index === false ){
+				$array = array_reverse( $array );
+				if( is_numeric( $key ) || is_string( $key ) )
+					$array[ $key ] = $value; else $array[] = $value;
+				$array = array_reverse( $array );
+			} elseif( is_numeric( $index ) ) {
+				$R = [];
+				$n = 0;
+				$index = intval( $index );
+				if( $index < 0 ){
+					$array = array_reverse( $array );
+				}
+				foreach( $array as $k => $v ){
+					if( $n == abs( $index ) ){
+						if( is_numeric( $key ) || is_string( $key ) )
+							$R[ $key ] = $value; else $R[] = $value;
+					}
+					if( array_key_exists( $k, $R ) ){
+						if( is_int( $k ) )
+							$R[ intval( $k ) + 1 ] = $v;
+					} else $R[ $k ] = $v;
+					$n ++;
+				}
+				$array = $R;
+				if( $index < 0 ){
+					$array = array_reverse( $array );
+				}
+			} else {
+				if( is_numeric( $key ) || is_string( $key ) )
+					$array[ $key ] = $value; else $array[] = $value;
+			}
+			return $array;
+		}
+
+
+		/**
 		 * Возвращает значение ключа по его индексу
 		 * @param array     $array
 		 * @param int|array $index = номер (массив номеров) индекса значения. Напрмиер 0 - первый ключ. Чтобы получить последний ключ, укажите -1, так же - 2 вернет предпоследний ключ. Если индекс ключа превысит
@@ -93,7 +139,10 @@
 						if( $ifOneArr_doMergeArr ){
 							$v = $this->merge( $array1[ $k ], $array2[ $k ] );
 						} else {
-							$v = array( $array1[ $k ], $array2[ $k ] );
+							$v = array(
+								$array1[ $k ],
+								$array2[ $k ]
+							);
 						}
 					} elseif( $ifOneArr_doMergeArr ) {
 						if( is_array( $array1[ $k ] ) ){

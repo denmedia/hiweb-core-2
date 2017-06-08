@@ -36,7 +36,7 @@
 						$width = ( $col->width() / $width_full * 100 ) . '%';
 						?>
 						<th data-col="<?= $col->id() ?>" style="width:<?= $width ?>">
-							<?= $col->name() . ( $col->description() != '' ? $col->description() : '' ) ?>
+							<?= $col->name() . ( $col->description() != '' ? '<p class="description">'.$col->description().'</p>' : '' ) ?>
 						</th>
 						<?php
 					}

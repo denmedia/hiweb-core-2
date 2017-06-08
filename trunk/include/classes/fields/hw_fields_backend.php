@@ -9,19 +9,7 @@
 	 */
 	class hw_fields_backend{
 
-		private $form_template_for_hooks = array(
-			'edit_form_top' => 'default',
-			'edit_form_before_permalink' => 'postbox',
-			'edit_form_after_title' => 'postbox',
-			'edit_form_after_editor' => 'postbox',
-			'submitpage_box' => 'postbox',
-			'submitpost_box' => 'postbox',
-			'edit_page_form' => 'postbox',
-			'edit_form_advanced' => 'postbox',
-			'_add_form_fields' => 'add-term',
-			'_edit_form' => 'term',
-			'options' => 'default'
-		);
+		private $form_template_for_hooks = [ 'edit_form_top' => 'default', 'edit_form_before_permalink' => 'postbox', 'edit_form_after_title' => 'postbox', 'edit_form_after_editor' => 'postbox', 'submitpage_box' => 'postbox', 'submitpost_box' => 'postbox', 'edit_page_form' => 'postbox', 'edit_form_advanced' => 'postbox', '_add_form_fields' => 'add-term', '_edit_form' => 'term', 'options' => 'default' ];
 
 
 		use hw_hidden_methods_props;
@@ -31,107 +19,50 @@
 
 			if( hiweb()->context()->is_backend_page() ){
 				///POSTS PAGE EDIT BACKEND
-				add_action( 'edit_form_top', [
-					$this,
-					'edit_form_top'
-				] );
-				add_action( 'edit_form_before_permalink', [
-					$this,
-					'edit_form_before_permalink'
-				] );
-				add_action( 'edit_form_after_title', [
-					$this,
-					'edit_form_after_title'
-				] );
-				add_action( 'edit_form_after_editor', [
-					$this,
-					'edit_form_after_editor'
-				] );
-				add_action( 'submitpost_box', [
-					$this,
-					'submitpost_box'
-				] );
-				add_action( 'submitpage_box', [
-					$this,
-					'submitpage_box'
-				] );
-				add_action( 'edit_form_advanced', [
-					$this,
-					'edit_form_advanced'
-				] );
-				add_action( 'edit_page_form', [
-					$this,
-					'edit_page_form'
-				] );
-				add_action( 'dbx_post_sidebar', [
-					$this,
-					'dbx_post_sidebar'
-				] );
+				add_action( 'edit_form_top', [ $this, 'edit_form_top' ] );
+				add_action( 'edit_form_before_permalink', [ $this, 'edit_form_before_permalink' ] );
+				add_action( 'edit_form_after_title', [ $this, 'edit_form_after_title' ] );
+				add_action( 'edit_form_after_editor', [ $this, 'edit_form_after_editor' ] );
+				add_action( 'submitpost_box', [ $this, 'submitpost_box' ] );
+				add_action( 'submitpage_box', [ $this, 'submitpage_box' ] );
+				add_action( 'edit_form_advanced', [ $this, 'edit_form_advanced' ] );
+				add_action( 'edit_page_form', [ $this, 'edit_page_form' ] );
+				add_action( 'dbx_post_sidebar', [ $this, 'dbx_post_sidebar' ] );
 				///POSTS COLUMNS
 				add_action( 'admin_init', function(){
-					if( !function_exists( 'get_post_types' ) )
-						return;
+					if( !function_exists( 'get_post_types' ) ) return;
 					$post_types = get_post_types();
-					if( is_array( $post_types ) )
-						foreach( $post_types as $post_type ){
-							add_action( 'manage_' . $post_type . '_posts_custom_column', [
-								$this,
-								'manage_posts_custom_column'
-							], 10, 2 );
-							add_filter( 'manage_' . $post_type . '_posts_columns', [
-								$this,
-								'manage_posts_columns'
-							] );
-						}
+					if( is_array( $post_types ) ) foreach( $post_types as $post_type ){
+						add_action( 'manage_' . $post_type . '_posts_custom_column', [ $this, 'manage_posts_custom_column' ], 10, 2 );
+						add_filter( 'manage_' . $post_type . '_posts_columns', [ $this, 'manage_posts_columns' ] );
+					}
 				} );
 				///POSTS SAVE
-				add_action( 'save_post', [
-					$this,
-					'save_post'
-				], 10, 3 );
+				add_action( 'save_post', [ $this, 'save_post' ], 10, 3 );
 				////////
 				///TAXONOMIES BACKEND
 				add_action( 'init', function(){
-					if( function_exists( 'get_taxonomies' ) && is_array( get_taxonomies() ) )
-						foreach( get_taxonomies() as $taxonomy_name ){
-							//add
-							add_action( $taxonomy_name . '_add_form_fields', [
-								$this,
-								'taxonomy_add_form_fields'
-							] );
-							//edit
-							add_action( $taxonomy_name . '_edit_form', [
-								$this,
-								'taxonomy_edit_form'
-							], 10, 2 );
-						}
+					if( function_exists( 'get_taxonomies' ) && is_array( get_taxonomies() ) ) foreach( get_taxonomies() as $taxonomy_name ){
+						//add
+						add_action( $taxonomy_name . '_add_form_fields', [ $this, 'taxonomy_add_form_fields' ] );
+						//edit
+						add_action( $taxonomy_name . '_edit_form', [ $this, 'taxonomy_edit_form' ], 10, 2 );
+					}
 				} );
 				///TAXONOMY SAVE
-				add_action( 'create_term', [
-					$this,
-					'edited_term'
-				], 10, 3 );
-				add_action( 'edited_term', [
-					$this,
-					'edited_term'
-				], 10, 3 );
+				add_action( 'create_term', [ $this, 'edited_term' ], 10, 3 );
+				add_action( 'edited_term', [ $this, 'edited_term' ], 10, 3 );
 				///OPTIONS FIELDS
-				add_action( 'admin_init', [
-					$this,
-					'options_page_add_fields'
-				], 999999 );
+				add_action( 'admin_init', [ $this, 'options_page_add_fields' ], 999999 );
 				///ADMIN MENU FIELDS
-				add_action( 'current_screen', [
-					$this,
-					'admin_menu_fields'
-				], 999999 );
+				add_action( 'current_screen', [ $this, 'admin_menu_fields' ], 999999 );
 			}
 		}
 
 
 		private function get_form_template_from_hook( $hook = '' ){
 			$template = 'default';
-			static $success = array();
+			static $success = [];
 			if( isset( $success[ $hook ] ) ){
 				$template = $success[ $hook ];
 			} elseif( isset( $this->form_template_for_hooks[ $hook ] ) ) {
@@ -180,10 +111,8 @@
 			$locations = hiweb()->fields()->locations()->get_by( 'options_page' );
 			$pages = [];
 			foreach( $locations as $location ){
-				if( !isset( $location->rules['options_page']['slug'] ) || !is_array( $location->rules['options_page']['slug'] ) || count( $location->rules['options_page']['slug'] ) == 0 )
-					continue;
-				if( reset( $location->rules['options_page']['section_title'] ) != '' )
-					$pages[ $location->rules['options_page']['slug'][0] ]['title'] = is_array( $location->rules['options_page']['section_title'] ) ? reset( $location->rules['options_page']['section_title'] ) : $location->rules['options_page']['section_title'];
+				if( !isset( $location->rules['options_page']['slug'] ) || !is_array( $location->rules['options_page']['slug'] ) || count( $location->rules['options_page']['slug'] ) == 0 ) continue;
+				if( reset( $location->rules['options_page']['section_title'] ) != '' ) $pages[ $location->rules['options_page']['slug'][0] ]['title'] = is_array( $location->rules['options_page']['section_title'] ) ? reset( $location->rules['options_page']['section_title'] ) : $location->rules['options_page']['section_title'];
 				$pages[ $location->rules['options_page']['slug'][0] ]['fields'][] = $location->get_field();
 			}
 			///Register Section and Fields
@@ -198,10 +127,7 @@
 						} else {
 							$field->value( get_option( $field_options_name, null ) );
 							$field->input()->name = $field_options_name;
-							add_settings_field( $field_options_name, $field->label(), [
-								$field->input(),
-								'the'
-							], $page, 'hiweb-' . $page );
+							add_settings_field( $field_options_name, $field->label(), [ $field->input(), 'the' ], $page, 'hiweb-' . $page );
 						}
 					}
 				}
@@ -219,18 +145,16 @@
 
 		public function taxonomy_add_form_fields( $taxonomy ){
 			$fields = $this->get_fields_by_taxonomy( $taxonomy );
-			if( is_array( $fields ) && count( $fields ) > 0 )
-				hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
+			if( is_array( $fields ) && count( $fields ) > 0 ) hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 		}
 
 
 		public function taxonomy_edit_form( $term, $taxonomy ){
 			$fields = $this->get_fields_by_taxonomy( $taxonomy );
 			if( is_array( $fields ) && count( $fields ) > 0 ){
-				if( $term instanceof WP_Term )
-					foreach( $fields as $field ){
-						$field->value( get_term_meta( $term->term_id, $field->id(), true ) );
-					}
+				if( $term instanceof WP_Term ) foreach( $fields as $field ){
+					$field->value( get_term_meta( $term->term_id, $field->id(), true ) );
+				}
 				hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 			}
 		}
@@ -245,17 +169,16 @@
 			if( intval( $term_id ) > 0 ){
 				$fields = $this->get_fields_by_taxonomy( $taxonomy );
 				$R = [];
-				if( is_array( $fields ) )
-					foreach( $fields as $field ){
-						$R[] = $field->id();
-						if( array_key_exists( $field->id(), $_POST ) ){
-							update_term_meta( $term_id, $field->id(), $_POST[ $field->id() ] );
-						} elseif( array_key_exists( $field->id(), $_GET ) ) {
-							update_term_meta( $term_id, $field->id(), $_GET[ $field->id() ] );
-						} else {
-							update_term_meta( $term_id, $field->id(), null );
-						}
+				if( is_array( $fields ) ) foreach( $fields as $field ){
+					$R[] = $field->id();
+					if( array_key_exists( $field->id(), $_POST ) ){
+						update_term_meta( $term_id, $field->id(), $_POST[ $field->id() ] );
+					} elseif( array_key_exists( $field->id(), $_GET ) ) {
+						update_term_meta( $term_id, $field->id(), $_GET[ $field->id() ] );
+					} else {
+						update_term_meta( $term_id, $field->id(), null );
 					}
+				}
 			}
 		}
 
@@ -273,8 +196,7 @@
 				///GET LOCATIONS by CONTEXT
 				/** @var hw_field[] $R */
 				$args = [];
-				if( is_int( $position ) )
-					$args['position'] = $position;
+				if( is_int( $position ) ) $args['position'] = $position;
 				$args['post_type'] = get_current_screen()->id;
 
 				//POST SETTINGS
@@ -287,10 +209,6 @@
 				$R = hiweb()->fields()->locations()->get_fields_by( 'post_type', $args );
 				if( $post instanceof WP_Post ){
 					foreach( $R as $field ){
-						hiweb()->console( [
-							$field->id(),
-							get_post_meta( $post->ID, $field->id(), true )
-						] ); //todo-
 						$field->value( get_post_meta( $post->ID, $field->id(), true ) );
 					}
 				}
@@ -305,8 +223,7 @@
 		 */
 		private function the_form_post( $post = null, $position = 3 ){
 			$fields = $this->get_fields_by_post_type_position( $post, $position );
-			if( is_array( $fields ) && count( $fields ) > 0 )
-				hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
+			if( is_array( $fields ) && count( $fields ) > 0 ) hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 		}
 
 
@@ -371,17 +288,10 @@
 				if( $column == hiweb()->fields()->get_columns_field_id( $location->get_field()->id() ) ){
 					$callback = $location->post_type->columns_manager()->callback;
 					if( is_null( $callback ) ){
-						echo $location->get_field()->prepend() . ' <span>' . hiweb()->fields()->home()->get_frontend( $location->get_field()->id(), get_post( $post_id ) )->content( [
-								50,
-								50
-							], true ) . '</span> ' . $location->get_field()->append();
+						echo $location->get_field()->prepend() . ' <span>' . hiweb()->fields()->home()->get_frontend( $location->get_field()->id(), get_post( $post_id ) )->content( [ 50, 50 ], true ) . '</span> ' . $location->get_field()->append();
 					} else {
 						if( is_callable( $callback ) ){
-							call_user_func( $callback, [
-								$post_id,
-								$location->get_field(),
-								$location
-							] );
+							call_user_func( $callback, [ $post_id, $location->get_field(), $location ] );
 						} else {
 							echo $callback;
 						}
@@ -426,17 +336,16 @@
 			if( $post instanceof WP_Post ){
 				$fields = $this->get_fields_by_post_type_position( $post, false );
 				$R = [];
-				if( is_array( $fields ) )
-					foreach( $fields as $field ){
-						$R[] = $field->id();
-						if( array_key_exists( $field->id(), $_POST ) ){
-							update_post_meta( $post->ID, $field->id(), $_POST[ $field->id() ] );
-						} elseif( array_key_exists( $field->id(), $_GET ) ) {
-							update_post_meta( $post->ID, $field->id(), $_GET[ $field->id() ] );
-						} else {
-							update_post_meta( $post->ID, $field->id(), null );
-						}
+				if( is_array( $fields ) ) foreach( $fields as $field ){
+					$R[] = $field->id();
+					if( array_key_exists( $field->id(), $_POST ) ){
+						update_post_meta( $post->ID, $field->id(), $_POST[ $field->id() ] );
+					} elseif( array_key_exists( $field->id(), $_GET ) ) {
+						update_post_meta( $post->ID, $field->id(), $_GET[ $field->id() ] );
+					} else {
+						update_post_meta( $post->ID, $field->id(), null );
 					}
+				}
 			}
 		}
 

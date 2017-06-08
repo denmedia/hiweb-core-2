@@ -1,0 +1,257 @@
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+.wp-list-table th#hw_tool_thumbnail {
+  width: 80px; }
+.wp-list-table td.hw_tool_thumbnail {
+  position: relative; }
+  .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    cursor: pointer;
+    text-align: center;
+    min-height: 55px;
+    z-index: 40;
+    -webkit-transition: transform opacity ease-in-out 0ms;
+    -moz-transition: transform opacity ease-in-out 0ms;
+    -o-transition: transform opacity ease-in-out 0ms;
+    transition: transform opacity ease-in-out 0ms; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone .img {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      bottom: 5px;
+      left: 5px;
+      background-size: cover;
+      overflow: hidden;
+      -webkit-transition: transform 0.5s ease-in-out 0ms;
+      -moz-transition: transform 0.5s ease-in-out 0ms;
+      -o-transition: transform 0.5s ease-in-out 0ms;
+      transition: transform 0.5s ease-in-out 0ms; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone .noimg {
+      background: url(img/noimg.png) 50% 50%;
+      -webkit-opacity: 0.5;
+      -moz-opacity: 0.5;
+      -ms-opacity: 0.5;
+      -o-opacity: 0.5;
+      opacity: 0.5;
+      -webkit-transition: transform 0.2s ease-in-out 0ms;
+      -moz-transition: transform 0.2s ease-in-out 0ms;
+      -o-transition: transform 0.2s ease-in-out 0ms;
+      transition: transform 0.2s ease-in-out 0ms; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone:hover {
+      -webkit-opacity: 1;
+      -moz-opacity: 1;
+      -ms-opacity: 1;
+      -o-opacity: 1;
+      opacity: 1;
+      -webkit-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
+      -moz-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
+      -o-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
+      transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms; }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone:hover .img {
+        -webkit-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms, filter 0.2s ease-in-out 0ms;
+        -moz-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms, filter 0.2s ease-in-out 0ms;
+        -o-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms, filter 0.2s ease-in-out 0ms;
+        transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms, filter 0.2s ease-in-out 0ms;
+        -webkit-transform: scale(0.9);
+        -moz-transform: scale(0.9);
+        -o-transform: scale(0.9);
+        transform: scale(0.9);
+        -webkit-opacity: 0.4;
+        -moz-opacity: 0.4;
+        -ms-opacity: 0.4;
+        -o-opacity: 0.4;
+        opacity: 0.4;
+        -webkit-filter: 3px;
+        -moz-filter: 3px;
+        -o-filter: 3px;
+        -ms-filter: 3px;
+        filter: 3px; }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone:hover [data-ctrl] [data-ctrl-btn] {
+        -webkit-opacity: 0.6;
+        -moz-opacity: 0.6;
+        -ms-opacity: 0.6;
+        -o-opacity: 0.6;
+        opacity: 0.6; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-ctrl] {
+      position: relative;
+      z-index: 20;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0; }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-ctrl] [data-ctrl-btn] {
+        font-size: 34px;
+        -webkit-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
+        -moz-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
+        -o-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
+        transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
+        -webkit-transform: scale(0.9);
+        -moz-transform: scale(0.9);
+        -o-transform: scale(0.9);
+        transform: scale(0.9);
+        -webkit-opacity: 0;
+        -moz-opacity: 0;
+        -ms-opacity: 0;
+        -o-opacity: 0;
+        opacity: 0; }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-ctrl] .left {
+        position: absolute;
+        top: 0;
+        right: 50%;
+        bottom: 0;
+        left: 10%; }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-ctrl] .right {
+        position: absolute;
+        top: 0;
+        right: 10%;
+        bottom: 0;
+        left: 50%; }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-ctrl] i {
+        font-size: 32px;
+        text-align: center;
+        display: block;
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        line-height: 24px;
+        -webkit-text-shadow: 0 0 10px white;
+        -moz-text-shadow: 0 0 10px white;
+        -o-text-shadow: 0 0 10px white;
+        text-shadow: 0 0 10px white;
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%); }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-ctrl] [data-ctrl-btn]:hover {
+        -webkit-transition: transform 0.1s ease-in-out 0ms, opacity 0.1s ease-in-out 0ms;
+        -moz-transition: transform 0.1s ease-in-out 0ms, opacity 0.1s ease-in-out 0ms;
+        -o-transition: transform 0.1s ease-in-out 0ms, opacity 0.1s ease-in-out 0ms;
+        transition: transform 0.1s ease-in-out 0ms, opacity 0.1s ease-in-out 0ms;
+        -webkit-opacity: 1;
+        -moz-opacity: 1;
+        -ms-opacity: 1;
+        -o-opacity: 1;
+        opacity: 1;
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -o-transform: scale(1.2);
+        transform: scale(1.2); }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-drop-logo] {
+      -webkit-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+      -moz-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+      -o-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+      transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      -webkit-opacity: 0;
+      -moz-opacity: 0;
+      -ms-opacity: 0;
+      -o-opacity: 0;
+      opacity: 0;
+      display: none; }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-drop-logo] i {
+        font-size: 48px;
+        text-align: center;
+        display: block;
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        line-height: 24px;
+        -webkit-text-shadow: 0 0 10px white;
+        -moz-text-shadow: 0 0 10px white;
+        -o-text-shadow: 0 0 10px white;
+        text-shadow: 0 0 10px white;
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%); }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-has-thumbnail="1"] .noimg {
+      display: none; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-has-thumbnail="1"] [data-ctrl="noimg"] {
+      display: none; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-has-thumbnail="0"] [data-img] {
+      display: none; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-has-thumbnail="0"] [data-ctrl="img"] {
+      display: none; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-is-process="1"] [data-ctrl], .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-is-process="1"] .img, .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-is-process="1"] [data-drop-logo] {
+      display: none !important; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-is-process="1"] [data-loader] {
+      display: block; }
+      .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-is-process="1"] [data-loader] i {
+        font-size: 32px;
+        text-align: center;
+        display: block;
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        line-height: 24px;
+        margin-top: -12px;
+        -webkit-animation: rotating 2s linear infinite;
+        -moz-animation: rotating 2s linear infinite;
+        -ms-animation: rotating 2s linear infinite;
+        -o-animation: rotating 2s linear infinite;
+        animation: rotating 2s linear infinite; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone[data-is-process="0"] [data-loader] {
+      display: none; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone.global-dragover [data-ctrl], .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone.global-dragover .img {
+      -webkit-transform: scale(0.9);
+      -moz-transform: scale(0.9);
+      -o-transform: scale(0.9);
+      transform: scale(0.9);
+      -webkit-opacity: 0.4;
+      -moz-opacity: 0.4;
+      -ms-opacity: 0.4;
+      -o-opacity: 0.4;
+      opacity: 0.4; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone.global-dragover [data-drop-logo] {
+      display: block;
+      -webkit-opacity: 1;
+      -moz-opacity: 1;
+      -ms-opacity: 1;
+      -o-opacity: 1;
+      opacity: 1; }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone.dragover [data-drop-logo] {
+      -webkit-transform: scale(1.1);
+      -moz-transform: scale(1.1);
+      -o-transform: scale(1.1);
+      transform: scale(1.1); }
+    .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone.dragover .img {
+      -webkit-opacity: 0.2;
+      -moz-opacity: 0.2;
+      -ms-opacity: 0.2;
+      -o-opacity: 0.2;
+      opacity: 0.2;
+      -webkit-transform: scale(0.7);
+      -moz-transform: scale(0.7);
+      -o-transform: scale(0.7);
+      transform: scale(0.7); }
+
+/*# sourceMappingURL=tool-thumbnail-upload.css.map */

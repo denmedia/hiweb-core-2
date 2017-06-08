@@ -33,7 +33,6 @@
 		 * @param $wp_admin_bar
 		 */
 		private function add_link_to_admin_bar( WP_Admin_Bar $wp_admin_bar ){
-			hiweb()->console( $this->_node );
 			if( is_array( $this->_node ) )
 				foreach( $this->_node as $id => $node ){
 					if( $node instanceof hw_wp_admin_bar_add_menu )
