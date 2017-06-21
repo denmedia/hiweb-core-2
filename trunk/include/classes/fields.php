@@ -19,8 +19,7 @@
 		 */
 		public function home(){
 			static $class;
-			if( !$class instanceof hw_fields_home )
-				$class = new hw_fields_home();
+			if( !$class instanceof hw_fields_home ) $class = new hw_fields_home();
 			return $class;
 		}
 
@@ -30,8 +29,7 @@
 		 */
 		public function loop(){
 			static $class;
-			if( !$class instanceof hw_fields_loop )
-				$class = new hw_fields_loop();
+			if( !$class instanceof hw_fields_loop ) $class = new hw_fields_loop();
 			return $class;
 		}
 
@@ -41,8 +39,7 @@
 		 */
 		public function locations(){
 			static $class;
-			if( !$class instanceof hw_fields_locations )
-				$class = new hw_fields_locations();
+			if( !$class instanceof hw_fields_locations ) $class = new hw_fields_locations();
 			return $class;
 		}
 
@@ -101,8 +98,9 @@
 				$ARGS[] = [ 'slug' => $context_id ]; //todo? было закомментированно
 			} else { //Контекст задан объектом
 				///
-				if( !is_object( $context_id ) && did_action( 'wp' ) )
-					$context_id = get_queried_object(); elseif( is_numeric( $context_id ) ) {
+				if( !is_object( $context_id ) && did_action( 'wp' ) ){
+					$context_id = get_queried_object();
+				} elseif( is_numeric( $context_id ) ) {
 					$temp_contenxt = get_queried_object();
 					if( $temp_contenxt instanceof WP_Post ){
 						$context_id = get_post( $context_id );
@@ -130,11 +128,7 @@
 					hiweb()->console()->warn( sprintf( __( 'It is not possible to define the context and convert to global_id.' ) ), true );
 				}
 			}
-			return [
-				$GROUP,
-				$ARGS,
-				$context_id
-			];
+			return [ $GROUP, $ARGS, $context_id ];
 		}
 
 
@@ -145,10 +139,7 @@
 		 * @return string
 		 */
 		public function context_to_id( $field_id, $content_id = null, $md5 = true ){
-			$R = json_encode( [
-				$field_id,
-				$this->context_to_array( $content_id )
-			] );
+			$R = json_encode( [ $field_id, $this->context_to_array( $content_id ) ] );
 			return $md5 ? md5( $R ) : $R;
 		}
 

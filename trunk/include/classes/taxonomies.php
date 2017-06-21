@@ -4,7 +4,7 @@
 	class hw_taxonomies{
 
 		/** @var hw_taxonomy[] */
-		private $taxonomies = array();
+		private $taxonomies = [];
 
 
 		public function __construct(){
@@ -89,29 +89,11 @@
 		private $rewrite;
 		private $update_count_callback;
 		private $_builtin;
-		private $defaults = array(
-			'labels' => array(),
-			'description' => '',
-			'public' => true,
-			'publicly_queryable' => null,
-			'hierarchical' => false,
-			'show_ui' => null,
-			'show_in_menu' => null,
-			'show_in_nav_menus' => null,
-			'show_tagcloud' => null,
-			'show_in_quick_edit' => null,
-			'show_admin_column' => false,
-			'meta_box_cb' => null,
-			'capabilities' => array(),
-			'rewrite' => true,
-			'update_count_callback' => '',
-			'_builtin' => false,
-			'object_type' => array()
-		);
+		private $defaults = [ 'labels' => [], 'description' => '', 'public' => true, 'publicly_queryable' => null, 'hierarchical' => false, 'show_ui' => null, 'show_in_menu' => null, 'show_in_nav_menus' => null, 'show_tagcloud' => null, 'show_in_quick_edit' => null, 'show_admin_column' => false, 'meta_box_cb' => null, 'capabilities' => [], 'rewrite' => true, 'update_count_callback' => '', '_builtin' => false, 'object_type' => [] ];
 		/** @var array */
-		private $object_type = array();
+		private $object_type = [];
 		/** @var array */
-		private $terms = array();
+		private $terms = [];
 
 		use hw_hidden_methods_props;
 
@@ -128,14 +110,13 @@
 			}
 			$this->labels = $name;
 			///Create
-			add_action( 'init', array( $this, 'register_taxonomy' ), 0 );
+			add_action( 'init', [ $this, 'register_taxonomy' ], 0 );
 		}
 
 
 		/*public function __clone(){
 			add_action( 'init', array( $this, 'register_taxonomy' ), 99 );
 		}*/
-
 
 		private function register_taxonomy(){
 			if( !taxonomy_exists( $this->name ) ){
@@ -159,10 +140,8 @@
 		 */
 		public function object_type( $object_type = null, $append = false ){
 			if( !is_null( $object_type ) ){
-				if( !is_array( $this->object_type ) )
-					$this->object_type = array( $this->object_type );
-				if( !is_array( $object_type ) )
-					$object_type = array( $object_type );
+				if( !is_array( $this->object_type ) ) $this->object_type = [ $this->object_type ];
+				if( !is_array( $object_type ) ) $object_type = [ $object_type ];
 				$this->object_type = $append ? array_merge( $this->object_type, $object_type ) : $object_type;
 				return $this;
 			} else return $this->object_type;
@@ -173,12 +152,10 @@
 		 * @return array
 		 */
 		public function props(){
-			$R = array();
-			if( is_array( $this->defaults ) )
-				foreach( $this->defaults as $key => $def_value ){
-					if( property_exists( $this, $key ) && !is_null( $this->{$key} ) )
-						$R[ $key ] = $this->{$key}; else $R[ $key ] = $def_value;
-				}
+			$R = [];
+			if( is_array( $this->defaults ) ) foreach( $this->defaults as $key => $def_value ){
+				if( property_exists( $this, $key ) && !is_null( $this->{$key} ) ) $R[ $key ] = $this->{$key}; else $R[ $key ] = $def_value;
+			}
 			return $R;
 		}
 
@@ -202,8 +179,7 @@
 		 */
 		public function labels( $labels = null ){
 			if( !is_null( $labels ) ){
-				if( !is_array( $labels ) )
-					$labels = array( 'name' => $labels );
+				if( !is_array( $labels ) ) $labels = [ 'name' => $labels ];
 				$this->labels = $labels;
 				return $this;
 			}
@@ -421,7 +397,7 @@
 			$args = get_defined_vars();
 			$argsString = md5( json_encode( $args ) );
 			if( !array_key_exists( $argsString, $this->terms ) ){
-				$this->terms[ $argsString ] = array();
+				$this->terms[ $argsString ] = [];
 				$terms = get_terms( $args );
 				/** @var WP_Term[] $terms */
 				if( is_array( $terms ) ){
@@ -437,7 +413,7 @@
 						}
 					}
 				} else {
-					$this->terms[ $argsString ] = array();
+					$this->terms[ $argsString ] = [];
 				}
 			}
 

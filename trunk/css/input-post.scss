@@ -1,0 +1,24 @@
+.hw-input-post {
+
+	.single .selectator_selected_items .selectator_selected_item .selectator_selected_item_left img {
+		width: 25px !important;
+		height: 25px !important;
+	}
+
+	.selectator_element {
+		width: 100% !important;
+		.selectator_options{
+			z-index: 1100;
+			.selectator_option {
+				.selectator_option_left img {
+					width: 25px !important;
+					height: 25px !important;
+				}
+				.selectator_option_right {
+					background-color: #ccc;
+					border-radius: 2px;
+				}
+			}
+		}
+	}
+}

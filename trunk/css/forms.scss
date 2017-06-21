@@ -18,7 +18,7 @@
 }
 
 .hw-form-field {
-	p { margin: 7px 0 3px 0; }
+	.name { margin: 7px 0 3px 0; font-weight: 700; }
 	input[type="text"] { width: 100%; }
 	margin-bottom: 15px;
 	clear: both;

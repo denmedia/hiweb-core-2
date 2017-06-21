@@ -37,6 +37,10 @@
 			public $dir_js = 'js';
 			/** @var string URL папки скриптов JS */
 			public $url_js = 'js';
+			/** @var string Папка VENDORS */
+			public $dir_vendors = 'vendors';
+			/** @var string URL папки VENDORS */
+			public $url_vendors = 'vendors';
 
 
 			public function __call( $name, $arguments ){
@@ -53,6 +57,7 @@
 				///
 				$this->url_css = $this->url . '/' . $this->dir_css;
 				$this->url_js = $this->url . '/' . $this->dir_js;
+				$this->url_vendors = $this->url . '/' . $this->url_vendors;
 				$this->dir_include = $this->dir . '/' . $this->dir_include;
 				$this->dir_views = $this->dir . '/' . $this->dir_views;
 				$this->dir_classes = $this->dir_include . '/' . $this->dir_classes;
@@ -60,6 +65,7 @@
 				$this->dir_tools = $this->dir_include . '/' . $this->dir_tools;
 				$this->dir_css = $this->dir . '/' . $this->dir_css;
 				$this->dir_js = $this->dir . '/' . $this->dir_js;
+				$this->dir_vendors = $this->dir . '/' . $this->dir_vendors;
 				///Load traits
 				$this->path()->include_dir( $this->dir_traits );
 				///ERRORS DISPLAY

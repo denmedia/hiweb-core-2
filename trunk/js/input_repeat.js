@@ -113,12 +113,13 @@ var hw_input_repeat = {
         var prepend = jQuery(this).is('[data-action-add="1"]');
         var root = jQuery(this).closest(hw_input_repeat.selector);
         var row_list = hw_input_repeat.get_rows_list(root);
-        var newLine = hw_input_repeat.get_row_source(root).clone().hide().fadeIn();
+        var newLine = hw_input_repeat.get_row_source(root).clone(false).hide().fadeIn();
         if (prepend) {
             row_list.prepend(newLine);
         } else {
             row_list.append(newLine);
         }
+        newLine.find('[data-col] > *').trigger('init');
         newLine.css('opacity', 0).animate({opacity: 1}).find('> td')
             .wrapInner('<div style="display: none;" />')
             .parent()
@@ -128,13 +129,14 @@ var hw_input_repeat = {
                 $set.replaceWith($set.contents());
             });
         hw_input_repeat.make_table_names(root);
-
+        newLine.find('[data-col] > *').trigger('init_2');
     },
 
     click_duplicate: function (e) {
         e.preventDefault();
         var row = jQuery(this).closest(hw_input_repeat.selector_row);
-        var newRow = row.clone().insertAfter(row);
+        var newRow = row.clone(false).insertAfter(row);
+        newRow.find('[data-col] > *').trigger('init');
         newRow.css('opacity', 0).animate({opacity: 1}).find('> td')
             .wrapInner('<div style="display: none;" />')
             .parent()
@@ -145,6 +147,7 @@ var hw_input_repeat = {
 
             });
         hw_input_repeat.make_table_names(jQuery(this).closest(hw_input_repeat.selector));
+        newRow.find('[data-col] > *').trigger('init_2');
     },
 
     click_remove: function (e) {

@@ -38,8 +38,7 @@
 		 * @return bool|hw_fields_location_root
 		 */
 		public function get( $globalId ){
-			if( !isset( $this->locations[ $globalId ] ) )
-				return false;
+			if( !isset( $this->locations[ $globalId ] ) ) return false;
 			return $this->locations[ $globalId ];
 		}
 
@@ -52,8 +51,7 @@
 		 */
 		public function get_byGroup( $groups = [ 'post_type' ] ){
 			$R = [];
-			if( !is_array( $groups ) )
-				$groups = [ $groups ];
+			if( !is_array( $groups ) ) $groups = [ $groups ];
 			foreach( $this->rulesId as $location_id => $rule ){
 				foreach( $groups as $group_name ){
 					if( preg_match( '/^' . $group_name . ':.*/i', $rule ) ){
@@ -79,8 +77,7 @@
 			$R = true;
 			$PATTERNS[ $ruleId ] = [];
 			////
-			if( !is_array( $filter ) )
-				$filter = [ $filter ];
+			if( !is_array( $filter ) ) $filter = [ $filter ];
 			//attributes filter
 			$filter_pattern = [];
 			foreach( $required_filter as $key => $val ){
@@ -95,14 +92,12 @@
 				if( !array_key_exists( $filter_pattern, $PATTERNS[ $ruleId ] ) ){
 					$match = preg_match( $filter_pattern, $ruleId );
 					$PATTERNS[ $ruleId ][ $filter_pattern ] = $match;
-					if( $match == 0 )
-						$R = false;
+					if( $match == 0 ) $R = false;
 				}
 			}
 			foreach( $filter as $key => $val ){
 				$filter_pattern = [ '(?:"' . $key . '":(?>' ];
-				if( !is_array( $val ) && !is_bool( $val ) )
-					$val = [ $val ];
+				if( !is_array( $val ) && !is_bool( $val ) ) $val = [ $val ];
 				$pattern_val = [];
 				if( count( $val ) > 1 ){
 					foreach( $val as $key2 => $val2 ){
@@ -118,8 +113,7 @@
 				if( !array_key_exists( $filter_pattern, $PATTERNS[ $ruleId ] ) ){
 					$match = preg_match( $filter_pattern, $ruleId );
 					$PATTERNS[ $ruleId ][ $filter_pattern ] = $match;
-					if( $match == 0 )
-						$R = false;
+					if( $match == 0 ) $R = false;
 				}
 			}
 			//
@@ -169,7 +163,7 @@
 
 		use hw_hidden_methods_props;
 
-		public $rules = array();
+		public $rules = [];
 		public $rulesId = '';
 		public $globalId = '';
 		/** @var hw_field */
@@ -290,6 +284,8 @@
 		private $location_root;
 		private $columns_manager;
 
+		private $save_post_callback;
+
 
 		public function __construct( hw_fields_location_root $location_root ){
 			$this->location_root = $location_root;
@@ -398,6 +394,14 @@
 		 */
 		public function get_location(){
 			return $this->location_root;
+		}
+
+
+		/**
+		 * @param $callback
+		 */
+		public function save_post( $callback ){
+			if( is_callable( $callback ) ) $this->save_post_callback = $callback; else unset( $this->save_post_callback );
 		}
 
 	}

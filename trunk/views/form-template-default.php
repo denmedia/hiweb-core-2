@@ -6,7 +6,7 @@
 		if( $field instanceof hw_field ){
 			?>
 		<div class="hw-form-field hw-field-<?php echo $field->type() ?>">
-			<p><strong><?php echo $field->label() ?></strong></p>
+			<p class="name"><?php echo $field->label() ?></p>
 			<?php $field->the(); ?>
 			<?php echo $field->description() != '' ? '<p class="description">' . $field->description() . '</p>' : ''; ?>
 			</div><?php

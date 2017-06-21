@@ -121,7 +121,6 @@ jQuery(document).ready(function ($) {
                     place.addClass('dragover');
                 },
                 dragover: function () {
-                    console.info('!!!');
                     showDrag = true;
                 },
                 dragleave: function () {

@@ -1,0 +1,139 @@
+//colors
+$color_curious_blue_approx: #3498db;
+$color_gallery_approx: #eeeeee;
+$color_storm_dust_approx: #616161;
+$color_mountain_mist_approx: #929292;
+$white: #fff;
+
+//fonts
+$font_0: Roboto;
+
+//urls
+$url_0: url(http://themes.googleusercontent.com/static/fonts/roboto/v9/Hgo13k-tfSpn0qi1SFdUfT8E0i7KZn-EPnyo3HZu7kw.woff);
+$url_1: url(http://themes.googleusercontent.com/static/fonts/roboto/v9/2UX7WLTfW3W8TclTUvlFyQ.woff);
+$url_2: url(../img/close-tag-icon.png);
+$url_3: url(../img/close-tag-icon-hover.png);
+
+@font-face {
+	font-family: $font_0;
+	font-style: normal;
+	font-weight: 300;
+	src: local('Roboto Light'), local('Roboto-Light'), $url_0 format('woff');
+}
+@font-face {
+	font-family: $font_0;
+	font-style: normal;
+	font-weight: 400;
+	src: local('Roboto Regular'), local('Roboto-Regular'), $url_1 format('woff');
+}
+.mt_search_message {
+	z-index: 9999;
+	position: relative;
+	border: 1px solid $color_gallery_approx;
+	border-top: 1px solid $color_curious_blue_approx;
+	background: $white;
+	width: 200px;
+	padding: 10px;
+}
+.mt_search_list_container .mt_entry_container {
+	padding: 10px;
+	padding-bottom: 0;
+	min-height: 50px;
+	cursor: pointer;
+	//Instead of the line below you could use @include transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+	transition: all 0.2s linear;
+	&.active {
+		background: $color_curious_blue_approx;
+		color: $color_gallery_approx;
+		.right {
+			.name {
+				color: $color_gallery_approx;
+			}
+			.description {
+				color: $color_gallery_approx;
+			}
+		}
+	}
+	img {
+		//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+		border-radius: 50%;
+		width: 36px;
+		height: 36px;
+	}
+	.left {
+		position: absolute;
+	}
+	.right {
+		margin-bottom: -10px;
+		margin-left: 50px;
+		.name {
+			color: $color_storm_dust_approx;
+			font-size: 12px;
+			font-family: $font_0;
+			font-weight: 400;
+			margin-top: 3px;
+			margin-bottom: 0;
+		}
+		.description {
+			color: $color_mountain_mist_approx;
+			font-size: 10px;
+			font-family: $font_0;
+			font-weight: 400;
+			margin-top: 1px;
+			margin-bottom: 0;
+		}
+	}
+	&:after {
+		clear: both;
+		visibility: hidden;
+		content: '.';
+	}
+	&:not(.inactive):hover {
+		background: $color_curious_blue_approx;
+		color: $color_gallery_approx;
+		.right {
+			.name {
+				color: $color_gallery_approx;
+			}
+			.description {
+				color: $color_gallery_approx;
+			}
+		}
+	}
+}
+.mt-tag-container .mt-tag-element {
+	font-family: $font_0;
+	font-weight: 300;
+	font-size: 15px;
+	border: 1px solid $color_curious_blue_approx;
+	padding: 0 10px;
+	color: $color_curious_blue_approx;
+	margin-right: 15px;
+	float: left;
+	margin-top: 5px;
+	//Instead of the line below you could use @include transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+	transition: all 0.2s linear;
+	line-height: 1.5;
+	&:hover {
+		background: $color_curious_blue_approx;
+		color: $white;
+	}
+	a {
+		padding: 0;
+		border: none;
+		width: 7px;
+		height: 7px;
+		display: inline-block;
+		margin-right: 0;
+		margin-left: 10px;
+		margin-bottom: 2px;
+		background: $url_2 no-repeat center center;
+		text-indent: -9999px;
+		cursor: pointer;
+		float: right;
+		margin-top: 7px;
+		&:hover {
+			background: $url_3 no-repeat center center;
+		}
+	}
+}

@@ -1,0 +1,15 @@
+.hw-input-post .single .selectator_selected_items .selectator_selected_item .selectator_selected_item_left img {
+  width: 25px !important;
+  height: 25px !important; }
+.hw-input-post .selectator_element {
+  width: 100% !important; }
+  .hw-input-post .selectator_element .selectator_options {
+    z-index: 1100; }
+  .hw-input-post .selectator_element .selectator_options .selectator_option .selectator_option_left img {
+    width: 25px !important;
+    height: 25px !important; }
+  .hw-input-post .selectator_element .selectator_options .selectator_option .selectator_option_right {
+    background-color: #ccc;
+    border-radius: 2px; }
+
+/*# sourceMappingURL=input-post.css.map */

@@ -4,7 +4,7 @@
 	class hw_path{
 
 		/** @var array|hw_path_file[] */
-		private $files = array();
+		private $files = [];
 
 
 		/**
@@ -25,10 +25,8 @@
 		 */
 		public function request( $key, $default = null ){
 			$R = $default;
-			if( array_key_exists( $key, $_GET ) )
-				$R = $_GET[ $key ];
-			if( array_key_exists( $key, $_POST ) )
-				$R = stripslashes( $_POST[ $key ] );
+			if( array_key_exists( $key, $_GET ) ) $R = $_GET[ $key ];
+			if( array_key_exists( $key, $_POST ) ) $R = stripslashes( $_POST[ $key ] );
 			return $R;
 		}
 
@@ -47,8 +45,8 @@
 				//if(hiweb()->cacheExists()) return hiweb()->cache();
 				$root = ltrim( $this->base_dir(), '/' );
 				$query = ltrim( str_replace( '\\', '/', dirname( $_SERVER['PHP_SELF'] ) ), '/' );
-				$rootArr = array();
-				$queryArr = array();
+				$rootArr = [];
+				$queryArr = [];
 				foreach( array_reverse( explode( '/', $root ) ) as $dir ){
 					$rootArr[] = rtrim( $dir . '/' . end( $rootArr ), '/' );
 				}
@@ -92,7 +90,7 @@
 		 * @return string
 		 * @version 1.4
 		 */
-		public function query( $url = null, $addData = array(), $removeKeys = array() ){
+		public function query( $url = null, $addData = [], $removeKeys = [] ){
 			if( is_null( $url ) || trim( $url ) == '' ){
 				$url = $this->url_full();
 			}
@@ -101,7 +99,7 @@
 			$query = implode( '?', $url );
 			///
 			$params = explode( '&', $query );
-			$paramsPair = array();
+			$paramsPair = [];
 			foreach( $params as $param ){
 				if( trim( $param ) == '' ){
 					continue;
@@ -130,7 +128,7 @@
 				unset( $paramsPair[ $removeKeys ] );
 			}
 			///
-			$params = array();
+			$params = [];
 			foreach( $paramsPair as $key => $value ){
 				$params[] = ( is_string( $key ) ? $key . '=' : '' ) . htmlentities( $value, ENT_QUOTES, 'UTF-8' );
 			}
@@ -157,8 +155,7 @@
 		 * @return mixed
 		 */
 		public function path_to_url( $path ){
-			if( strpos( $path, 'http' ) === 0 )
-				return $path;
+			if( strpos( $path, 'http' ) === 0 ) return $path;
 			$path = str_replace( '\\', '/', $this->realpath( $path ) );
 			return str_replace( $this->base_dir(), $this->base_url(), $path );
 		}
@@ -187,7 +184,7 @@
 			$urlPath = array_shift( $urlExplode );
 			$query = implode( '?', $urlExplode );
 			///params
-			$paramsPair = array();
+			$paramsPair = [];
 			if( trim( $query ) != '' ){
 				$params = explode( '&', $query );
 				foreach( $params as $param ){
@@ -200,22 +197,13 @@
 			$baseUrl = strpos( $url, $baseUrl ) === 0 ? $baseUrl : false;
 			$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
 			$shema = $https ? 'https://' : 'http://';
-			$dirs = array();
+			$dirs = [];
 			$domain = '';
 			if( $baseUrl != false ){
 				$dirs = explode( '/', trim( str_replace( $shema, '', $urlPath ), '/' ) );
 				$domain = array_shift( $dirs );
 			}
-			return array(
-				'url' => $url,
-				'base_url' => $baseUrl,
-				'shema' => $shema,
-				'domain' => $domain,
-				'dirs' => implode( '/', $dirs ),
-				'dirs_arr' => $dirs,
-				'params' => $query,
-				'params_arr' => $paramsPair
-			);
+			return [ 'url' => $url, 'base_url' => $baseUrl, 'shema' => $shema, 'domain' => $domain, 'dirs' => implode( '/', $dirs ), 'dirs_arr' => $dirs, 'params' => $query, 'params_arr' => $paramsPair ];
 		}
 
 
@@ -315,10 +303,7 @@
 				hiweb()->console()->warn( 'Путь должен быть строкой', 1 );
 				return false;
 			}
-			$r = strtr( $path, array(
-				'\\' => $this->separator(),
-				'/' => $this->separator()
-			) );
+			$r = strtr( $path, [ '\\' => $this->separator(), '/' => $this->separator() ] );
 			return $removeLastSeparators ? rtrim( $r, $this->separator() ) : $r;
 		}
 
@@ -336,6 +321,15 @@
 
 
 		/**
+		 * @param $fileOrDirPath
+		 * @return bool|string
+		 */
+		public function simplepath( $fileOrDirPath ){
+			return strpos( $fileOrDirPath, $this->base_dir() ) === 0 ? substr( $fileOrDirPath, strlen( $this->base_dir() ) ) : $fileOrDirPath;
+		}
+
+
+		/**
 		 * Функция атоматически создает папки
 		 * @param $dirPath - путь до папи, которую необходимо создать
 		 * @return string
@@ -346,8 +340,8 @@
 				return is_dir( $dirPath ) ? $dirPath : false;
 			}
 			$dirPathArr = explode( '/', str_replace( '/', '/', $dirPath ) );
-			$newDirArr = array();
-			$newDirDoneArr = array();
+			$newDirArr = [];
+			$newDirDoneArr = [];
 			foreach( $dirPathArr as $name ){
 				$newDirArr[] = $name;
 				$newDirStr = implode( '/', $newDirArr );
@@ -451,9 +445,9 @@
 		public function scan_directory( $path, $returnDirs = true, $returnFiles = true, $getSubDirs = true ){
 			$path = $this->realpath( $path );
 			if( !file_exists( $path ) ){
-				return array();
+				return [];
 			}
-			$R = array();
+			$R = [];
 			if( $handle = opendir( $path ) ){
 				while( false !== ( $file = readdir( $handle ) ) ){
 					$nextpath = $path . '/' . $file;
@@ -558,10 +552,9 @@
 		 * @version 1.1
 		 * @return bool|string
 		 */
-		public function get_content( $path, $vars = array() ){
+		public function get_content( $path, $vars = [] ){
 			$path = $this->realpath( $path );
-			if( is_array( $vars ) )
-				extract( $vars, EXTR_OVERWRITE );
+			if( is_array( $vars ) ) extract( $vars, EXTR_OVERWRITE );
 			if( file_exists( $path ) && is_readable( $path ) ){
 				if( function_exists( 'ob_start' ) ){
 					ob_start();
@@ -584,8 +577,7 @@
 		 * @return mixed
 		 */
 		public function is_url( $url ){
-			if( !is_string( $url ) )
-				return false;
+			if( !is_string( $url ) ) return false;
 			return filter_var( $url, FILTER_VALIDATE_URL );
 		}
 
@@ -596,12 +588,11 @@
 		 * @param array $fileExtension - массив типов подключаемых файлов, доступны типы: php, js, css
 		 * @return array
 		 */
-		public function include_dir( $path, $fileExtension = array( 'php', 'css', 'js' ) ){
+		public function include_dir( $path, $fileExtension = [ 'php', 'css', 'js' ] ){
 			$subFiles = $this->file( $path )->get_sub_files( $fileExtension );
-			$R = array();
+			$R = [];
 			foreach( $subFiles as $file ){
-				if( !$file->is_readable )
-					continue;
+				if( !$file->is_readable ) continue;
 				switch( $file->extension ){
 					case 'php':
 						include_once $file->path;
@@ -665,13 +656,7 @@
 			if( !copy( $tmp_name, $newPath ) ){
 				return - 2;
 			}
-			$attachment = array(
-				'guid' => $wp_upload_dir['url'] . '/' . $fileName,
-				'post_mime_type' => $wp_filetype['type'],
-				'post_title' => preg_replace( '/\.[^.]+$/', '', $fileName ),
-				'post_content' => '',
-				'post_status' => 'inherit'
-			);
+			$attachment = [ 'guid' => $wp_upload_dir['url'] . '/' . $fileName, 'post_mime_type' => $wp_filetype['type'], 'post_title' => preg_replace( '/\.[^.]+$/', '', $fileName ), 'post_content' => '', 'post_status' => 'inherit' ];
 			$attachment_id = wp_insert_attachment( $attachment, $newPath );
 			require_once( ABSPATH . 'wp-admin/includes/image.php' );
 			$attachment_data = wp_generate_attachment_metadata( $attachment_id, $newPath );
@@ -707,7 +692,7 @@
 		public $filetype;
 		///
 		private $size;
-		private $subFiles = array();
+		private $subFiles = [];
 		///
 		public $fileatime = 0;
 		public $filectime = 0;
@@ -772,19 +757,17 @@
 		 * @param array $mask - маска файлов
 		 * @return array|hw_path_file[]
 		 */
-		public function get_sub_files( $mask = array() ){
+		public function get_sub_files( $mask = [] ){
 			$maskKey = json_encode( $mask );
 			if( !array_key_exists( $maskKey, $this->subFiles ) ){
-				$this->subFiles[ $maskKey ] = array();
-				if( $this->is_dir )
-					foreach( scandir( $this->path ) as $subFileName ){
-						if( $subFileName == '.' || $subFileName == '..' )
-							continue;
-						$subFilePath = $this->path . '/' . $subFileName;
-						$subFile = $this->hw_path->file( $subFilePath );
-						$this->subFiles[ $maskKey ][ $subFile->path ] = $subFile;
-						$this->subFiles[ $maskKey ] = array_merge( $this->subFiles[ $maskKey ], $subFile->get_sub_files( $mask ) );
-					}
+				$this->subFiles[ $maskKey ] = [];
+				if( $this->is_dir ) foreach( scandir( $this->path ) as $subFileName ){
+					if( $subFileName == '.' || $subFileName == '..' ) continue;
+					$subFilePath = $this->path . '/' . $subFileName;
+					$subFile = $this->hw_path->file( $subFilePath );
+					$this->subFiles[ $maskKey ][ $subFile->path ] = $subFile;
+					$this->subFiles[ $maskKey ] = array_merge( $this->subFiles[ $maskKey ], $subFile->get_sub_files( $mask ) );
+				}
 			}
 			return $this->subFiles[ $maskKey ];
 		}

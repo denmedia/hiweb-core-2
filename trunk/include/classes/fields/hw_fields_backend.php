@@ -223,7 +223,7 @@
 		 */
 		private function the_form_post( $post = null, $position = 3 ){
 			$fields = $this->get_fields_by_post_type_position( $post, $position );
-			if( is_array( $fields ) && count( $fields ) > 0 ) hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
+			if( is_array( $fields ) && count( $fields ) > 0 ) hiweb()->form( hiweb()->string()->rand() )->add_fields( $fields )->the_noform( __FUNCTION__ );
 		}
 
 
