@@ -40,8 +40,7 @@
 		 */
 		protected function make_input( $fieldType = 'text' ){
 			$this->input = hiweb()->inputs()->create( $fieldType, $this->id );
-			if( $this->input->tag_get( 'name' ) == '' )
-				$this->input->tag_add( 'name', $this->value_default );
+			$this->input->tag_add('data-field-id', $this->id);
 			return $this->input;
 		}
 

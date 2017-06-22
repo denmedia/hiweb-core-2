@@ -9,7 +9,7 @@
 		foreach( $this->get_fields() as $field ){
 			if( $field instanceof hw_field ){
 				?>
-			<span class="hw-form-field hw-field-<?php echo $field->type() ?>">
+			<span class="hw-form-field hw-field-<?= $field->type() ?>" data-field-id="<?=$field->id()?>" data-field-global-id="<?=$field->global_id()?>">
 				<p><strong><?php echo $field->label() ?></strong></p>
 				<?php $field->the(); ?>
 				<?php echo $field->description() != '' ? '<p class="description">' . $field->description() . '</p>' : ''; ?>

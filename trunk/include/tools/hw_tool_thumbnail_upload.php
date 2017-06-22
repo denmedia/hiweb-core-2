@@ -9,7 +9,7 @@
 			private $post_types = [];
 			private $taxonomies = [];
 
-			private $default_preview_size = [ 200, 300 ];
+			public $default_preview_size = [ 200, 300 ];
 
 
 			public function __construct(){
@@ -38,62 +38,8 @@
 						}
 					}
 				} );
-				// ajax
-				add_action( 'wp_ajax_hw_thumbnail_post_upload', function(){
-					$post_id = intval( $_SERVER['HTTP_POSTID'] );
-					$file = $_FILES['file'];
-					if( $post_id > 0 ){
-						///Upload File
-						$attachment_id = $this->upload( $file );
-						if( $attachment_id <= 0 ){
-							wp_die( json_encode( [ false, 'не удалось загрузит  файл' ] ) );
-						} else {
-							if( $_SERVER['HTTP_POSTTYPE'] == 'taxonomy' ){
-								$R = update_term_meta( $post_id, 'thumbnail_id', $attachment_id );
-							} else {
-								$R = set_post_thumbnail( $post_id, $attachment_id );
-							}
-							if( $R == false ){
-								wp_die( json_encode( [ false, 'не удалось установить миниатюру для товара' ] ) );
-							} else {
-								$img_src = wp_get_attachment_image_url( $attachment_id, $this->default_preview_size );
-								wp_die( json_encode( [ true, $img_src ] ) );
-							}
-						}
-					}
-					wp_die( json_encode( [ false, 'Не верный ID товара' ] ) );
-				} );
 
-				add_action( 'wp_ajax_hw_thumbnail_post_remove', function(){
-					$post_id = intval( $_POST['post_id'] );
-					if( $post_id > 0 ){
-						$R = delete_post_thumbnail( $post_id );
-						if( $R ) wp_die( json_encode( [ true, 'Миниатюра удалена' ] ) ); else wp_die( json_encode( [ false, 'Не удалось удалить миниатюру' ] ) );
-					} else {
-						wp_die( json_encode( [ false, 'Не верный ID товара' ] ) );
-					}
-				} );
 
-				add_action( 'wp_ajax_hw_thumbnail_post_set', function(){
-					$post_id = intval( $_POST['post_id'] );
-					$attachment_id = intval( $_POST['thumbnail_id'] );
-					if( $attachment_id == 0 ){
-						wp_die( json_encode( [ false, 'Не указан индификатор миниатюры post:[thumbnail_id]' ] ) );
-					} elseif( $post_id > 0 ) {
-						if( $_POST['type'] == 'taxonomy' ){
-							$R = update_term_meta( $post_id, 'thumbnail_id', $attachment_id );
-						} else {
-							$R = set_post_thumbnail( $post_id, $attachment_id );
-						}
-						if( $R == false ){
-							wp_die( json_encode( [ false, 'не удалось установить миниатюру для товара' ] ) );
-						} else {
-							$img_src = wp_get_attachment_image_url( $attachment_id, $this->default_preview_size );
-							wp_die( json_encode( [ true, $img_src ] ) );
-						}
-					}
-					wp_die( json_encode( [ false, 'Не верный ID товара' ] ) );
-				} );
 			}
 
 
@@ -131,6 +77,7 @@
 
 
 			protected function manage_posts_columns( $posts_columns, $post_type ){
+				wp_enqueue_media();
 				$posts_columns = hiweb()->arrays()->push( $posts_columns, ' ', 0, 'hw_tool_thumbnail' );
 				return $posts_columns;
 			}
@@ -219,10 +166,11 @@
 
 
 			/**
+			 * Передайте массив одного файла для загрузки
 			 * @param $_file
 			 * @return int|WP_Error
 			 */
-			protected function upload( $_file ){
+			public function upload( $_file ){
 				if( !isset( $_file['tmp_name'] ) ){
 					return 0;
 				}

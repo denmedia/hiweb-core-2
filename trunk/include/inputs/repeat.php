@@ -74,6 +74,13 @@
 			<?php
 		}
 
+		public function ajax_html_row($input_name){
+			ob_start();
+			$this->name( $input_name );
+			$this->the_row_html(0);
+			return ob_get_clean();
+		}
+
 
 		public function html( $arguments = null ){
 			if( !hiweb()->context()->is_backend_page() ){
@@ -84,6 +91,7 @@
 			hiweb()->js( hiweb()->url_js . '/input_repeat.js', array( 'jquery-ui-sortable' ) );
 			///
 			ob_start();
+			$this->tag_add('data-input-name', $this->name());
 			?>
 			<div class="hw-input-repeat" <?= $this->tags_html() ?>>
 				<?php if( !$this->have_cols() ){

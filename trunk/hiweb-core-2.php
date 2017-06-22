@@ -17,6 +17,7 @@
 		///
 		require_once 'include/core.php';
 		require_once 'include/short_functions.php';
+		require_once 'include/ajax.php';
 		///
 		if( file_exists( hiweb()->dir . '/test.php' ) && is_readable(hiweb()->dir.'/test.php') ){
 			include_once hiweb()->dir . '/test.php';

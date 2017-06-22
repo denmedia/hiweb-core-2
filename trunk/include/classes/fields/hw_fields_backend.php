@@ -126,7 +126,7 @@
 							delete_option( $field_options_name );
 						} else {
 							$field->value( get_option( $field_options_name, null ) );
-							$field->input()->name = $field_options_name;
+							$field->input()->name($field_options_name);
 							add_settings_field( $field_options_name, $field->label(), [ $field->input(), 'the' ], $page, 'hiweb-' . $page );
 						}
 					}

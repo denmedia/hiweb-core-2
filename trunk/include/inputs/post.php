@@ -10,16 +10,6 @@
 		protected $attributes = [ 'post_type' => [], 'meta_key' => '' ];
 
 
-		public function __construct( $id = false, $type = 'text' ){
-			parent::__construct( $id, $type );
-			add_action( 'wp_ajax_hw_input_posts', function(){
-				$R = [];
-				wp_die( '[{"id":1,"name":"Random Dude","description":"0744561062","picture_path":"avatar.png"},{"id":2,"name":"Random Dude 2","description":"0744561062","picture_path":"avatar.png"},{"id":3,"name":"Random Dude 3","description":"0744561062","picture_path":"avatar.png"}]' );
-				//wp_die( json_encode( $R ) );
-			} );
-		}
-
-
 		public function html(){
 
 			if( !hiweb()->context()->is_backend_page() ){

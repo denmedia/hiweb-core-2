@@ -7,7 +7,7 @@
 	<?php
 		foreach( $this->get_fields() as $field ){
 			?>
-			<tr class="form-field term-description-wrap hw-field-<?php echo $field->type() ?>">
+			<tr class="form-field term-description-wrap hw-field-<?= $field->type() ?>" data-field-id="<?=$field->id()?>" data-field-global-id="<?=$field->global_id()?>">
 				<th scope="row"><label for="<?php echo $field->input()->id ?>"><?php echo $field->label() ?></label></th>
 				<td><?php $field->the() ?>
 					<?php if( $field->description() != '' ){

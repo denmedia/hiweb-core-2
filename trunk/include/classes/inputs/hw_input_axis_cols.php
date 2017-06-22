@@ -96,6 +96,7 @@
 				}
 				$input = clone $this->input();
 				$input->value( $row_value );
+				$input->id( $this->parent_input->name() . '-' . $this->id().'-'.rand(1000,9999) );
 				$input->name( $this->parent_input->name() . '[' . $row_id . '][' . $this->id() . ']' );
 				$this->inputs_by_row[ $row_id ] = $input;
 			}

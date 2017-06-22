@@ -49,6 +49,11 @@ var hw_input_repeat = {
         return jQuery(root).find('> table > tbody[data-rows-list] > tr[data-row]');
     },
 
+    /**
+     *
+     * @param root
+     * @returns {*|{}}
+     */
     get_cols: function (root) {
         return jQuery(root).find('> table > thead [data-col]');
     },
@@ -108,12 +113,29 @@ var hw_input_repeat = {
         hw_input_repeat.make_sortable();
     },
 
+
+    get_global_id: function (e) {
+        return jQuery(e).closest('[data-global-id]').attr('data-global-id');
+    },
+
+    get_name_id: function (e) {
+        return jQuery(e).closest('[data-input-name]').attr('data-input-name');
+    },
+
     click_add: function (e) {
         e.preventDefault();
         var prepend = jQuery(this).is('[data-action-add="1"]');
         var root = jQuery(this).closest(hw_input_repeat.selector);
         var row_list = hw_input_repeat.get_rows_list(root);
-        var newLine = hw_input_repeat.get_row_source(root).clone(false).hide().fadeIn();
+        jQuery.ajax({
+            url: ajaxurl + '?action=hw_get_input',
+            type: 'post',
+            data: {id: hw_input_repeat.get_global_id(this), method: 'ajax_html_row', params: hw_input_repeat.get_name_id(this)},
+            dataType: 'json',
+            success: function (data) {
+
+                if (data.hasOwnProperty('result') && data.result === true) {
+                    var newLine = jQuery(data.data).hide().fadeIn();
         if (prepend) {
             row_list.prepend(newLine);
         } else {
@@ -130,6 +152,31 @@ var hw_input_repeat = {
             });
         hw_input_repeat.make_table_names(root);
         newLine.find('[data-col] > *').trigger('init_2');
+                } else {
+                    console.warn(data);
+                }
+            },
+            error: function (data) {
+                console.warn(data);
+            }
+        });
+        //var newLine = hw_input_repeat.get_row_source(root).clone(false).hide().fadeIn();
+        /*if (prepend) {
+         row_list.prepend(newLine);
+         } else {
+         row_list.append(newLine);
+         }
+         newLine.find('[data-col] > *').trigger('init');
+         newLine.css('opacity', 0).animate({opacity: 1}).find('> td')
+         .wrapInner('<div style="display: none;" />')
+         .parent()
+         .find('> td > div')
+         .slideDown(700, function () {
+         var $set = jQuery(this);
+         $set.replaceWith($set.contents());
+         });
+         hw_input_repeat.make_table_names(root);
+         newLine.find('[data-col] > *').trigger('init_2');*/
     },
 
     click_duplicate: function (e) {
