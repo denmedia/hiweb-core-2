@@ -44,8 +44,8 @@
 
 			tr {
 				[data-ctrl] {
-					width: 40px;
 					padding: auto 2px;
+					width: 38px;
 				}
 
 				[data-drag] {
@@ -53,6 +53,11 @@
 					cursor: move;
 					border-right: 1px dotted #eee;
 					border-bottom: 1px dotted #eee;
+					width: 16px;
+					padding: 8px 2px;
+					button, i {
+						cursor: move;
+					}
 					i {
 						opacity: 0.5;
 					}
@@ -98,15 +103,7 @@
 		td {
 			text-align: center;
 
-			&[data-drag] {
-				width: 16px;
-				button, i {
-					cursor: move;
-				}
-			}
-
 			&[data-ctrl] {
-				width: 25px;
 			}
 
 		}

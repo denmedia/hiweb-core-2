@@ -68,8 +68,9 @@ var hw_input_repeat = {
             roots.sortable("destroy");
         }
         roots.sortable({
-            update: function () {
+            update: function (e, ui) {
                 hw_input_repeat.make_table_names(jQuery(this).closest(hw_input_repeat.selector));
+                ui.placeholder.find('> [data-col] > *').trigger('drag_update');
             },
             distance: 3,
             handle: '> [data-drag], > [data-drag] button, > [data-drag] i',
@@ -77,11 +78,16 @@ var hw_input_repeat = {
                 ui.find('th, td').each(function () {
                     jQuery(this).width(jQuery(this).width());
                 });
+                ui.find('> [data-col] > *').trigger('dragged');
                 return ui;
             },
             revert: true,
             start: function (e, elements) {
                 elements.placeholder.height(elements.helper.height());
+                elements.helper.find('> [data-col] > *').trigger('drag_start', elements);
+            },
+            stop: function(e,ui){
+                ui.item.find('> [data-col] > *').trigger('drag_stop', ui.placeholder);
             }
         });
         jQuery(hw_input_repeat.selector + ' tbody').disableSelection();
@@ -149,6 +155,7 @@ var hw_input_repeat = {
             .slideDown(700, function () {
                 var $set = jQuery(this);
                 $set.replaceWith($set.contents());
+                            newLine.find('[data-col] > *').trigger('init_3');
             });
         hw_input_repeat.make_table_names(root);
         newLine.find('[data-col] > *').trigger('init_2');
@@ -160,12 +167,37 @@ var hw_input_repeat = {
                 console.warn(data);
             }
         });
-        //var newLine = hw_input_repeat.get_row_source(root).clone(false).hide().fadeIn();
-        /*if (prepend) {
-         row_list.prepend(newLine);
-         } else {
+    },
+
+    objectifyForm: function (formArray) {//serialize data function
+
+        var returnArray = {};
+        for (var i = 0; i < formArray.length; i++) {
+            returnArray[formArray[i]['name']] = formArray[i]['value'];
+        }
+        return returnArray;
+    },
+
+    click_duplicate: function (e) {
+        e.preventDefault();
+        var root = jQuery(this).closest(hw_input_repeat.selector);
+        var row_list = hw_input_repeat.get_rows_list(root);
+        var currentRow = jQuery(this).closest(hw_input_repeat.selector_row);
+        var values = {};
+        hw_input_repeat.get_cols(root).each(function () {
+            var col_id = jQuery(this).attr('data-col');
+            values[col_id] = hw_input_repeat.objectifyForm(currentRow.find('> td[data-col="' + col_id + '"] [name]').serializeArray());
+        });
+
+        jQuery.ajax({
+            url: ajaxurl + '?action=hw_get_input',
+            type: 'post',
+            data: {id: hw_input_repeat.get_global_id(this), method: 'ajax_html_row', params: hw_input_repeat.get_name_id(this), value: values}, //todo: value
+            dataType: 'json',
+            success: function (data) {
+                if (data.hasOwnProperty('result') && data.result === true) {
+                    var newLine = jQuery(data.data).hide().fadeIn();
          row_list.append(newLine);
-         }
          newLine.find('[data-col] > *').trigger('init');
          newLine.css('opacity', 0).animate({opacity: 1}).find('> td')
          .wrapInner('<div style="display: none;" />')
@@ -176,11 +208,15 @@ var hw_input_repeat = {
          $set.replaceWith($set.contents());
          });
          hw_input_repeat.make_table_names(root);
-         newLine.find('[data-col] > *').trigger('init_2');*/
+                } else {
+                    console.warn(data);
+                }
     },
-
-    click_duplicate: function (e) {
-        e.preventDefault();
+            error: function (data) {
+                console.warn(data);
+            }
+        });
+        /*
         var row = jQuery(this).closest(hw_input_repeat.selector_row);
         var newRow = row.clone(false).insertAfter(row);
         newRow.find('[data-col] > *').trigger('init');
@@ -194,7 +230,7 @@ var hw_input_repeat = {
 
             });
         hw_input_repeat.make_table_names(jQuery(this).closest(hw_input_repeat.selector));
-        newRow.find('[data-col] > *').trigger('init_2');
+         newRow.find('[data-col] > *').trigger('init_2');*/
     },
 
     click_remove: function (e) {

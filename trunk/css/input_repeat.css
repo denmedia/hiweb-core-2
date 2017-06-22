@@ -47,13 +47,17 @@
   padding: 0;
   font-size: 0.9em; }
 .hw-input-repeat table tbody[data-rows-list] tr [data-ctrl] {
-  width: 40px;
-  padding: auto 2px; }
+  padding: auto 2px;
+  width: 38px; }
 .hw-input-repeat table tbody[data-rows-list] tr [data-drag] {
   background-image: url(img/pattern-2.png);
   cursor: move;
   border-right: 1px dotted #eee;
-  border-bottom: 1px dotted #eee; }
+  border-bottom: 1px dotted #eee;
+  width: 16px;
+  padding: 8px 2px; }
+  .hw-input-repeat table tbody[data-rows-list] tr [data-drag] button, .hw-input-repeat table tbody[data-rows-list] tr [data-drag] i {
+    cursor: move; }
   .hw-input-repeat table tbody[data-rows-list] tr [data-drag] i {
     opacity: 0.5; }
   .hw-input-repeat table tbody[data-rows-list] tr [data-drag]:hover i {
@@ -94,11 +98,5 @@
   margin: 0; }
 .hw-input-repeat table td {
   text-align: center; }
-  .hw-input-repeat table td[data-drag] {
-    width: 16px; }
-    .hw-input-repeat table td[data-drag] button, .hw-input-repeat table td[data-drag] i {
-      cursor: move; }
-  .hw-input-repeat table td[data-ctrl] {
-    width: 25px; }
 
 /*# sourceMappingURL=input_repeat.css.map */

@@ -67,7 +67,7 @@
 					}
 				} ?>
 				<td data-ctrl>
-					<button title="Duplicate row" class="dashicons dashicons-admin-page" data-action-duplicate="<?= $row_id ?>"></button>
+					<!--<button title="Duplicate row" class="dashicons dashicons-admin-page" data-action-duplicate="<?= $row_id ?>"></button>-->
 					<button title="Remove row..." class="dashicons dashicons-trash" data-action-remove="<?= $row_id ?>"></button>
 				</td>
 			</tr>

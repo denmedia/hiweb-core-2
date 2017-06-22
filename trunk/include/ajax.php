@@ -104,7 +104,9 @@
 				$R['error'] = 'Инпут с id[' . $input_global_id . '] не найден!';
 			} else {
 				$input = hiweb()->inputs()->inputs[$input_global_id];
-				if( !is_null( $value ) ) $input->value( $value );
+				if( !is_null( $value ) ) {
+					$input->value( $value );
+				}
 				if( method_exists( $input, $method ) ){
 					$R['result'] = true;
 					$R['data'] = call_user_func( [ $input, $method ], $params );

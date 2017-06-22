@@ -26,7 +26,7 @@
 		public function request( $key, $default = null ){
 			$R = $default;
 			if( array_key_exists( $key, $_GET ) ) $R = $_GET[ $key ];
-			if( array_key_exists( $key, $_POST ) ) $R = stripslashes( $_POST[ $key ] );
+			if( array_key_exists( $key, $_POST ) ) $R = is_string( $_POST[ $key ] ) ? stripslashes( $_POST[ $key ] ) : $_POST[ $key ];
 			return $R;
 		}
 
