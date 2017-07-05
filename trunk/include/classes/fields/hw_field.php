@@ -15,6 +15,7 @@
 		private $description;
 		private $prepend = '';
 		private $append = '';
+		private $on_change = [];
 		///
 		/** @var mixed Значение по-умолчанию */
 		private $value_default;
@@ -137,6 +138,20 @@
 		 */
 		public function location(){
 			return hiweb()->fields()->locations()->add( $this );
+		}
+
+
+		/**
+		 * @param null $callback
+		 * @return array|hw_field
+		 */
+		public function on_change( $callback = null ){
+			if( is_null( $callback ) ){
+				return $this->on_change;
+			} else {
+				$this->on_change[] = $callback;
+				return $this;
+			}
 		}
 
 

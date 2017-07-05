@@ -41,11 +41,11 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         transition: all .2s; }
   .hw-input-checkbox .checkbox:checked + label:before {
-    background: #9fd468; }
+    background: #0085ba; }
   .hw-input-checkbox .checkbox:checked + label:after {
     left: 26px; }
   .hw-input-checkbox .checkbox:focus + label:before {
-    box-shadow: 0 0 0 3px rgba(255, 255, 0, 0.5); }
+    box-shadow: 0 0 0 3px rgba(0, 103, 153, 0.2); }
 .hw-input-checkbox .radio {
   vertical-align: top;
   width: 17px;
@@ -77,13 +77,13 @@
         width: 16px;
         height: 16px;
         border-radius: 50%;
-        background: #9fd468;
+        background: #0085ba;
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
         opacity: 0;
         transition: all .2s; }
   .hw-input-checkbox .radio:checked + label:after {
     opacity: 1; }
   .hw-input-checkbox .radio:focus + label:before {
-    box-shadow: 0 0 0 3px rgba(255, 255, 0, 0.5); }
+    box-shadow: 0 0 0 3px rgba(0, 103, 153, 0.2); }
 
 /*# sourceMappingURL=input-checkbox.css.map */

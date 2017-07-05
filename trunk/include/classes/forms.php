@@ -53,6 +53,8 @@
 			foreach( $field_or_fields as $field ){
 				if( $field instanceof hw_field ){
 					$this->fields[ $field->id() ] = $field;
+				} else {
+					$this->fields[ $field->global_id() ] = $field;
 				}
 			}
 			return $this;

@@ -47,6 +47,19 @@
 
 
 		/**
+		 * @param        $label
+		 * @param string $description
+		 * @return hw_field_separator
+		 */
+		public function make_separator($label, $description = ''){
+			$global_id = hiweb()->string()->rand();
+			$field_separator = new hw_field_separator($label, $description, $global_id);
+			$this->fields[ $global_id ] = $field_separator;
+			return $field_separator;
+		}
+
+
+		/**
 		 * Смена глобального ID для поля
 		 * @param $oldGlobalId
 		 * @param $newGlobalId

@@ -162,10 +162,10 @@
     -moz-transition: opacity 200ms ease-in-out 0ms, filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
     -o-transition: opacity 200ms ease-in-out 0ms, filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
     transition: opacity 200ms ease-in-out 0ms, filter 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
-    -webkit-box-shadow: 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
-    -o-box-shadow: 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
-    box-shadow: 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
+    -o-box-shadow: inset 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: inset 5px 10px 10px 0 rgba(0, 0, 0, 0.3);
     -webkit-transform: scale(1.2) !important;
     -moz-transform: scale(1.2) !important;
     -o-transform: scale(1.2) !important;

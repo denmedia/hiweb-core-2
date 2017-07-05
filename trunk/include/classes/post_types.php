@@ -69,7 +69,7 @@
 			$this->_type = sanitize_file_name( strtolower( $post_type ) );
 			$this->label = $post_type;
 			$this->set_props();
-			add_action( 'init', [ $this, 'add_action_init_create' ], 99999 );
+			add_action( 'init', [ $this, 'add_action_init_create' ] );
 			///Add metas...
 			add_action( 'edit_form_top', [ $this, 'add_action_edit_form_top' ] );
 			add_action( 'edit_form_before_permalink', [ $this, 'add_action_edit_form_before_permalink' ] );
@@ -498,15 +498,15 @@
 
 		/**
 		 * @param bool $set
-		 * @return array
+		 * @return hw_post_type
 		 */
 		public function columns_manager_thumbnail( $set = true ){
 			if($set){
-				return hiweb()->tools()->thumbnail_upload()->post_type( $this->type() );
+				hiweb()->tools()->thumbnail_upload()->post_type( $this->type() );
 			} else {
-				return hiweb()->tools()->thumbnail_upload()->remove_post_type( $this->type() );
+				hiweb()->tools()->thumbnail_upload()->remove_post_type( $this->type() );
 			}
-
+			return $this;
 		}
 
 

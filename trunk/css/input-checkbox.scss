@@ -3,8 +3,8 @@ $color_mischka_approx: #cdd1da;
 $black_20: rgba(0, 0, 0, .2);
 $white: #fff;
 $black_30: rgba(0, 0, 0, .3);
-$color_olivine_approx: #9fd468;
-$yellow_50: rgba(255, 255, 0, .5);
+$color_olivine_approx: #0085ba;
+$shadow_color: rgba(0, 103, 153, .2);
 $black_50: rgba(0, 0, 0, .5);
 
 .hw-form-field.hw-field-bool {
@@ -74,7 +74,7 @@ $black_50: rgba(0, 0, 0, .5);
 		}
 		&:focus + label:before {
 			//Instead of the line below you could use @include box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
-			box-shadow: 0 0 0 3px $yellow_50;
+			box-shadow: 0 0 0 3px $shadow_color;
 		}
 	}
 
@@ -127,7 +127,7 @@ $black_50: rgba(0, 0, 0, .5);
 		}
 		&:focus + label:before {
 			//Instead of the line below you could use @include box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
-			box-shadow: 0 0 0 3px $yellow_50;
+			box-shadow: 0 0 0 3px $shadow_color;
 		}
 	}
 }

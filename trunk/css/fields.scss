@@ -33,3 +33,25 @@
 .hw-fields-block[data-hook="edit_form_after_editor"] {
 	margin-top: 15px;
 }
+
+
+.hw_field_separator {
+	margin: 22px 0 8px 0;
+	border-bottom: 1px dashed #ccc;
+	.hw-field-separator-title {
+		font-size: 180%;
+		margin: 4px 0;
+		&.has-description {
+			margin-bottom: 0;
+			padding-bottom: 0;
+		}
+		&.no-description {
+			margin-bottom: 16px;
+			padding-bottom: 0;
+		}
+	}
+
+	.hw-field-separator-description {
+		margin-top: 0;
+	}
+}

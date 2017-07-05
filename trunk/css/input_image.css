@@ -21,57 +21,30 @@
     -o-transform: rotate(360deg);
     transform: rotate(360deg); } }
 .hw-input-image {
-  display: inline-block; }
+  padding: 1px;
+  display: inline-block;
+  background: #fff;
+  border: 1px solid #e5e5e5; }
   .hw-input-image .image-select {
-    border: 1px solid #919b9c;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+    color: #444;
+    border: 1px solid #ccc;
     display: block;
     min-height: 85px;
     min-width: 85px;
     max-width: 100%;
     position: relative;
-    background: 50% 50% no-repeat #ccc;
-    background-size: cover;
     text-align: center;
     text-decoration: none;
-    color: black;
-    overflow: hidden; }
-    .hw-input-image .image-select:hover {
-      background: 50% 50% no-repeat #ccc;
-      background-size: cover; }
-      .hw-input-image .image-select:hover .dashicons {
-        font-size: 54px;
-        margin-top: -28px;
-        margin-left: -30px; }
-      .hw-input-image .image-select:hover .image {
-        -webkit-filter: blur(6px) brightness(2);
-        -moz-filter: blur(6px) brightness(2);
-        -o-filter: blur(6px) brightness(2);
-        -ms-filter: blur(6px) brightness(2);
-        filter: blur(6px) brightness(2);
-        -webkit-transition: all 0.2s ease-in-out 0ms;
-        -moz-transition: all 0.2s ease-in-out 0ms;
-        -o-transition: all 0.2s ease-in-out 0ms;
-        transition: all 0.2s ease-in-out 0ms;
-        position: absolute;
-        top: -20px;
-        right: -20px;
-        bottom: -20px;
-        left: -20px;
-        background-color: black; }
-      .hw-input-image .image-select:hover .overlay {
-        -webkit-opacity: 0.75;
-        -moz-opacity: 0.75;
-        -ms-opacity: 0.75;
-        -o-opacity: 0.75;
-        opacity: 0.75; }
-    .hw-input-image .image-select .image {
-      background: 50% 50% no-repeat #ccc;
+    overflow: hidden;
+    -webkit-box-shadow: inset 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    -o-box-shadow: inset 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0px 0px 15px 0 rgba(0, 0, 0, 0.1); }
+    .hw-input-image .image-select .thumbnail {
+      background: no-repeat center center;
       background-size: cover;
       position: absolute;
-      top: 0;
+      top: 1px;
       right: 0;
       bottom: 0;
       left: 0;
@@ -93,22 +66,85 @@
       -moz-opacity: 0;
       -ms-opacity: 0;
       -o-opacity: 0;
-      opacity: 0;
-      background: white; }
+      opacity: 0; }
     .hw-input-image .image-select .dashicons {
+      font-size: 34px;
+      line-height: 34px;
+      width: 34px;
+      height: 34px;
+      position: relative;
+      top: 50%;
+      -webkit-opacity: 0.4;
+      -moz-opacity: 0.4;
+      -ms-opacity: 0.4;
+      -o-opacity: 0.4;
+      opacity: 0.4;
       -webkit-transition: all 0.2s ease-in-out 0ms;
       -moz-transition: all 0.2s ease-in-out 0ms;
       -o-transition: all 0.2s ease-in-out 0ms;
       transition: all 0.2s ease-in-out 0ms;
-      font-size: 34px;
-      position: relative;
-      top: 50%;
-      margin-top: -18px;
-      margin-left: -10px;
-      text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7); }
+      -webkit-transform: translateY(-50%);
+      -moz-transform: translateY(-50%);
+      -o-transform: translateY(-50%);
+      transform: translateY(-50%); }
+    .hw-input-image .image-select .dashicons[data-icon="deselect"] {
+      -webkit-opacity: 0;
+      -moz-opacity: 0;
+      -ms-opacity: 0;
+      -o-opacity: 0;
+      opacity: 0;
+      -webkit-text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      -moz-text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      -o-text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+    .hw-input-image .image-select:hover {
+      background: none !important; }
+      .hw-input-image .image-select:hover .dashicons {
+        -webkit-opacity: 1;
+        -moz-opacity: 1;
+        -ms-opacity: 1;
+        -o-opacity: 1;
+        opacity: 1;
+        -webkit-transition: all 0.1s ease-in-out 0ms;
+        -moz-transition: all 0.1s ease-in-out 0ms;
+        -o-transition: all 0.1s ease-in-out 0ms;
+        transition: all 0.1s ease-in-out 0ms;
+        -webkit-transform: translateY(-50%) scale(1.4);
+        -moz-transform: translateY(-50%) scale(1.4);
+        -o-transform: translateY(-50%) scale(1.4);
+        transform: translateY(-50%) scale(1.4); }
+      .hw-input-image .image-select:hover .thumbnail {
+        -webkit-transition: all 0.2s ease-in-out 0ms;
+        -moz-transition: all 0.2s ease-in-out 0ms;
+        -o-transition: all 0.2s ease-in-out 0ms;
+        transition: all 0.2s ease-in-out 0ms;
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -o-transform: scale(1.2);
+        transform: scale(1.2);
+        -webkit-opacity: 0.4;
+        -moz-opacity: 0.4;
+        -ms-opacity: 0.4;
+        -o-opacity: 0.4;
+        opacity: 0.4;
+        -webkit-filter: blur(6px) brightness(3) grayscale(50%);
+        -moz-filter: blur(6px) brightness(3) grayscale(50%);
+        -o-filter: blur(6px) brightness(3) grayscale(50%);
+        -ms-filter: blur(6px) brightness(3) grayscale(50%);
+        filter: blur(6px) brightness(3) grayscale(50%); }
+      .hw-input-image .image-select:hover .overlay {
+        -webkit-opacity: 0.75;
+        -moz-opacity: 0.75;
+        -ms-opacity: 0.75;
+        -o-opacity: 0.75;
+        opacity: 0.75; }
+  .hw-input-image[data-has-image="1"] .image-select {
+    background: url(img/pattern-4.png) 50% 50%; }
   .hw-input-image[data-has-image="1"] .dashicons[data-icon="select"] {
     display: none; }
   .hw-input-image[data-has-image="0"] .dashicons[data-icon="deselect"] {
     display: none; }
+  .hw-input-image[data-image-small="1"] .image-select .thumbnail {
+    background-size: auto; }
 
 /*# sourceMappingURL=input_image.css.map */

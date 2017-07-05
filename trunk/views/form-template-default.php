@@ -10,6 +10,10 @@
 			<?php $field->the(); ?>
 			<?php echo $field->description() != '' ? '<p class="description">' . $field->description() . '</p>' : ''; ?>
 			</div><?php
+		}elseif($field instanceof hw_field_separator){
+			?>
+			<div class="hw-form-field-separator"><?php $field->the() ?></div>
+			<?php
 		} else {
 			?>
 			<div class="hw-form-field"><?php hiweb()->dump( $field ) ?></div><?php

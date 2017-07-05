@@ -20,5 +20,8 @@
 				}
 			}
 		}
+		&.single .selectator_input {
+			z-index: 1100;
+		}
 	}
 }

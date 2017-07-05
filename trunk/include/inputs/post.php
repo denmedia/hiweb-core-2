@@ -25,12 +25,16 @@
 			if( is_string( $post_types ) ) $post_types = [ $post_types ];
 			$post_types_names = [];
 			if( is_array( $post_types ) ) foreach( $post_types as $post_type ){
-				$post_types_names[ $post_type ] = get_post_type_object( $post_type )->label;
+				if(post_type_exists($post_type)){
+					$post_types_names[ $post_type ] = get_post_type_object( $post_type )->label;
+				} else {
+					$post_types_names[ $post_type ] = 'неизвестный тип записи';
+				}
 			}
 
 			ob_start();
-			$this->attributes( 'multiple', 'multiple ' );
-			$this->attributes( 'data-selectator-keep-open', 'true ' );
+			$this->attributes( 'multiple', 'multiple' );
+			$this->attributes( 'data-selectator-keep-open', 'true' );
 			///
 			$wp_query = new WP_Query( [ 'post_type' => $post_types, 'posts_per_page' => 99 ] );
 			///
@@ -49,7 +53,7 @@
 								$right = get_post_meta($P->ID, $this->attributes('meta_key'), true);
 							}
 							?>
-							<option <?= $selected ? 'selected="selected"' : '' ?> value="<?= $P->ID ?>" data-subtitle="<?= $post_types_names[ $P->post_type ] ?>" data-left="<?= $img_src ?>" data-right="<?= $right ?>"><?= $P->post_title ?></option><?php
+							<option <?= $selected ? 'selected="selected"' : '' ?> value="<?= $P->ID ?>" data-subtitle="<?=  hiweb()->arrays()->get_byKey($post_types_names, $P->post_type, 'неизвестный тип записи') ?>" data-left="<?= $img_src ?>" data-right="<?= $right ?>"><?= $P->post_title ?></option><?php
 						}
 					} ?>
 				</select>

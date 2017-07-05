@@ -19,10 +19,10 @@
 		 */
 		public function merge( $array1, $array2, $createEmptyArr = true ){
 			if( !is_array( $array1 ) ){
-				$array1 = $createEmptyArr ? array() : array( $array1 );
+				$array1 = $createEmptyArr ? [] : [ $array1 ];
 			}
 			if( !is_array( $array2 ) ){
-				$array2 = $createEmptyArr ? array() : array( $array2 );
+				$array2 = $createEmptyArr ? [] : [ $array2 ];
 			}
 
 			return array_merge( $array1, $array2 );
@@ -49,12 +49,10 @@
 		 * @return array
 		 */
 		public function push( $array, $value, $index = null, $key = null ){
-			if( !is_array( $array ) )
-				$array = [ $array ];
+			if( !is_array( $array ) ) $array = [ $array ];
 			if( $index === false ){
 				$array = array_reverse( $array );
-				if( is_numeric( $key ) || is_string( $key ) )
-					$array[ $key ] = $value; else $array[] = $value;
+				if( is_numeric( $key ) || is_string( $key ) ) $array[ $key ] = $value; else $array[] = $value;
 				$array = array_reverse( $array );
 			} elseif( is_numeric( $index ) ) {
 				$R = [];
@@ -65,12 +63,10 @@
 				}
 				foreach( $array as $k => $v ){
 					if( $n == abs( $index ) ){
-						if( is_numeric( $key ) || is_string( $key ) )
-							$R[ $key ] = $value; else $R[] = $value;
+						if( is_numeric( $key ) || is_string( $key ) ) $R[ $key ] = $value; else $R[] = $value;
 					}
 					if( array_key_exists( $k, $R ) ){
-						if( is_int( $k ) )
-							$R[ intval( $k ) + 1 ] = $v;
+						if( is_int( $k ) ) $R[ intval( $k ) + 1 ] = $v;
 					} else $R[ $k ] = $v;
 					$n ++;
 				}
@@ -79,8 +75,7 @@
 					$array = array_reverse( $array );
 				}
 			} else {
-				if( is_numeric( $key ) || is_string( $key ) )
-					$array[ $key ] = $value; else $array[] = $value;
+				if( is_numeric( $key ) || is_string( $key ) ) $array[ $key ] = $value; else $array[] = $value;
 			}
 			return $array;
 		}
@@ -115,6 +110,32 @@
 
 
 		/**
+		 * Осуществляет поиск значения в массиве и возвращает ключ
+		 * @param      $array
+		 * @param      $search_value
+		 * @param bool $use_regexp
+		 * @return int|null|string|array
+		 */
+		public function find_key( $array, $search_value, $use_regexp = false ){
+			if( is_array( $array ) ){
+				foreach( $array as $key => $val ){
+					if( !is_array( $val ) && !is_object( $val ) ){
+						if( $search_value == $val || ( $use_regexp && preg_match( $search_value, $val ) > 0 ) ){
+							return $key;
+						}
+					} else {
+						$sub_find = $this->find_key( $val, $search_value, $use_regexp );
+						if( !is_null( $sub_find ) ){
+							return array_merge( [ $key ], is_array( $sub_find ) ? $sub_find : [ $sub_find ] );
+						}
+					}
+				}
+			}
+			return null;
+		}
+
+
+		/**
 		 * Возвращает массив, соединенный из двух массивов, с учетом их ключей и значений
 		 * @param            $array1                - начальный массив
 		 * @param            $array2                - приоритетный массив
@@ -124,12 +145,12 @@
 		 * @return array
 		 */
 		public function mergeRecursive( $array1, $array2, $ifSameKey_doArr = false, $ifOneArr_doMergeArr = true, $ifSameNumKey_doNewKey = true ){
-			$r = array();
+			$r = [];
 			if( !is_array( $array1 ) ){
-				$array1 = array( $array1 );
+				$array1 = [ $array1 ];
 			}
 			if( !is_array( $array2 ) ){
-				$array2 = array( $array2 );
+				$array2 = [ $array2 ];
 			}
 			///
 			foreach( array_unique( array_merge( array_keys( $array1 ), array_keys( $array2 ) ) ) as $k ){
@@ -139,10 +160,10 @@
 						if( $ifOneArr_doMergeArr ){
 							$v = $this->merge( $array1[ $k ], $array2[ $k ] );
 						} else {
-							$v = array(
+							$v = [
 								$array1[ $k ],
 								$array2[ $k ]
-							);
+							];
 						}
 					} elseif( $ifOneArr_doMergeArr ) {
 						if( is_array( $array1[ $k ] ) ){
@@ -185,8 +206,8 @@
 		 * @param string $needle   - необходимый фрагмент для поиска
 		 * @return array|bool
 		 */
-		public function strPos_keys( $haystack = array(), $needle = '' ){
-			$r = array();
+		public function strPos_keys( $haystack = [], $needle = '' ){
+			$r = [];
 			foreach( $haystack as $k => $v ){
 				$strpos = strpos( $v, $needle );
 				if( $strpos !== false ){
@@ -204,8 +225,8 @@
 		 * @param string $haystack - строка, в которой произвести поиск
 		 * @return array|bool
 		 */
-		public function strPos( $needle = array(), $haystack = '' ){
-			$r = array();
+		public function strPos( $needle = [], $haystack = '' ){
+			$r = [];
 			foreach( $needle as $k => $v ){
 				$strpos = strpos( $haystack, $v );
 				if( $strpos !== false ){
@@ -223,8 +244,8 @@
 		 * @param array $needle
 		 * @return array|bool
 		 */
-		public function strPos_arrays( $haystack = array(), $needle = array() ){
-			$r = array();
+		public function strPos_arrays( $haystack = [], $needle = [] ){
+			$r = [];
 			if( !is_array( $haystack ) || !is_array( $needle ) ){
 				return false;
 			}
@@ -249,7 +270,7 @@
 		 * @return mixed
 		 * @version 1.2
 		 */
-		public function get_byKey( $haystack = array(), $keyMix = '', $def = null ){
+		public function get_byKey( $haystack = [], $keyMix = '', $def = null ){
 			if( is_object( $haystack ) ){
 				$haystack = (array)$haystack;
 			}
@@ -276,7 +297,7 @@
 				$mix = $this->get_byKey( $mix, $subKey );
 			}
 
-			return ( is_array( $mix ) || is_null( $mix ) ) ? $mix : array( $mix );
+			return ( is_array( $mix ) || is_null( $mix ) ) ? $mix : [ $mix ];
 		}
 
 
@@ -288,7 +309,7 @@
 		 * @return null
 		 * @version 1.0
 		 */
-		public function getValNext( $haystack = array(), $keyMix = '', $def = null ){
+		public function getValNext( $haystack = [], $keyMix = '', $def = null ){
 			if( is_object( $haystack ) ){
 				$haystack = (array)$haystack;
 			}
@@ -314,9 +335,9 @@
 		 */
 		public function explodeTrim( $delimiter, $haystack, $returnEmptyParts = true, $returnEmptyArray = true ){
 			if( !is_string( $haystack ) ){
-				return $returnEmptyArray ? array() : false;
+				return $returnEmptyArray ? [] : false;
 			}
-			$r = array();
+			$r = [];
 			foreach( explode( $delimiter, $haystack ) as $part ){
 				if( $returnEmptyParts || trim( $part ) != '' ){
 					$r[] = $part;
@@ -352,7 +373,7 @@
 		 * @return array
 		 */
 		public function group_by_value( $array, $groupKey ){
-			$R = array();
+			$R = [];
 			if( is_array( $array ) ){
 				foreach( $array as $key => $haystack ){
 					$haystackArray = (array)$haystack;
@@ -369,7 +390,7 @@
 
 
 		public function ungroup( $array, $level = 0 ){
-			$R = array();
+			$R = [];
 			//$object = $array;
 			if( is_object( $array ) ){
 				$array = (array)$array;

@@ -129,4 +129,15 @@
 			return $this->input()->have_rows();
 		}
 
+
+		/**
+		 * @param null $name_or_array
+		 * @param null $value
+		 * @return array|hw_field|mixed|null
+		 */
+		public function attributes( $name_or_array = null, $value = null ){
+			$R = $this->input()->attributes($name_or_array, $value);
+			return ($R instanceof hw_input) ? $this : $R;
+		}
+
 	}

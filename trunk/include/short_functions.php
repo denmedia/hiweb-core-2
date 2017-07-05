@@ -26,6 +26,17 @@
 		}
 	}
 
+	if(!function_exists('add_field_separator')){
+		/**
+		 * @param        $label
+		 * @param string $description
+		 * @return hw_field_separator
+		 */
+		function add_field_separator($label, $description = ''){
+			return hiweb()->fields()->home()->make_separator($label, $description);
+		}
+	}
+
 	if( !function_exists( 'get_field' ) ){
 		/**
 		 * @param      $fieldId

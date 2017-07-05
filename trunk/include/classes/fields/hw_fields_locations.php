@@ -20,10 +20,10 @@
 
 
 		/**
-		 * @param hw_field $field
+		 * @param hw_field|hw_field_separator $field - hw_field or hw_field_separator
 		 * @return hw_fields_location_root
 		 */
-		public function add( hw_field $field ){
+		public function add( $field ){
 			$globalId = hiweb()->string()->rand();
 			$location = new hw_fields_location_root( $field, $globalId );
 			$this->locations[ $globalId ] = $location;
@@ -151,7 +151,11 @@
 			$locations = $this->get_by( $group, $filter, $required_filter );
 			$R = [];
 			foreach( $locations as $location ){
-				$R[ $location->get_field()->id() ] = $location->get_field();
+				if($location->get_field() instanceof hw_field){
+					$R[ $location->get_field()->id() ] = $location->get_field();
+				} else {
+					$R[ $location->get_field()->global_id() ] = $location->get_field();
+				}
 			}
 			return $R;
 		}
@@ -166,7 +170,7 @@
 		public $rules = [];
 		public $rulesId = '';
 		public $globalId = '';
-		/** @var hw_field */
+		/** @var hw_field|hw_field_separator */
 		private $field;
 		/** @var  hw_fields_location_post_type */
 		private $post_type;
@@ -182,10 +186,10 @@
 
 		/**
 		 * hw_fields_location constructor.
-		 * @param hw_field $field
-		 * @param string   $location_globalId - global location id
+		 * @param hw_field|hw_field_separator $field
+		 * @param string                      $location_globalId - global location id
 		 */
-		public function __construct( hw_field $field, $location_globalId ){
+		public function __construct( $field, $location_globalId ){
 			$this->globalId = $location_globalId;
 			$this->field = $field;
 		}
@@ -252,7 +256,9 @@
 			$this->rules['options_page'] = [];
 			$this->options_page = new hw_fields_location_options_page( $this );
 			$this->options_page->slug( $slug );
-			register_setting( hiweb()->fields()->get_options_group_id( $this->options_page > get_slug() ), hiweb()->fields()->get_options_field_id( $this->options_page > get_slug(), $this->get_field()->id() ) );
+			if( $this->get_field() instanceof hw_field ){
+				register_setting( hiweb()->fields()->get_options_group_id( $this->options_page > get_slug() ), hiweb()->fields()->get_options_field_id( $this->options_page > get_slug(), $this->get_field()->id() ) );
+			}
 			return $this->options_page;
 		}
 
@@ -261,13 +267,15 @@
 			$this->rules['admin_menu'] = [];
 			$this->admin_menu = new hw_fields_location_admin_menu( $this );
 			$this->admin_menu->slug( $slug );
-			register_setting( hiweb()->fields()->get_options_group_id( $slug ), hiweb()->fields()->get_options_field_id( $slug, $this->get_field()->id() ) );
+			if( $this->get_field() instanceof hw_field ){
+				register_setting( hiweb()->fields()->get_options_group_id( $slug ), hiweb()->fields()->get_options_field_id( $slug, $this->get_field()->id() ) );
+			}
 			return $this->admin_menu;
 		}
 
 
 		/**
-		 * @return hw_field
+		 * @return hw_field|hw_field_separator
 		 */
 		public function get_field(){
 			return $this->field;
@@ -382,7 +390,7 @@
 
 
 		/**
-		 * @return hw_field
+		 * @return hw_field|hw_field_separator
 		 */
 		public function get_field(){
 			return $this->location_root->get_field();
@@ -449,7 +457,7 @@
 
 
 		/**
-		 * @return hw_field
+		 * @return hw_field|hw_field_separator
 		 */
 		public function get_field(){
 			return $this->location_root->get_field();
@@ -480,7 +488,7 @@
 
 
 		/**
-		 * @return hw_field
+		 * @return hw_field|hw_field_separator
 		 */
 		public function get_field(){
 			return $this->location_root->get_field();
@@ -542,7 +550,7 @@
 
 
 		/**
-		 * @return hw_field
+		 * @return hw_field|hw_field_separator
 		 */
 		public function get_field(){
 			return $this->location_root->get_field();
@@ -583,7 +591,7 @@
 
 
 		/**
-		 * @return hw_field
+		 * @return hw_field|hw_field_separator
 		 */
 		public function get_field(){
 			return $this->location_root->get_field();

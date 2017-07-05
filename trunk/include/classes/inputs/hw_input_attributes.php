@@ -16,7 +16,7 @@
 		/**
 		 * @param null|string|array $name_or_array
 		 * @param null              $value
-		 * @return hw_field|array|mixed|null
+		 * @return hw_input|array|mixed|null
 		 */
 		public function attributes( $name_or_array = null, $value = null ){
 			if( is_array( $name_or_array ) ){

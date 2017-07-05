@@ -110,7 +110,7 @@
 			}
 			$this->labels = $name;
 			///Create
-			add_action( 'init', [ $this, 'register_taxonomy' ], 0 );
+			add_action( 'init', [ $this, 'register_taxonomy' ] );
 		}
 
 

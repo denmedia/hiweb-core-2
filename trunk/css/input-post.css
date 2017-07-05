@@ -5,11 +5,13 @@
   width: 100% !important; }
   .hw-input-post .selectator_element .selectator_options {
     z-index: 1100; }
-  .hw-input-post .selectator_element .selectator_options .selectator_option .selectator_option_left img {
-    width: 25px !important;
-    height: 25px !important; }
-  .hw-input-post .selectator_element .selectator_options .selectator_option .selectator_option_right {
-    background-color: #ccc;
-    border-radius: 2px; }
+    .hw-input-post .selectator_element .selectator_options .selectator_option .selectator_option_left img {
+      width: 25px !important;
+      height: 25px !important; }
+    .hw-input-post .selectator_element .selectator_options .selectator_option .selectator_option_right {
+      background-color: #ccc;
+      border-radius: 2px; }
+  .hw-input-post .selectator_element.single .selectator_input {
+    z-index: 1100; }
 
 /*# sourceMappingURL=input-post.css.map */

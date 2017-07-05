@@ -18,6 +18,7 @@
 		public function __construct(){
 
 			if( hiweb()->context()->is_backend_page() ){
+				hiweb()->css(hiweb()->url_css.'/fields.css');
 				///POSTS PAGE EDIT BACKEND
 				add_action( 'edit_form_top', [ $this, 'edit_form_top' ] );
 				add_action( 'edit_form_before_permalink', [ $this, 'edit_form_before_permalink' ] );
@@ -92,10 +93,12 @@
 							if( $admin_page instanceof hw_admin_menu_abstract ){
 								$fields = hiweb()->fields()->locations()->get_fields_by( 'admin_menu', [ 'slug' => $admin_page->menu_slug() ] );
 								foreach( $fields as $field ){
-									$field_option_name = hiweb()->fields()->get_options_field_id( $admin_page->menu_slug(), $field->id() );
-									$field->value( get_option( $field_option_name, null ) );
-									$field->input()->name( $field_option_name );
-									$field->input()->id( $field_option_name );
+									if($field instanceof hw_field){
+										$field_option_name = hiweb()->fields()->get_options_field_id( $admin_page->menu_slug(), $field->id() );
+										$field->value( get_option( $field_option_name, null ) );
+										$field->input()->name( $field_option_name );
+										$field->input()->id( $field_option_name );
+									}
 								}
 								hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 							}
@@ -126,7 +129,7 @@
 							delete_option( $field_options_name );
 						} else {
 							$field->value( get_option( $field_options_name, null ) );
-							$field->input()->name($field_options_name);
+							$field->input()->name( $field_options_name );
 							add_settings_field( $field_options_name, $field->label(), [ $field->input(), 'the' ], $page, 'hiweb-' . $page );
 						}
 					}
@@ -153,7 +156,7 @@
 			$fields = $this->get_fields_by_taxonomy( $taxonomy );
 			if( is_array( $fields ) && count( $fields ) > 0 ){
 				if( $term instanceof WP_Term ) foreach( $fields as $field ){
-					$field->value( get_term_meta( $term->term_id, $field->id(), true ) );
+					if($fields instanceof hw_field) $field->value( get_term_meta( $term->term_id, $field->id(), true ) );
 				}
 				hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 			}
@@ -170,13 +173,22 @@
 				$fields = $this->get_fields_by_taxonomy( $taxonomy );
 				$R = [];
 				if( is_array( $fields ) ) foreach( $fields as $field ){
-					$R[] = $field->id();
-					if( array_key_exists( $field->id(), $_POST ) ){
-						update_term_meta( $term_id, $field->id(), $_POST[ $field->id() ] );
-					} elseif( array_key_exists( $field->id(), $_GET ) ) {
-						update_term_meta( $term_id, $field->id(), $_GET[ $field->id() ] );
-					} else {
-						update_term_meta( $term_id, $field->id(), null );
+					if($field instanceof hw_field){
+						$R[] = $field->id();
+						$newValue = null;
+						if( array_key_exists( $field->id(), $_POST ) ){
+							$newValue = $_POST[ $field->id() ];
+						} elseif( array_key_exists( $field->id(), $_GET ) ) {
+							$newValue = $_GET[ $field->id() ];
+						}
+						///change value detect
+						if( is_array( $field->on_change() ) && count( $field->on_change() ) > 0 && json_encode( $field->value() ) != json_encode( $newValue ) ){
+							if( is_array( $field->on_change() ) ) foreach( $field->on_change() as $callable ){
+								if( is_callable( $callable ) ) call_user_func( $callable, $this );
+							}
+						}
+						///save taxonomy field value
+						update_term_meta( $term_id, $field->id(), $newValue );
 					}
 				}
 			}
@@ -209,7 +221,7 @@
 				$R = hiweb()->fields()->locations()->get_fields_by( 'post_type', $args );
 				if( $post instanceof WP_Post ){
 					foreach( $R as $field ){
-						$field->value( get_post_meta( $post->ID, $field->id(), true ) );
+						if($field instanceof hw_field) $field->value( get_post_meta( $post->ID, $field->id(), true ) );
 					}
 				}
 			}
@@ -305,9 +317,10 @@
 			if( function_exists( 'get_current_screen' ) ){
 				$locations = hiweb()->fields()->locations()->get_by( 'post_type', [ 'post_type' => get_current_screen()->post_type ], [ 'columns_manager' ] );
 				foreach( $locations as $location ){
+					$field = $location->get_field();
+					if(!$field instanceof hw_field) continue;
 					$column_manager = $location->post_type->columns_manager();
 					$col_position = $column_manager->position;
-					$field = $location->get_field();
 					$column_name = $column_manager->name == '' ? $field->label() : $column_manager->name;
 					if( count( $columns ) > $col_position ){
 						$old_columns = $columns;
@@ -337,14 +350,22 @@
 				$fields = $this->get_fields_by_post_type_position( $post, false );
 				$R = [];
 				if( is_array( $fields ) ) foreach( $fields as $field ){
+					if(!$field instanceof hw_field) continue;
 					$R[] = $field->id();
+					$newValue = null;
 					if( array_key_exists( $field->id(), $_POST ) ){
-						update_post_meta( $post->ID, $field->id(), $_POST[ $field->id() ] );
+						$newValue = $_POST[ $field->id() ];
 					} elseif( array_key_exists( $field->id(), $_GET ) ) {
-						update_post_meta( $post->ID, $field->id(), $_GET[ $field->id() ] );
-					} else {
-						update_post_meta( $post->ID, $field->id(), null );
+						$newValue = $_GET[ $field->id() ];
 					}
+					///change value detect
+					if( is_array( $field->on_change() ) && count( $field->on_change() ) > 0 && json_encode( $field->value() ) != json_encode( $newValue ) ){
+						if( is_array( $field->on_change() ) ) foreach( $field->on_change() as $callable ){
+							if( is_callable( $callable ) ) call_user_func( $callable, $this );
+						}
+					}
+					///save post meta field value
+					update_post_meta( $post->ID, $field->id(), $newValue );
 				}
 			}
 		}

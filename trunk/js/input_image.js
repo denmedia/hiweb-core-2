@@ -34,7 +34,7 @@ var hw_input_image = {
 
     select_image: function (current, selection) {
         var input = current.find('input');
-        var image_preview = current.find('.image');
+        var image_preview = current.find('.thumbnail');
         switch ('object') {
             case typeof selection.sizes.medium:
                 var url = selection.sizes.medium.url;
@@ -59,7 +59,7 @@ var hw_input_image = {
 
     deselect_image: function (current) {
         var input = current.find('input').val('');
-        var image_preview = current.find('.image');
+        var image_preview = current.find('.thumbnail');
         image_preview.css('background-image', 'none');
         current.attr('data-has-image', '0');
     }

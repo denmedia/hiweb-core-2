@@ -3,6 +3,7 @@
 	include_once 'fields/hw_fields_locations.php';
 	include_once 'fields/hw_fields_home.php';
 	include_once 'fields/hw_field.php';
+	include_once 'fields/hw_field_separator.php';
 	include_once 'fields/hw_field_frontend.php';
 	include_once 'fields/hw_fields_backend.php';
 	include_once 'fields/hw_fields_loop.php';
