@@ -67,10 +67,10 @@
       -ms-opacity: 1;
       -o-opacity: 1;
       opacity: 1;
-      -webkit-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
-      -moz-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
-      -o-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
-      transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms; }
+      -webkit-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+      -moz-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+      -o-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+      transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms; }
       .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone:hover .img {
         -webkit-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms, filter 0.2s ease-in-out 0ms;
         -moz-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms, filter 0.2s ease-in-out 0ms;
@@ -106,10 +106,10 @@
       left: 0; }
       .wp-list-table td.hw_tool_thumbnail .thumb_hw_upload_zone [data-ctrl] [data-ctrl-btn] {
         font-size: 34px;
-        -webkit-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
-        -moz-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
-        -o-transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
-        transition: transform 500ms ease-in-out 0ms, opacity 500ms ease-in-out 0ms;
+        -webkit-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+        -moz-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+        -o-transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
+        transition: transform 0.2s ease-in-out 0ms, opacity 0.2s ease-in-out 0ms;
         -webkit-transform: scale(0.9);
         -moz-transform: scale(0.9);
         -o-transform: scale(0.9);

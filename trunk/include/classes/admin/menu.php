@@ -4,18 +4,18 @@
 	class hw_admin_menu{
 
 		/** @var hw_admin_menu_abstract[] */
-		private $pages = array();
+		private $pages = [];
 
 		/** @var hw_admin_menu_page[] */
-		private $_admin_menu_pages = array();
+		private $_admin_menu_pages = [];
 		/** @var hw_admin_submenu_page[] */
-		private $_admin_submenu_pages = array();
+		private $_admin_submenu_pages = [];
 		/** @var hw_admin_options_page[] */
-		private $_admin_option_pages = array();
+		private $_admin_option_pages = [];
 		/** @var hw_admin_theme_page[] */
-		private $_admin_theme_pages = array();
+		private $_admin_theme_pages = [];
 
-		private $_sections = array();
+		private $_sections = [];
 
 
 		/**
@@ -94,7 +94,7 @@
 
 		/**
 		 * @param             $section_slug
-		 * @param string      $options_slug
+		 * @param string $options_slug
 		 * @param null|string $section_title
 		 * @return hw_admin_menu_section
 		 */
@@ -119,17 +119,12 @@
 		 * @return hw_admin_menu_abstract[]|hw_admin_menu_section[]
 		 */
 		public function get_pages( $pages = true, $sections = true, $subpages = true, $options = true, $themes = true ){
-			$R = array();
-			if( $pages )
-				$R = array_merge( $R, $this->_admin_menu_pages );
-			if( $subpages )
-				$R = array_merge( $R, $this->_admin_submenu_pages );
-			if( $options )
-				$R = array_merge( $R, $this->_admin_option_pages );
-			if( $themes )
-				$R = array_merge( $R, $this->_admin_theme_pages );
-			if( $sections )
-				$R = array_merge( $R, $this->_sections );
+			$R = [];
+			if( $pages ) $R = array_merge( $R, $this->_admin_menu_pages );
+			if( $subpages ) $R = array_merge( $R, $this->_admin_submenu_pages );
+			if( $options ) $R = array_merge( $R, $this->_admin_option_pages );
+			if( $themes ) $R = array_merge( $R, $this->_admin_theme_pages );
+			if( $sections ) $R = array_merge( $R, $this->_sections );
 			return $R;
 		}
 
@@ -144,7 +139,7 @@
 		protected $menu_slug = '';
 		protected $function_echo;
 		/** @var hw_field[] */
-		protected $fields = array();
+		protected $fields = [];
 
 		protected $update_success_message = '';
 
@@ -162,10 +157,10 @@
 				$this->page_title = $slug;
 			}
 			$this->init( $additionData );
-			add_action( 'admin_menu', array(
+			add_action( 'admin_menu', [
 				$this,
 				'add_action_admin_menu'
-			) );
+			] );
 		}
 
 
@@ -268,7 +263,7 @@
 		 * @param hw_field $hw_field
 		 * @return array|hw_field[]
 		 */
-		public function add_field(hw_field $hw_field){
+		public function add_field( hw_field $hw_field ){
 			$this->fields[] = $hw_field;
 			return $this->fields;
 		}
@@ -304,29 +299,30 @@
 				$page_is_empty = false;
 			}
 			///Fields to options
-			$fields = hiweb()->fields()->locations()->get_fields_by('admin_menu',['slug' => $this->menu_slug()]);
+			$fields = hiweb()->fields()->locations()->get_fields_by( 'admin_menu', [ 'slug' => $this->menu_slug() ] );
 			if( is_array( $fields ) ){
-				$field_ids = array();
+				$field_ids = [];
 				foreach( $fields as $field ){
-					if($field instanceof hw_field) $field_ids[] = hiweb()->fields()->get_options_field_id($this->menu_slug(), $field->id());
+					if( $field instanceof hw_field ) $field_ids[] = hiweb()->fields()->get_options_field_id( $this->menu_slug(), $field->id() );
 				}
-				echo '<input type="hidden" name="action" value="update" /><input type="hidden" name="page_options" value="' . implode( ',', $field_ids ) . '" />';
+				?>
+				<input type="hidden" name="action" value="update"/>
+				<input type="hidden" name="page_options" value="<?= implode( ',', $field_ids ) ?>"/>
+				<?php
 			}
 			///
 			$content = ob_get_clean();
 			///
 			//Wrap + Title
-			if( $this->use_title_form )
-				if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_pre' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_pre', $this ) ){
-					echo '<div class="wrap"><h2>' . $this->page_title . '</h2>';
-				}
+			if( $this->use_title_form ) if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_pre' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_pre', $this ) ){
+				echo '<div class="wrap"><h2>' . $this->page_title . '</h2>';
+			}
 			if( $content != '' ){
 				//Form
-				if( $this->use_title_form )
-					if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_form' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_form', $this ) ){
-						echo '<form method="post" action="options.php">';
-						wp_nonce_field( 'update-options' );
-					}
+				if( $this->use_title_form ) if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_form' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_form', $this ) ){
+					echo '<form method="post" action="options.php">';
+					wp_nonce_field( 'update-options' );
+				}
 			}
 			////
 			echo $content;
@@ -337,11 +333,10 @@
 			///
 			if( $content != '' ){
 				//Form Close
-				if( $this->use_title_form )
-					if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_form' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_form', $this ) ){
-						submit_button();
-						echo '</form>';
-					}
+				if( $this->use_title_form ) if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug . '_form' ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug . '_form', $this ) ){
+					submit_button();
+					echo '</form>';
+				}
 			}
 			//Wrap Close
 			if( !has_filter( 'hw_admin_menu_page_' . $this->menu_slug ) || apply_filters( 'hw_admin_menu_page_' . $this->menu_slug, $this ) ){
@@ -362,10 +357,10 @@
 
 
 		protected function add_action_admin_menu(){
-			add_menu_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
+			add_menu_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, [
 				$this,
 				'the_page'
-			), $this->icon_url, $this->position );
+			], $this->icon_url, $this->position );
 		}
 
 
@@ -412,10 +407,10 @@
 
 
 		protected function add_action_admin_menu(){
-			add_submenu_page( $this->parent_slug, $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
+			add_submenu_page( $this->parent_slug, $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, [
 				$this,
 				'the_page'
-			) );
+			] );
 		}
 
 
@@ -437,10 +432,10 @@
 	class hw_admin_options_page extends hw_admin_menu_abstract{
 
 		protected function add_action_admin_menu(){
-			add_options_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
+			add_options_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, [
 				$this,
 				'the_page'
-			) );
+			] );
 		}
 
 	}
@@ -449,10 +444,10 @@
 	class hw_admin_theme_page extends hw_admin_menu_abstract{
 
 		protected function add_action_admin_menu(){
-			add_theme_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array(
+			add_theme_page( $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, [
 				$this,
 				'the_page'
-			) );
+			] );
 		}
 	}
 
@@ -469,8 +464,7 @@
 
 		public function __construct( $id, $parent_slug = 'options-general.php' ){
 			$this->id = sanitize_file_name( strtolower( $id ) );
-			if( trim( $this->id ) == '' )
-				$this->id = 'hw_admin_menu_sections_' . $parent_slug;
+			if( trim( $this->id ) == '' ) $this->id = 'hw_admin_menu_sections_' . $parent_slug;
 			if( preg_match( $this->pattern_slug, $parent_slug, $math ) > 0 ){
 				$this->parent_slug = $parent_slug;
 				$this->parent_slug_short = $math[1];

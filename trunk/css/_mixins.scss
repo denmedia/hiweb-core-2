@@ -11,7 +11,7 @@
 	background-size: $size;
 }
 
-@mixin hw_transition($key: all, $duration: 500ms, $easing: ease-in-out, $delay: 0ms) {
+@mixin hw_transition($key: all, $duration: .2s, $easing: ease-in-out, $delay: 0ms) {
 	$params: null;
 	@each $val in $key {
 		@if ($params == '') {
@@ -68,7 +68,7 @@
 
 @mixin hw_box_shadow($size: 5px, $opacity: .04, $offset_x: 0px, $offset_y: 0px, $inset: false) {
 	$props: $offset_x $offset_y $size 0 rgba(0, 0, 0, $opacity);
-	@if inset {
+	@if $inset {
 		$props: inset $offset_x $offset_y $size 0 rgba(0, 0, 0, $opacity);
 	}
 

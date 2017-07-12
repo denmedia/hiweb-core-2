@@ -84,10 +84,10 @@
     -ms-opacity: 0.85;
     -o-opacity: 0.85;
     opacity: 0.85;
-    -webkit-box-shadow: inset 10px 20px 10px 0 rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: inset 10px 20px 10px 0 rgba(0, 0, 0, 0.1);
-    -o-box-shadow: inset 10px 20px 10px 0 rgba(0, 0, 0, 0.1);
-    box-shadow: inset 10px 20px 10px 0 rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 10px 20px 10px 0 rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 10px 20px 10px 0 rgba(0, 0, 0, 0.1);
+    -o-box-shadow: 10px 20px 10px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 10px 20px 10px 0 rgba(0, 0, 0, 0.1);
     -webkit-filter: blur(0.2px);
     -moz-filter: blur(0.2px);
     -o-filter: blur(0.2px);

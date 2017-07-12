@@ -18,7 +18,7 @@
 		public function __construct(){
 
 			if( hiweb()->context()->is_backend_page() ){
-				hiweb()->css(hiweb()->url_css.'/fields.css');
+				hiweb()->css( hiweb()->url_css . '/fields.css' );
 				///POSTS PAGE EDIT BACKEND
 				add_action( 'edit_form_top', [ $this, 'edit_form_top' ] );
 				add_action( 'edit_form_before_permalink', [ $this, 'edit_form_before_permalink' ] );
@@ -49,7 +49,7 @@
 						//edit
 						add_action( $taxonomy_name . '_edit_form', [ $this, 'taxonomy_edit_form' ], 10, 2 );
 					}
-				} );
+				}, 100 );
 				///TAXONOMY SAVE
 				add_action( 'create_term', [ $this, 'edited_term' ], 10, 3 );
 				add_action( 'edited_term', [ $this, 'edited_term' ], 10, 3 );
@@ -57,6 +57,15 @@
 				add_action( 'admin_init', [ $this, 'options_page_add_fields' ], 999999 );
 				///ADMIN MENU FIELDS
 				add_action( 'current_screen', [ $this, 'admin_menu_fields' ], 999999 );
+				/// USERS SETTINGS
+				add_action( 'admin_color_scheme_picker', [ $this, 'admin_color_scheme_picker' ] );
+				add_action( 'personal_options', [ $this, 'personal_options' ] );
+				add_action( 'profile_personal_options', [ $this, 'profile_personal_options' ] );
+				add_action( 'show_user_profile', [ $this, 'show_user_profile' ] );
+				add_action( 'edit_user_profile', [ $this, 'edit_user_profile' ] );
+				/// USERS SAVE
+				add_action( 'personal_options_update', [ $this, 'edit_user_profile_update' ] );
+				add_action( 'edit_user_profile_update', [ $this, 'edit_user_profile_update' ] );
 			}
 		}
 
@@ -82,6 +91,88 @@
 		}
 
 
+		///////////////////USERS
+		private function get_fields_by_user_position( $user_id, $position = 2 ){
+			$R = [];
+			if( function_exists( 'get_user_by' ) ){
+				if( $user_id instanceof WP_User ) $user = $user_id; else $user = get_user_by( 'ID', $user_id );
+				if( $user instanceof WP_User ){
+					///GET LOCATIONS by CONTEXT
+					/** @var hw_field[] $R */
+					$args = [];
+					if( is_int( $position ) ) $args['position'] = $position;
+					$args['id'] = $user_id;
+					$args['email'] = $user->user_email;
+					$R = hiweb()->fields()->locations()->get_fields_by( 'user', $args );
+					foreach( $R as $field ){
+						if( $field instanceof hw_field ) $field->value( get_user_meta( $user->ID, $field->id(), true ) );
+					}
+				}
+			}
+			return $R;
+		}
+
+
+		private function the_user_form( $user_id, $position = 2 ){
+			$fields = $this->get_fields_by_user_position( $user_id, $position );
+			if( is_array( $fields ) && count( $fields ) > 0 ) hiweb()->form( hiweb()->string()->rand() )->add_fields( $fields )->the_noform( __FUNCTION__ );
+		}
+
+
+		public function admin_color_scheme_picker( $user_id ){
+			$this->the_user_form( $user_id, 1 );
+		}
+
+
+		public function personal_options( $user_id ){
+			$this->the_user_form( $user_id, 0 );
+		}
+
+
+		public function profile_personal_options( $user_id ){
+			$this->the_user_form( $user_id, 4 );
+		}
+
+
+		public function show_user_profile( $user_id ){
+			$this->the_user_form( $user_id, 2 );
+		}
+
+
+		public function edit_user_profile( $user_id ){
+			$this->the_user_form( $user_id, 2 );
+		}
+
+
+		public function edit_user_profile_update( $user_id ){
+			if( function_exists( 'get_user_by' ) ){
+				if( $user_id instanceof WP_User ) $user = $user_id; else $user = get_user_by( 'ID', $user_id );
+				if( $user instanceof WP_User ){
+					$fields = $this->get_fields_by_user_position( $user, false );
+					$R = [];
+					if( is_array( $fields ) ) foreach( $fields as $field ){
+						if( !$field instanceof hw_field ) continue;
+						$R[] = $field->id();
+						$newValue = null;
+						if( array_key_exists( $field->id(), $_POST ) ){
+							$newValue = $_POST[ $field->id() ];
+						} elseif( array_key_exists( $field->id(), $_GET ) ) {
+							$newValue = $_GET[ $field->id() ];
+						}
+						///change value detect
+						if( is_array( $field->on_change() ) && count( $field->on_change() ) > 0 && json_encode( $field->value() ) != json_encode( $newValue ) ){
+							if( is_array( $field->on_change() ) ) foreach( $field->on_change() as $callable ){
+								if( is_callable( $callable ) ) call_user_func( $callable, $this );
+							}
+						}
+						///save post meta field value
+						update_user_meta( $user->ID, $field->id(), $newValue );
+					}
+				}
+			}
+		}
+
+
 		///////////////////ADMIN MENU PAGE
 		public function admin_menu_fields(){
 			if( function_exists( 'get_current_screen' ) ){
@@ -93,7 +184,7 @@
 							if( $admin_page instanceof hw_admin_menu_abstract ){
 								$fields = hiweb()->fields()->locations()->get_fields_by( 'admin_menu', [ 'slug' => $admin_page->menu_slug() ] );
 								foreach( $fields as $field ){
-									if($field instanceof hw_field){
+									if( $field instanceof hw_field ){
 										$field_option_name = hiweb()->fields()->get_options_field_id( $admin_page->menu_slug(), $field->id() );
 										$field->value( get_option( $field_option_name, null ) );
 										$field->input()->name( $field_option_name );
@@ -156,7 +247,7 @@
 			$fields = $this->get_fields_by_taxonomy( $taxonomy );
 			if( is_array( $fields ) && count( $fields ) > 0 ){
 				if( $term instanceof WP_Term ) foreach( $fields as $field ){
-					if($fields instanceof hw_field) $field->value( get_term_meta( $term->term_id, $field->id(), true ) );
+					if( $fields instanceof hw_field ) $field->value( get_term_meta( $term->term_id, $field->id(), true ) );
 				}
 				hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 			}
@@ -173,7 +264,7 @@
 				$fields = $this->get_fields_by_taxonomy( $taxonomy );
 				$R = [];
 				if( is_array( $fields ) ) foreach( $fields as $field ){
-					if($field instanceof hw_field){
+					if( $field instanceof hw_field ){
 						$R[] = $field->id();
 						$newValue = null;
 						if( array_key_exists( $field->id(), $_POST ) ){
@@ -199,7 +290,7 @@
 
 		/**
 		 * @param null $post
-		 * @param int  $position
+		 * @param int $position
 		 * @return hw_field[]
 		 */
 		private function get_fields_by_post_type_position( $post = null, $position = 3 ){
@@ -221,7 +312,7 @@
 				$R = hiweb()->fields()->locations()->get_fields_by( 'post_type', $args );
 				if( $post instanceof WP_Post ){
 					foreach( $R as $field ){
-						if($field instanceof hw_field) $field->value( get_post_meta( $post->ID, $field->id(), true ) );
+						if( $field instanceof hw_field ) $field->value( get_post_meta( $post->ID, $field->id(), true ) );
 					}
 				}
 			}
@@ -231,7 +322,7 @@
 
 		/**
 		 * @param null $post
-		 * @param int  $position
+		 * @param int $position
 		 */
 		private function the_form_post( $post = null, $position = 3 ){
 			$fields = $this->get_fields_by_post_type_position( $post, $position );
@@ -318,7 +409,7 @@
 				$locations = hiweb()->fields()->locations()->get_by( 'post_type', [ 'post_type' => get_current_screen()->post_type ], [ 'columns_manager' ] );
 				foreach( $locations as $location ){
 					$field = $location->get_field();
-					if(!$field instanceof hw_field) continue;
+					if( !$field instanceof hw_field ) continue;
 					$column_manager = $location->post_type->columns_manager();
 					$col_position = $column_manager->position;
 					$column_name = $column_manager->name == '' ? $field->label() : $column_manager->name;
@@ -346,11 +437,11 @@
 
 		//Save POST
 		public function save_post( $post_id = null, $post = null, $update = false ){
-			if( $post instanceof WP_Post ){
+			if( $post instanceof WP_Post && $post->post_status != 'trash' ){
 				$fields = $this->get_fields_by_post_type_position( $post, false );
 				$R = [];
 				if( is_array( $fields ) ) foreach( $fields as $field ){
-					if(!$field instanceof hw_field) continue;
+					if( !$field instanceof hw_field ) continue;
 					$R[] = $field->id();
 					$newValue = null;
 					if( array_key_exists( $field->id(), $_POST ) ){

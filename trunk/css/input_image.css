@@ -36,10 +36,10 @@
     text-align: center;
     text-decoration: none;
     overflow: hidden;
-    -webkit-box-shadow: inset 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: inset 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
-    -o-box-shadow: inset 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
-    box-shadow: inset 0px 0px 15px 0 rgba(0, 0, 0, 0.1); }
+    -webkit-box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    -o-box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.1); }
     .hw-input-image .image-select .thumbnail {
       background: no-repeat center center;
       background-size: cover;
@@ -48,10 +48,10 @@
       right: 0;
       bottom: 0;
       left: 0;
-      -webkit-transition: all 500ms ease-in-out 0ms;
-      -moz-transition: all 500ms ease-in-out 0ms;
-      -o-transition: all 500ms ease-in-out 0ms;
-      transition: all 500ms ease-in-out 0ms; }
+      -webkit-transition: all 0.2s ease-in-out 0ms;
+      -moz-transition: all 0.2s ease-in-out 0ms;
+      -o-transition: all 0.2s ease-in-out 0ms;
+      transition: all 0.2s ease-in-out 0ms; }
     .hw-input-image .image-select .overlay {
       -webkit-transition: all 0.2s ease-in-out 0ms;
       -moz-transition: all 0.2s ease-in-out 0ms;
