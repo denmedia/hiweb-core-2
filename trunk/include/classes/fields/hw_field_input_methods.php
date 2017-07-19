@@ -84,7 +84,7 @@
 		/**
 		 * Возвращает значение поля
 		 * @param null $set_value
-		 * @return mixed|null
+		 * @return mixed|null|hw_field
 		 */
 		public function value( $set_value = null ){
 			////

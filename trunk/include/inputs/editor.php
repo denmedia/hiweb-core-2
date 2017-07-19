@@ -1,7 +1,9 @@
 <?php
 
 	hiweb()->inputs()->register_type( 'editor', 'hw_input_editor' );
-
+	hiweb()->fields()->register_content_type( 'editor', function( $value, $nl2br = false ){
+		return $nl2br ? nl2br($value) : apply_filters('the_content', $value);
+	} );
 
 	class hw_input_editor extends hw_input{
 

@@ -104,9 +104,13 @@ jQuery(document).ready(function ($) {
         },
 
         _make_upload_zone: function (place, post_id, type) {
+            if (typeof hw_Dropzone !== 'function') return;
+            ///
             var upload_zone_id = $(place).attr('id'),
                 showDrag = false,
                 timeout = -1;
+            if (jQuery("#" + upload_zone_id).length === 0) return;
+            ///
             new hw_Dropzone("#" + upload_zone_id, {
                 url: ajaxurl + '?action=hw_thumbnail_post_upload',
                 headers: {'postid': post_id, 'posttype': type},

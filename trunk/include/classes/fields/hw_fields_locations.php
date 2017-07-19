@@ -66,11 +66,11 @@
 		/**
 		 * Сопоставляет правило и заданному фильтру контекста, возвращая TRUE или FALSE.
 		 * По указанию аргумента $return_result_array - возвращает составленные паттерны и результат соответствия
-		 * @param       $ruleId              - строка правила
-		 * @param       $group               - наименование группы
-		 * @param array $filter              - массив контекста
-		 * @param array $required_filter     - обязательные параметры в массиве контекста
-		 * @param bool  $return_result_array - возвратить массив паттернов с рузельтатами
+		 * @param       $ruleId - строка правила
+		 * @param       $group - наименование группы
+		 * @param array $filter - массив контекста
+		 * @param array $required_filter - обязательные параметры в массиве контекста
+		 * @param bool $return_result_array - возвратить массив паттернов с рузельтатами
 		 * @return string
 		 */
 		public function get_context_compare( $ruleId, $group, $filter = [], $required_filter = [], $return_result_array = false ){
@@ -107,7 +107,7 @@
 				} else {
 					$filter_pattern[] = strtr( json_encode( $val, JSON_UNESCAPED_UNICODE ), [ '[' => '\[', ']' => '\]' ] );
 				}
-				$filter_pattern[] = ')|(?!"' . $key . '":\[(?:"[\w-.\d]+"|\d)\]).)*';
+				$filter_pattern[] = ')|(?!"' . $key . '":\[?(?:"[\w-.\d]+"|\d)' . ( is_bool( $val ) ? '|' . ( $val ? 'false' : 'true' ) : '' ) . '\]?).)*';
 				//(?:"slug":\["theme"\]|(?!"slug":\["\w+"\]).)
 				$filter_pattern = '/^' . $group . ':(?:{|\[)' . implode( '', $filter_pattern ) . '(?:}|\])$/i';
 				if( !array_key_exists( $filter_pattern, $PATTERNS[ $ruleId ] ) ){
@@ -125,8 +125,8 @@
 		 * Return Locations by filter
 		 * USE: $locations = hiweb()->locations()->get_by( $group = 'post_type', $filter = [ 'post_type' => 'page' ], $like = true );
 		 * @param string $group
-		 * @param array  $filter
-		 * @param array  $required_filter
+		 * @param array $filter
+		 * @param array $required_filter
 		 * @return hw_fields_location_root[]
 		 */
 		public function get_by( $group, $filter = [], $required_filter = [] ){
@@ -151,7 +151,7 @@
 			$locations = $this->get_by( $group, $filter, $required_filter );
 			$R = [];
 			foreach( $locations as $location ){
-				if($location->get_field() instanceof hw_field){
+				if( $location->get_field() instanceof hw_field ){
 					$R[ $location->get_field()->id() ] = $location->get_field();
 				} else {
 					$R[ $location->get_field()->global_id() ] = $location->get_field();
@@ -187,7 +187,7 @@
 		/**
 		 * hw_fields_location constructor.
 		 * @param hw_field|hw_field_separator $field
-		 * @param string                      $location_globalId - global location id
+		 * @param string $location_globalId - global location id
 		 */
 		public function __construct( $field, $location_globalId ){
 			$this->globalId = $location_globalId;

@@ -247,7 +247,7 @@
 			$fields = $this->get_fields_by_taxonomy( $taxonomy );
 			if( is_array( $fields ) && count( $fields ) > 0 ){
 				if( $term instanceof WP_Term ) foreach( $fields as $field ){
-					if( $fields instanceof hw_field ) $field->value( get_term_meta( $term->term_id, $field->id(), true ) );
+					if( $field instanceof hw_field ) $field->value( get_term_meta( $term->term_id, $field->id(), true ) );
 				}
 				hiweb()->form( __FUNCTION__ )->add_fields( $fields )->the_noform( __FUNCTION__ );
 			}
@@ -437,7 +437,7 @@
 
 		//Save POST
 		public function save_post( $post_id = null, $post = null, $update = false ){
-			if( $post instanceof WP_Post && $post->post_status != 'trash' ){
+			if( $post instanceof WP_Post && $post->post_status != 'trash' && $update ){
 				$fields = $this->get_fields_by_post_type_position( $post, false );
 				$R = [];
 				if( is_array( $fields ) ) foreach( $fields as $field ){
@@ -448,7 +448,7 @@
 						$newValue = $_POST[ $field->id() ];
 					} elseif( array_key_exists( $field->id(), $_GET ) ) {
 						$newValue = $_GET[ $field->id() ];
-					}
+					} else return;
 					///change value detect
 					if( is_array( $field->on_change() ) && count( $field->on_change() ) > 0 && json_encode( $field->value() ) != json_encode( $newValue ) ){
 						if( is_array( $field->on_change() ) ) foreach( $field->on_change() as $callable ){
