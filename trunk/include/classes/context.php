@@ -27,11 +27,11 @@
 				if( is_numeric( $postOrId ) && false ){
 					return intval( $postOrId ) == get_option( 'page_on_front' );
 				} elseif( is_string( $postOrId ) ) {
-					$args = array(
+					$args = [
 						'post_name' => $postOrId,
 						'post_status' => 'publish',
 						'post_per-Page' => 1
-					);
+					];
 					$my_posts = get_posts( $args );
 					if( is_array( $my_posts ) && count( $my_posts ) > 0 ){
 						return reset( $my_posts )->ID == get_option( 'page_on_front' );
@@ -76,6 +76,15 @@
 		public function is_rest_api(){
 			$dirs = hiweb()->path()->url_info()['dirs_arr'];
 			return reset( $dirs ) == 'wp-json';
+		}
+
+
+		/**
+		 * Return TRUE, if context is CRON (request url domain.com/wp-cron.php)
+		 * @return bool
+		 */
+		public function is_cron(){
+			return defined( 'DOING_CRON' ) && DOING_CRON;
 		}
 
 

@@ -118,6 +118,15 @@
 
 
 			/**
+			 * Возвращает класс для работы с крон (планировщиком)
+			 * @return hw_cron
+			 */
+			public function cron(){
+				return $this->give_class( 'cron' );
+			}
+
+
+			/**
 			 * Display Errors ON, Debug enable
 			 * @return hw_errors
 			 */
@@ -194,8 +203,8 @@
 			/**
 			 * Подключение JS файла
 			 * @param       $file
-			 * @param array $afterJS   - список предварительных JS файлов от WP
-			 * @param bool  $in_footer - показывать в фтуре
+			 * @param array $afterJS - список предварительных JS файлов от WP
+			 * @param bool $in_footer - показывать в фтуре
 			 * @return mixed
 			 */
 			public function js( $file, $afterJS = [], $in_footer = false ){
@@ -213,9 +222,9 @@
 
 			/**
 			 * Корневой класс для работы с полями ввода
-			 * @param string            $type
+			 * @param string $type
 			 * @param bool|false|string $id
-			 * @param null              $value - значение
+			 * @param null $value - значение
 			 * @return hw_input
 			 */
 			public function input( $type = 'text', $id = false, $value = null ){
@@ -328,7 +337,7 @@
 			 * Подключение класса
 			 * @param            $name
 			 * @param null|mixed $data
-			 * @param bool       $newInstance
+			 * @param bool $newInstance
 			 * @return mixed
 			 * @version 1.2
 			 */

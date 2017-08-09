@@ -103,6 +103,24 @@
 			return $return_array ? $pages : reset( $pages );
 		}
 
+
+		/**
+		 * Return front page WP_Post
+		 * @return array|null|WP_Post
+		 */
+		public function get_front_page(){
+			return get_post( get_option( 'page_on_front' ) );
+		}
+
+
+		/**
+		 * Return blog WP_Post
+		 * @return array|null|WP_Post
+		 */
+		public function get_blog_page(){
+			return get_post( get_option( 'page_for_posts' ) );
+		}
+
 	}
 
 

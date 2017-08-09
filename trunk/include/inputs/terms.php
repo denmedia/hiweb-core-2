@@ -61,7 +61,7 @@
 										foreach( $terms as $wp_term ){
 											$selected = is_array($this->value()) ? in_array($wp_term->term_id, $this->value()) : ($wp_term->term_id == $this->value());
 											?>
-											<option <?=$selected?'selected':''?> value="<?= $wp_term->term_id ?>"><?= $wp_term->name ?></option>
+											<option <?=$selected?'selected':''?> value="<?= $wp_term->term_taxonomy_id ?>"><?= $wp_term->name ?></option>
 											<?php
 										}
 									?>
