@@ -9,7 +9,7 @@
 	 */
 	class hw_fields_loop{
 
-		static $limit = 99;
+		static $limit = 99999;
 
 		///
 		/** @var hw_field_frontend[] */

@@ -222,6 +222,19 @@
 
 
 		/**
+		 * Возвращает массив параметров из URL или значение определенного параметра
+		 * @param null $url - если не указывать, будет взят текущий URL
+		 * @param null $indexOrKey - если не указывать, будет вернут массив параметров, иначе значение параметра
+		 * @return string|array|null
+		 */
+		public function get_paramas_from_url( $url = null, $indexOrKey = null ){
+			$urlArr = $this->url_info( $this->prepare_url( $url, $this->base_url() ) );
+			$paramsArr = $urlArr['params_arr'];
+			return is_null( $indexOrKey ) ? $paramsArr : ( isset( $paramsArr[ $indexOrKey ] ) ? $paramsArr[ $indexOrKey ] : null );
+		}
+
+
+		/**
 		 * Нормализация URL, так же возвращает парсированный URL
 		 * @version 1.2
 		 * @param      $url
@@ -278,6 +291,18 @@
 			$currentUrl = ltrim( str_replace( $this->base_url(), '', $this->url_full() ), '/\\' );
 			$pageSlug = ltrim( $pageSlug, '/\\' );
 			return ( strpos( $currentUrl, $pageSlug ) === 0 );
+		}
+
+
+		/**
+		 * Возвращает TRUE, если файл по заданному пути или URL существует и читабелен
+		 * @param $pathOrUrl
+		 * @return bool
+		 */
+		public function is_readable( $pathOrUrl ){
+			if( trim( $pathOrUrl ) == '' ) return false;
+			$path = $this->url_to_path( $pathOrUrl );
+			return file_exists( $path ) && is_readable( $path );
 		}
 
 
@@ -616,7 +641,7 @@
 		 * Возвращает объект файла
 		 * @version 1.0
 		 * @param $pathOrUrl
-		 * @return array|hw_path_file
+		 * @return hw_path_file
 		 */
 		public function file( $pathOrUrl ){
 			if( !array_key_exists( $pathOrUrl, $this->files ) ){
@@ -631,24 +656,30 @@
 
 		/**
 		 * Upload file or files
-		 * @param $_file - $_FILES[file_id]
+		 * @param $_fileOrUrl - $_FILES[file_id]
 		 * @return int|WP_Error
 		 */
-		public function upload( $_file ){
-			if( !isset( $_file['tmp_name'] ) ){
-				return 0;
-			}
-			///
-			ini_set( 'upload_max_filesize', '128M' );
-			ini_set( 'post_max_size', '128M' );
-			ini_set( 'max_input_time', 300 );
-			ini_set( 'max_execution_time', 300 );
-			///
-			$tmp_name = $_file['tmp_name'];
-			$fileName = $_file['name'];
-			if( !is_readable( $tmp_name ) ){
-				return - 1;
-			}
+		public function upload( $_fileOrUrl ){
+			if( is_array( $_fileOrUrl ) ){
+				if( !isset( $_fileOrUrl['tmp_name'] ) ){
+					return 0;
+				}
+				///
+				ini_set( 'upload_max_filesize', '128M' );
+				ini_set( 'post_max_size', '128M' );
+				ini_set( 'max_input_time', 300 );
+				ini_set( 'max_execution_time', 300 );
+				///
+				$tmp_name = $_fileOrUrl['tmp_name'];
+				$fileName = $_fileOrUrl['name'];
+				if( !is_readable( $tmp_name ) ){
+					return - 1;
+				}
+			} elseif( is_string( $_fileOrUrl ) && $this->is_url( $_fileOrUrl ) ) {
+				$fileName = $this->file( $_fileOrUrl )->basename;
+				$tmp_name = $_fileOrUrl;
+			} else return - 2;
+
 			///File Upload
 			$wp_filetype = wp_check_filetype( $fileName, null );
 			$wp_upload_dir = wp_upload_dir();
@@ -661,6 +692,39 @@
 			require_once( ABSPATH . 'wp-admin/includes/image.php' );
 			$attachment_data = wp_generate_attachment_metadata( $attachment_id, $newPath );
 			wp_update_attachment_metadata( $attachment_id, $attachment_data );
+			return $attachment_id;
+		}
+
+
+		/**
+		 * Get an attachment ID given a URL.
+		 * @param string $url
+		 * @return int Attachment ID on success, 0 on failure
+		 */
+		function get_attachment_id( $url ){
+			$attachment_id = 0;
+			$dir = wp_upload_dir();
+			if( false !== strpos( $url, $dir['baseurl'] . '/' ) ){ // Is URL in uploads directory?
+				$file = basename( $url );
+				$query_args = [ 'post_type' => 'attachment',
+				                'post_status' => 'inherit',
+				                'fields' => 'ids',
+				                'meta_query' => [ [ 'value' => $file,
+				                                    'compare' => 'LIKE',
+				                                    'key' => '_wp_attachment_metadata', ], ] ];
+				$query = new WP_Query( $query_args );
+				if( $query->have_posts() ){
+					foreach( $query->posts as $post_id ){
+						$meta = wp_get_attachment_metadata( $post_id );
+						$original_file = basename( $meta['file'] );
+						$cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
+						if( $original_file === $file || in_array( $file, $cropped_image_files ) ){
+							$attachment_id = $post_id;
+							break;
+						}
+					}
+				}
+			}
 			return $attachment_id;
 		}
 

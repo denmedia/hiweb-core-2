@@ -124,11 +124,11 @@
 		public function field(){
 			if( !$this->field instanceof hw_field ){
 				if( !$this->is_exists() )
-					return null;
+					return new hw_field($this->id(),'');
 				///
 				$fields = hiweb()->fields()->locations()->get_fields_by( $this->context_group(), $this->context_args() );
 				if( !array_key_exists( $this->id(), $fields ) || !$fields[ $this->id() ] instanceof hw_field ){
-					return null;
+					return new hw_field($this->id(),'');
 				}
 				$this->field = $fields[ $this->id() ];
 			} else {

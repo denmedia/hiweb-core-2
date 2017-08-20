@@ -1,9 +1,18 @@
 @import "functions";
 
-@mixin hw_border_radius($radius: 5px) {
-	-webkit-border-radius: $radius;
-	-moz-border-radius: $radius;
-	border-radius: $radius;
+@mixin hw_border_radius($topleft: 5px, $topright: $topleft, $bottomright: $topleft, $bottomleft: $topleft) {
+	-webkit-border-top-left-radius: $topleft;
+	-webkit-border-top-right-radius: $topright;
+	-webkit-border-bottom-right-radius: $bottomright;
+	-webkit-border-bottom-left-radius: $bottomleft;
+	-moz-border-radius-topleft: $topleft;
+	-moz-border-radius-topright: $topright;
+	-moz-border-radius-bottomright: $bottomright;
+	-moz-border-radius-bottomleft: $bottomleft;
+	border-top-left-radius: $topleft;
+	border-top-right-radius: $topright;
+	border-bottom-right-radius: $bottomright;
+	border-bottom-left-radius: $bottomleft;
 }
 
 @mixin hw_background_image($size: cover) {
