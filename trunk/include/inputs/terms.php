@@ -6,7 +6,7 @@
 
 
 		protected $attributes = [
-			'taxonomy' => 'category',
+			'taxonomy' => ['category'],
 			'hide_empty' => false
 		];
 

@@ -9,7 +9,7 @@
 			private $post_types = [];
 			private $taxonomies = [];
 
-			public $default_preview_size = [ 200, 300 ];
+			public $default_preview_size = 'thumbnail';
 
 
 			public function __construct(){
@@ -18,7 +18,7 @@
 					if( is_array( $this->post_types() ) ) foreach( $this->post_types() as $post_type ){
 						if( $post_type == 'post' ){
 							add_action( 'manage_posts_custom_column', [ $this, 'manage_posts_custom_column' ], 10, 2 );
-							add_filter( 'manage_posts_columns', [ $this, 'manage_posts_columns' ] );
+							add_filter( 'manage_posts_columns', [ $this, 'manage_posts_columns' ], 10, 2 );
 						} elseif( $post_type == 'page' ) {
 							add_action( 'manage_pages_custom_column', [ $this, 'manage_posts_custom_column' ], 10, 2 );
 							add_filter( 'manage_pages_columns', [ $this, 'manage_posts_columns' ] );
@@ -38,14 +38,13 @@
 						}
 					}
 				} );
-
-
 			}
 
 
 			protected function manage_posts_custom_column( $column_name = '', $post_id = 0 ){
 				if( intval( $post_id ) > 0 && trim( $column_name ) == 'hw_tool_thumbnail' ){
 					$P = get_post( $post_id );
+					//if( is_null( hiweb()->arrays()->find_key( $this->post_types, $P->post_type ) ) ) return;
 					if( $this->post_type_exists( $P->post_type ) ){
 						?>
 						<div id="thumb_hw_upload_zone-<?= $P->ID ?>" class="thumb_hw_upload_zone" data-is-process="0" data-has-thumbnail="<?= has_post_thumbnail( $P ) ? '1' : '0' ?>">
@@ -77,6 +76,7 @@
 
 
 			protected function manage_posts_columns( $posts_columns, $post_type ){
+				if( is_null( hiweb()->arrays()->find_key( $this->post_types, $post_type ) ) ) return $posts_columns;
 				wp_enqueue_media();
 				$posts_columns = hiweb()->arrays()->push( $posts_columns, ' ', 0, 'hw_tool_thumbnail' );
 				return $posts_columns;

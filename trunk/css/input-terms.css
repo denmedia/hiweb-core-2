@@ -1,5 +1,10 @@
 .hw-input-terms {
   text-align: left; }
+  .hw-input-terms .chosen-container {
+    display: block;
+    width: 100% !important; }
+  .hw-input-terms .search-field {
+    width: 100%; }
   .hw-input-terms .tokens-container {
     display: block;
     width: 100%;

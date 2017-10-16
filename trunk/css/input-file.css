@@ -1,0 +1,115 @@
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+.hw-input-file {
+  padding: 1px;
+  display: inline-block;
+  background: #fff;
+  border: 1px solid #e5e5e5; }
+  .hw-input-file .file-select {
+    color: #444;
+    border: 1px solid #ccc;
+    display: block;
+    min-height: 85px;
+    min-width: 85px;
+    max-width: 100%;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    overflow: hidden;
+    -webkit-box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    -o-box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.1); }
+    .hw-input-file .file-select .overlay {
+      -webkit-transition: all 0.2s ease-in-out 0ms;
+      -moz-transition: all 0.2s ease-in-out 0ms;
+      -o-transition: all 0.2s ease-in-out 0ms;
+      transition: all 0.2s ease-in-out 0ms;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      -webkit-opacity: 0;
+      -moz-opacity: 0;
+      -ms-opacity: 0;
+      -o-opacity: 0;
+      opacity: 0; }
+    .hw-input-file .file-select .dashicons {
+      font-size: 34px;
+      line-height: 34px;
+      width: 34px;
+      height: 34px;
+      position: relative;
+      top: 50%;
+      -webkit-opacity: 0.4;
+      -moz-opacity: 0.4;
+      -ms-opacity: 0.4;
+      -o-opacity: 0.4;
+      opacity: 0.4;
+      -webkit-transition: all 0.2s ease-in-out 0ms;
+      -moz-transition: all 0.2s ease-in-out 0ms;
+      -o-transition: all 0.2s ease-in-out 0ms;
+      transition: all 0.2s ease-in-out 0ms;
+      -webkit-transform: translateY(-50%);
+      -moz-transform: translateY(-50%);
+      -o-transform: translateY(-50%);
+      transform: translateY(-50%); }
+    .hw-input-file .file-select .dashicons[data-icon="deselect"] {
+      -webkit-opacity: 0.9;
+      -moz-opacity: 0.9;
+      -ms-opacity: 0.9;
+      -o-opacity: 0.9;
+      opacity: 0.9;
+      -webkit-text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      -moz-text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      -o-text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+    .hw-input-file .file-select:hover {
+      background: none !important; }
+      .hw-input-file .file-select:hover .dashicons {
+        -webkit-opacity: 1;
+        -moz-opacity: 1;
+        -ms-opacity: 1;
+        -o-opacity: 1;
+        opacity: 1;
+        -webkit-transition: all 0.1s ease-in-out 0ms;
+        -moz-transition: all 0.1s ease-in-out 0ms;
+        -o-transition: all 0.1s ease-in-out 0ms;
+        transition: all 0.1s ease-in-out 0ms;
+        -webkit-transform: translateY(-50%) scale(1.4);
+        -moz-transform: translateY(-50%) scale(1.4);
+        -o-transform: translateY(-50%) scale(1.4);
+        transform: translateY(-50%) scale(1.4); }
+      .hw-input-file .file-select:hover .overlay {
+        -webkit-opacity: 0.75;
+        -moz-opacity: 0.75;
+        -ms-opacity: 0.75;
+        -o-opacity: 0.75;
+        opacity: 0.75; }
+  .hw-input-file[data-has-file="1"] .dashicons[data-icon="select"] {
+    display: none; }
+  .hw-input-file[data-has-file="0"] .dashicons[data-icon="deselect"] {
+    display: none; }
+
+/*# sourceMappingURL=input-file.css.map */

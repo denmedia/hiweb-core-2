@@ -36,7 +36,7 @@
 			$this->attributes( 'multiple', 'multiple' );
 			$this->attributes( 'data-selectator-keep-open', 'true' );
 			///
-			$wp_query = new WP_Query( [ 'post_type' => $post_types, 'posts_per_page' => 99 ] );
+			$wp_query = new WP_Query( [ 'post_type' => $post_types, 'posts_per_page' => 9999 ] );
 			///
 			?>
 			<div class="hw-input-post">

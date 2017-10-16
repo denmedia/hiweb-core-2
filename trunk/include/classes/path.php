@@ -35,9 +35,9 @@
 		 * Возвращает корневой URL
 		 * @param null|string $url
 		 * @return string
-		 * @version 1.3
+		 * @version 1.4
 		 */
-		public function base_url( $url = null ){
+		public function base_url( $url = null, $return_sheme = true ){
 			if( is_string( $url ) ){
 				$url = $this->prepare_url( $url, null, true );
 				return $url['base'];
@@ -64,8 +64,10 @@
 						}
 					}
 				}
+				$base_url = rtrim( $_SERVER['HTTP_HOST'] . '/' . $r, '/' );
+				if( !$return_sheme ) return $base_url;
 				$https = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) || $_SERVER['SERVER_PORT'] == 443;
-				return rtrim( 'http' . ( $https ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . $r, '/' );
+				return 'http' . ( $https ? 's' : '' ) . '://' . $base_url;
 			}
 		}
 
@@ -641,7 +643,7 @@
 		 * Возвращает объект файла
 		 * @version 1.0
 		 * @param $pathOrUrl
-		 * @return hw_path_file
+		 * @return array|hw_path_file
 		 */
 		public function file( $pathOrUrl ){
 			if( !array_key_exists( $pathOrUrl, $this->files ) ){
@@ -656,14 +658,11 @@
 
 		/**
 		 * Upload file or files
-		 * @param $_fileOrUrl - $_FILES[file_id]
+		 * @param $_file - $_FILES[file_id]
 		 * @return int|WP_Error
 		 */
 		public function upload( $_fileOrUrl ){
-			if( is_array( $_fileOrUrl ) ){
-				if( !isset( $_fileOrUrl['tmp_name'] ) ){
-					return 0;
-				}
+			if( isset( $_fileOrUrl['tmp_name'] ) ){
 				///
 				ini_set( 'upload_max_filesize', '128M' );
 				ini_set( 'post_max_size', '128M' );

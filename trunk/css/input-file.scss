@@ -1,0 +1,84 @@
+@import "mixins";
+
+.hw-input-file {
+	padding: 1px;
+	display: inline-block;
+	background: #fff;
+	border: 1px solid #e5e5e5;
+
+	.file-select {
+		color: #444;
+		border: 1px solid #ccc;
+		display: block;
+		min-height: 85px;
+		min-width: 85px;
+		max-width: 100%;
+		position: relative;
+		text-align: center;
+		text-decoration: none;
+		overflow: hidden;
+		@include hw_box_shadow(15px, .1, 0px, 0px, false);
+
+		//.thumbnail {
+		//	@include hw_background_image();
+		//	@include hw_position_stretch(1px);
+		//	@include hw_transition();
+		//}
+
+		.overlay {
+			@include hw_transition(all, 0.2s);
+			@include hw_position_stretch();
+			@include hw_opacity(0);
+		}
+
+		.dashicons {
+			font-size: 34px;
+			line-height: 34px;
+			width: 34px;
+			height: 34px;
+			position: relative;
+			top: 50%;
+			@include hw_opacity(.4);
+			@include hw_transition(all, 0.2s);
+			@include hw_transform(translateY(-50%));
+		}
+		.dashicons[data-icon="deselect"] {
+			@include hw_opacity(.9);
+			@include hw_text_shadow(10px, 0, 0, rgba(255, 255, 255, .8));
+		}
+
+		&:hover {
+			background: none !important;
+
+			.dashicons {
+				@include hw_opacity(1);
+				@include hw_transition(all, .1s);
+				@include hw_transform(translateY(-50%) scale(1.4));
+			}
+
+			//.thumbnail {
+			//	@include hw_transition(all, 0.2s);
+			//	@include hw_transform(scale(1.2));
+			//	@include hw_opacity(.4);
+			//	@include hw_filter(blur(6px) brightness(3) grayscale(50%));
+			//}
+			.overlay {
+				@include hw_opacity(0.75);
+			}
+		}
+	}
+
+	&[data-has-file="1"] {
+		.file-select {
+			//background: url(img/pattern-4.png) 50% 50%;
+		}
+		.dashicons[data-icon="select"] {
+			display: none;
+		}
+	}
+
+	&[data-has-file="0"] .dashicons[data-icon="deselect"] {
+		display: none;
+	}
+
+}
